@@ -1,0 +1,33 @@
+{
+  "provenance": "Reconstructed runnable equivalents; placeholders must be replaced with NEW paths. Not a recovered transcript of original historical interactive commands. Current actual executions are evidenced by the saved logs and transaction timestamps.",
+  "working_directory": "C:\\Users\\ethan\\Downloads\\MRP",
+  "commands": [
+    {
+      "label": "pinned_offline",
+      "command": "export TMPDIR=C:/Users/ethan/AppData/Local/hermes/cache/scratch; .venv/Scripts/python.exe -B -m src.acquisition --report <NEW_REPORT>.json"
+    },
+    {
+      "label": "live_primary",
+      "command": "export TMPDIR=C:/Users/ethan/AppData/Local/hermes/cache/scratch; .venv/Scripts/python.exe -B -m src.acquisition --live --root <NEW_EMPTY_ROOT> --only boc_original fed_original lit_diebold_li_ucm metadata_diebold2006forecasting --extract --report <NEW_REPORT>.json",
+      "observed_exit_code": 1
+    },
+    {
+      "label": "live_representative_literature",
+      "command": "export TMPDIR=C:/Users/ethan/AppData/Local/hermes/cache/scratch; .venv/Scripts/python.exe -B -m src.acquisition --live --root <NEW_EMPTY_ROOT> --only lit_omori_uci metadata_omori2007stochastic --extract --report <NEW_REPORT>.json",
+      "observed_exit_code": 0
+    },
+    {
+      "label": "compare_boc",
+      "command": "export TMPDIR=C:/Users/ethan/AppData/Local/hermes/cache/scratch; .venv/Scripts/python.exe -B -m src.verify_data_sources --original data/raw/boc_daily_2000_2026.csv --fresh <LIVE_ROOT>/data/raw/boc_daily_2000_2026.csv --report <NEW_REPORT>.json"
+    },
+    {
+      "label": "compare_fed",
+      "command": "export TMPDIR=C:/Users/ethan/AppData/Local/hermes/cache/scratch; .venv/Scripts/python.exe -B -m src.verify_data_sources --kind fed_csv --original data/raw/feds200628.csv --fresh <LIVE_ROOT>/data/raw/feds200628.csv --report <NEW_REPORT>.json"
+    },
+    {
+      "label": "regressions",
+      "command": "export TMPDIR=C:/Users/ethan/AppData/Local/hermes/cache/scratch; .venv/Scripts/python.exe -B -m unittest discover -s tests -v",
+      "observed_exit_code": 0
+    }
+  ]
+}

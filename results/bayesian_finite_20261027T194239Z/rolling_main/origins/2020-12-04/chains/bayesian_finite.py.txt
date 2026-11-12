@@ -1,0 +1,220 @@
+"""Finite-moment AR(1)-SV redesign. Historical IG sampler is left intact."""
+from __future__ import annotations
+from dataclasses import dataclass
+import numpy as np
+from scipy.special import betaln
+from src import bayesian_revised as br
+
+
+@dataclass(frozen=True)
+class FinitePrior:
+    base: br.Prior
+    v_upper: float = 4.
+    v_rate: float = 1.
+
+    def __post_init__(self):
+        if (not np.isfinite([self.v_upper,self.v_rate,self.base.omega_mean,self.base.omega_variance]).all()
+            or self.v_upper<=0 or self.v_rate<=0 or self.base.omega_variance<=0
+            or self.base.phi_alpha<=0 or self.base.phi_beta<=0):
+            raise ValueError('Need proper finite positive prior parameters')
+
+
+def v_logpdf(v,p):
+    if not np.isfinite(v) or not 0<v<p.v_upper: return -np.inf
+    return float(np.log(p.v_rate)-p.v_rate*v-np.log(-np.expm1(-p.v_rate*p.v_upper)))
+
+
+def decode(theta,p):
+    m,u,s=np.asarray(theta,float)
+    if not np.isfinite(theta).all() or s>=np.log(p.v_upper): return None
+    phi=float(np.tanh(u))
+    with np.errstate(under='ignore'): v=float(np.exp(s))
+    if abs(phi)>=1 or v<=0: return None
+    return float(m),phi,v,float(m-v/2),float(v*(1-phi*phi))
+
+
+def path_logpdf(h,m,phi,v):
+    if not 0<v or abs(phi)>=1: return -np.inf
+    omega=m-v/2; q=v*(1-phi*phi); h=np.asarray(h)
+    err=h[1:]-omega-phi*(h[:-1]-omega)
+    return float(-.5*(len(h)*np.log(2*np.pi)+np.log(v)+(len(h)-1)*np.log(q)
+                      +(h[0]-omega)**2/v+np.dot(err,err)/q))
+
+
+def centered_target(theta,h,p):
+    state=decode(theta,p)
+    if state is None: return -np.inf
+    m,phi,v,omega,q=state
+    return log_prior(theta,p)+path_logpdf(h,m,phi,v)
+
+
+def collapsed_target(theta,obs,labels,p):
+    state=decode(theta,p)
+    if state is None: return -np.inf
+    m,phi,v,omega,q=state
+    return log_prior(theta,p)+br.mixture_kalman_loglik(obs,labels,omega,phi,q)
+
+
+def noncentered_target(s,z,m,phi,obs,p):
+    state=decode(np.array([m,np.arctanh(phi),s]),p)
+    if state is None: return -np.inf
+    _,_,v,omega,q=state
+    h=omega+np.sqrt(v)*z
+    return float(np.sum(br.logchi2_logpdf(obs-h))+v_logpdf(v,p)+s)
+
+
+def m_conditional(h,phi,v,p):
+    mean,var=br.omega_conditional(h,phi,v*(1-phi*phi),p.base.omega_mean-v/2,p.base.omega_variance)
+    return mean+v/2,var
+
+
+def prior_phi_move(theta,target,obs,labels,p,rng):
+    """Reversible prior-independence phi MH, with h collapsed; m,v fixed."""
+    candidate=theta.copy()
+    phi=float(2*rng.beta(p.base.phi_alpha,p.base.phi_beta)-1)
+    if abs(phi)>=1: return theta,target
+    candidate[1]=np.arctanh(phi)
+    mm,pp,vv,ww,qq=decode(candidate,p)
+    m,ph,v,w,q=decode(theta,p)
+    # The mapped-Beta proposal (including dphi/du) cancels the phi prior.
+    ratio=(br.mixture_kalman_loglik(obs,labels,ww,pp,qq)
+           -br.mixture_kalman_loglik(obs,labels,w,ph,q))
+    if np.log(rng.random())<ratio:
+        return candidate,collapsed_target(candidate,obs,labels,p)
+    return theta,target
+
+
+def joint_step(obs,h,m,phi,v,p,rng,proposal_chol,steps=3):
+    """Reversible RW^steps/independence/RW^steps joint proposal, exact rollback."""
+    probs=br.mixture_probabilities(obs,h)
+    cdf=np.cumsum(probs,axis=1); cdf[:,-1]=1.
+    labels=(rng.random(len(h))[:,None]>cdf).sum(axis=1)
+    theta=np.array([m,np.arctanh(phi),np.log(v)])
+    target=collapsed_target(theta,obs,labels,p)
+    for side in range(2):
+        for _ in range(steps):
+            candidate=theta+proposal_chol@rng.normal(size=3)
+            new_target=collapsed_target(candidate,obs,labels,p)
+            if np.log(rng.random())<new_target-target:
+                theta=candidate; target=new_target
+        if side==0: theta,target=prior_phi_move(theta,target,obs,labels,p,rng)
+    mm,pp,vv,ww,qq=decode(theta,p)
+    candidate_h=br.ffbs(obs,labels,ww,pp,qq,rng.normal(size=len(h)))
+    accepted=bool(np.isfinite(candidate_h).all() and
+                  np.log(rng.random())<br.correction_log_ratio(obs,h,candidate_h))
+    return (candidate_h,mm,pp,vv,True) if accepted else (h,m,phi,v,False)
+
+
+def scale_step(obs,h,m,phi,v,p,rng):
+    """Exact noncentered v slice at fixed standardized stationary path."""
+    z=(h-(m-v/2))/np.sqrt(v); current=np.log(v)
+    target=lambda s:noncentered_target(s,z,m,phi,obs,p)
+    height=target(current)+np.log(rng.random())
+    left=current-rng.random(); right=left+1
+    while target(left)>height: left-=1
+    while target(right)>height: right+=1
+    while True:
+        candidate=rng.uniform(left,right)
+        if target(candidate)>=height:
+            vv=float(np.exp(candidate))
+            return m-vv/2+np.sqrt(vv)*z,vv
+        if candidate<current: left=candidate
+        else: right=candidate
+
+
+def sample_chain(x,p,model,rng,warmup=3000,draws=6000):
+    """Exact Gaussian factor likelihood, conditional on first factor value."""
+    import time
+    from scipy.stats import truncnorm
+    if model=='M4':
+        return br.sample_chain(x,p.base,model,rng,warmup,draws,kernel='collapsed')
+    if model!='M5' or warmup<0 or draws<1:
+        raise ValueError('Invalid model or sampling length')
+    x=np.asarray(x,float)
+    if x.ndim!=1 or len(x)<3 or not np.isfinite(x).all():
+        raise ValueError('Need a finite factor series')
+    started=time.perf_counter()
+    y=x[1:]; lag=x[:-1]; design=np.column_stack([np.ones(len(y)),lag])
+    beta=np.linalg.lstsq(design,y,rcond=None)[0]
+    m=p.base.omega_mean+rng.normal()
+    phi=float(2*rng.beta(p.base.phi_alpha,p.base.phi_beta)-1)
+    v=float(-np.log1p(-rng.random()*(-np.expm1(-p.v_rate*p.v_upper)))/p.v_rate)
+    h=np.full(len(y),m-v/2+rng.normal(0,.5))
+    output=np.empty((draws,10)); proposal_chol=np.diag([.15,.15,.2])
+    adaptation=np.empty((warmup,3)); phi_step=.15; block_accept=0
+    h_accept=phi_accept=joint_accept=0
+    for iteration in range(warmup+draws):
+        mean,cov=br.beta_conditional(y,lag,h,p.base)
+        sd_b=np.sqrt(cov[1,1])
+        b=truncnorm.rvs((-1-mean[1])/sd_b,(1-mean[1])/sd_b,
+                       loc=mean[1],scale=sd_b,random_state=rng)
+        a_mean=mean[0]+cov[0,1]/cov[1,1]*(b-mean[1])
+        a_sd=np.sqrt(cov[0,0]-cov[0,1]**2/cov[1,1])
+        beta=np.array([rng.normal(a_mean,a_sd),b])
+        obs=br.log_squared_residual(y-design@beta)
+        h,m,phi,v,accepted_joint=joint_step(obs,h,m,phi,v,p,rng,proposal_chol)
+        omega=m-v/2; q=v*(1-phi*phi)
+        h,accepted_h,_=br.corrected_h_step(obs,h,omega,phi,q,rng)
+        mm,mv=m_conditional(h,phi,v,p); m=float(rng.normal(mm,np.sqrt(mv)))
+        u=np.arctanh(phi); candidate=rng.normal(u,phi_step)
+        ratio=(centered_target(np.array([m,candidate,np.log(v)]),h,p)
+               -centered_target(np.array([m,u,np.log(v)]),h,p))
+        move=np.log(rng.random())<ratio
+        if move: phi=float(np.tanh(candidate))
+        h,v=scale_step(obs,h,m,phi,v,p,rng)
+        if iteration<warmup:
+            block_accept+=int(move)
+            if (iteration+1)%50==0:
+                phi_step*=np.exp((block_accept/50-.35)/np.sqrt((iteration+1)/50))
+                block_accept=0
+            adaptation[iteration]=[m,np.arctanh(phi),np.log(v)]
+            if iteration>=199 and (iteration+1)%50==0:
+                empirical=np.cov(adaptation[:iteration+1],rowvar=False)
+                covariance=(2.38**2/3)*(.95*empirical+.05*np.diag([.15,.15,.2])**2)
+                proposal_chol=np.linalg.cholesky(covariance+1e-8*np.eye(3))
+        else:
+            h_accept+=int(accepted_h); phi_accept+=int(move); joint_accept+=int(accepted_joint)
+            output[iteration-warmup]=np.r_[beta,m,phi,v,m-v/2,v*(1-phi*phi),h[0],h[len(h)//2],h[-1]]
+    return {'draws':output,'names':['a','b','m','phi','v','omega','q','h_first','h_mid','h_last'],
+            'model':model,'kernel':'finite_collapsed_interwoven_global_phi',
+            'h_acceptance':h_accept/draws,'phi_acceptance':phi_accept/draws,
+            'collapsed_acceptance':joint_accept/draws,
+            'frozen_proposal_cholesky':proposal_chol.tolist(),'frozen_phi_step':phi_step,
+            'prior_beta_mean':list(p.base.beta_mean),'prior_beta_variance':list(p.base.beta_variance),
+            'elapsed_s':time.perf_counter()-started}
+
+
+def log_prior_exp_h_moment(k,p):
+    """Log E exp(k*h), integrating stationary h, Gaussian m and bounded v."""
+    c=.5*(k*k-k)-p.v_rate
+    if abs(c)<1e-12: log_integral=np.log(p.v_upper)
+    elif c>0:
+        log_integral=c*p.v_upper+np.log1p(-np.exp(-c*p.v_upper))-np.log(c)
+    else: log_integral=np.log(-np.expm1(c*p.v_upper))-np.log(-c)
+    return float(k*p.base.omega_mean+.5*k*k*p.base.omega_variance
+                 +np.log(p.v_rate)-np.log(-np.expm1(-p.v_rate*p.v_upper))+log_integral)
+
+
+def moment_audit(p,n):
+    """Analytical proper-posterior/finite-horizon moment gate; proof in protocol."""
+    if not isinstance(n,(int,np.integer)) or n<1: raise ValueError('Need a nonempty finite path')
+    log_bound=(-.5*n*np.log(2*np.pi)-.5*n*p.base.omega_mean+n*p.v_upper/4
+               +n*n*(p.base.omega_variance+p.v_upper)/8)
+    return {'posterior_proper':True,'finite_predictive_second_moment':True,
+            'finite_predictive_fourth_moment':True,'stage_a_mathematical_gate_passed':True,
+            'proof':'Gaussian finite-path MGF, proper coefficients, bounded stationary log-vol variance; protocol.md',
+            'log_likelihood_normalizer_upper_bound':float(log_bound),
+            'log_prior_expected_innovation_variance':log_prior_exp_h_moment(1.,p),
+            'log_prior_innovation_fourth_moment':float(np.log(3)+log_prior_exp_h_moment(2.,p)),
+            'prior_prediction_caveat':'m SD=5 is inherited, proper but very broad; finite is not the same as tight',
+            'v_upper':p.v_upper,'v_rate':p.v_rate}
+
+
+def log_prior(theta,p):
+    state=decode(theta,p)
+    if state is None: return -np.inf
+    m,phi,v,omega,q=state; z=(phi+1)/2; b=p.base
+    return float(-.5*(np.log(2*np.pi*b.omega_variance)+(m-b.omega_mean)**2/b.omega_variance)
+                 +(b.phi_alpha-1)*np.log(z)+(b.phi_beta-1)*np.log1p(-z)
+                 -betaln(b.phi_alpha,b.phi_beta)-np.log(2)
+                 +v_logpdf(v,p)+np.log1p(-phi*phi)+theta[2])

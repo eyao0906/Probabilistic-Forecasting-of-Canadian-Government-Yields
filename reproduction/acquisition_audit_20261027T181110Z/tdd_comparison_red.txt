@@ -1,0 +1,25 @@
+test_daily_comparison_is_recomputable_from_two_files (tests.test_source_comparison.SourceComparisonTests.test_daily_comparison_is_recomputable_from_two_files) ... ok
+test_fed_comparison_reads_preamble_and_normalizes_percentage_points (tests.test_source_comparison.SourceComparisonTests.test_fed_comparison_reads_preamble_and_normalizes_percentage_points) ... ERROR
+test_missing_dates_and_incomplete_rows_are_explicit_not_silent (tests.test_source_comparison.SourceComparisonTests.test_missing_dates_and_incomplete_rows_are_explicit_not_silent) ... ERROR
+
+======================================================================
+ERROR: test_fed_comparison_reads_preamble_and_normalizes_percentage_points (tests.test_source_comparison.SourceComparisonTests.test_fed_comparison_reads_preamble_and_normalizes_percentage_points)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\ethan\Downloads\MRP\tests\test_source_comparison.py", line 33, in test_fed_comparison_reads_preamble_and_normalizes_percentage_points
+    report=compare(a,b,kind='fed_csv')
+TypeError: compare() got an unexpected keyword argument 'kind'
+
+======================================================================
+ERROR: test_missing_dates_and_incomplete_rows_are_explicit_not_silent (tests.test_source_comparison.SourceComparisonTests.test_missing_dates_and_incomplete_rows_are_explicit_not_silent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\ethan\Downloads\MRP\tests\test_source_comparison.py", line 19, in test_missing_dates_and_incomplete_rows_are_explicit_not_silent
+    self.assertEqual(report['original_only_raw_dates_in_range'],['2020-01-06'])
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'original_only_raw_dates_in_range'
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.246s
+
+FAILED (errors=2)

@@ -1,0 +1,32 @@
+{
+  "source": "Bank of Canada daily zero-coupon Government of Canada yield curves",
+  "source_page": "https://www.bankofcanada.ca/rates/interest-rates/bond-yield-curves/",
+  "download_endpoint_template": "https://www.bankofcanada.ca/stats/results/csv?lookupPage=lookup_yield_curve.php&dFrom={start}&dTo={end}",
+  "retrieval_evidence": "Existing raw file supplied in the project; filesystem modified time used as a retrieval proxy, not an independently authenticated server timestamp.",
+  "raw_file": "data\\raw\\boc_daily_2000_2026.csv",
+  "raw_sha256": "ada4b4208b6a4361463181b889383869ba9bf5ad2fbca531a047f954283238a9",
+  "raw_filesystem_mtime_local": "2026-10-09T15:36:17.730266-04:00",
+  "processing_run_utc": "2026-10-27T03:12:39.777027+00:00",
+  "daily_source_rows": 6974,
+  "complete_daily_rows_eight_maturities": 6639,
+  "rows_missing_selected_maturities": 335,
+  "weekly_rows": 1396,
+  "date_first": "1999-12-31",
+  "date_last": "2026-09-23",
+  "maturities_years": [
+    0.25,
+    0.5,
+    1,
+    2,
+    5,
+    7,
+    10,
+    30
+  ],
+  "raw_units": "decimal yields",
+  "processed_units": "percentage points (decimal yield multiplied by 100)",
+  "sampling": "last available complete observation in each ISO calendar week; not interpolated or averaged",
+  "missingness": "daily rows missing any selected maturity are excluded before weekly sampling",
+  "processed_file": "data\\processed\\canada_weekly.csv",
+  "processed_sha256": "0b2af5c3c7bb261973ea4ec04c151eedbf7cf1428f22d0e08eaae87a212bfd77"
+}

@@ -1,0 +1,44 @@
+"""Retrieve public authoritative metadata; preserve evidence and fetch errors."""
+from pathlib import Path
+import urllib.request, urllib.parse, json, datetime, time
+ROOT=Path(__file__).resolve().parents[1]
+OUT=ROOT/'docs'/'sources'; OUT.mkdir(exist_ok=True)
+DOIS={
+'diebold2006forecasting':'10.1016/j.jeconom.2005.03.005',
+'diebold2006macroeconomy':'10.1016/j.jeconom.2005.01.011',
+'hautsch2012bayesian':'10.1016/j.csda.2010.07.003',
+'caldeira2010bayesian':'10.12660/bre.v30n12010.3502',
+'gneiting2007strictly':'10.1198/016214506000001437',
+'scheuerer2015variogram':'10.1175/MWR-D-14-00269.1',
+'omori2007stochastic':'10.1016/j.jeconom.2006.07.008',
+'dawid1999coherent':'10.1214/aos/1018031101',
+'patton2011volatility':'10.1016/j.jeconom.2010.03.034',
+'hansen2011model':'10.3982/ECTA5771',
+'bolder2004canadian':'10.34989/swp-2004-48'}
+
+def main():
+    inventory=[]; bib=[]
+    for key,doi in DOIS.items():
+        dest=OUT/(key+'.json'); url='https://api.crossref.org/works/'+urllib.parse.quote(doi,safe='')
+        try:
+            if dest.exists(): raw=dest.read_bytes()
+            else:
+                with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'MQF-research-metadata-check/1.0'}),timeout=35) as response: raw=response.read()
+                dest.write_bytes(raw); time.sleep(1)
+            m=json.loads(raw)['message']
+            year=(m.get('published-print') or m.get('published') or m.get('issued'))['date-parts'][0][0]
+            authors=' and '.join(a.get('family','')+', '+a.get('given','') for a in m.get('author',[]))
+            fields={'title':m['title'][0], 'author':authors, 'year':year, 'doi':m['DOI'], 'url':m['URL']}
+            for source,target in [('container-title','journal'),('volume','volume'),('issue','number'),('page','pages')]:
+                value=m.get(source)
+                if value: fields[target]=value[0] if isinstance(value,list) else value
+            entry='@article{'+key+',\n'+',\n'.join('  '+k+' = {'+str(v).replace('&',r'\&')+'}' for k,v in fields.items())+'\n}\n'
+            bib.append(entry)
+            inventory.append({'key':key,'doi':doi,'metadata_url':url,'metadata_cached':str(dest.relative_to(ROOT)),'title':fields['title'],'authors':authors,'year':year,'verified_doi':m['DOI'],'access_date_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'evidence_level':'Crossref bibliographic metadata; not proof of full-text review'})
+            print(key,fields)
+        except Exception as error:
+            inventory.append({'key':key,'doi':doi,'metadata_url':url,'error':str(error)})
+            print('ERROR',key,str(error))
+    (OUT/'crossref_inventory.json').write_text(json.dumps(inventory,indent=2),encoding='utf-8')
+    (OUT/'crossref_verified.bib').write_text('\n'.join(bib),encoding='utf-8')
+if __name__=='__main__': main()

@@ -1,0 +1,51 @@
+"""Public-source retrieval only. Writes solely beside this script; no installs."""
+from pathlib import Path
+from datetime import datetime, timezone
+import concurrent.futures, hashlib, json, subprocess, shutil, sys
+import requests
+ROOT = Path(__file__).resolve().parent
+MANIFEST = ROOT / 'retrieval_manifest.json'
+
+def fetch(item):
+    key, url = item
+    now = datetime.now(timezone.utc).isoformat()
+    entry = {'id': key, 'requested_url': url, 'accessed_utc': now}
+    try:
+        r = requests.get(url, timeout=55, headers={'User-Agent': 'Academic literature verification; public full-text research'})
+        b = r.content
+        ispdf = b.startswith(b'%PDF-')
+        suffix = '.pdf' if ispdf else '.html'
+        dest = ROOT / (key + suffix)
+        dest.write_bytes(b)
+        entry.update(status=r.status_code, final_url=r.url, content_type=r.headers.get('Content-Type'), bytes=len(b), sha256=hashlib.sha256(b).hexdigest(), pdf_magic=ispdf, original=dest.name)
+        if ispdf:
+            txt = ROOT / (key + '.txt')
+            exe = shutil.which('pdftotext')
+            if exe is None:
+                raise RuntimeError('pdftotext is not available; no environment changes permitted')
+            p = subprocess.run([exe, '-layout', str(dest), str(txt)], capture_output=True, text=True, encoding='utf-8', errors='replace')
+            entry['pdftotext_returncode'] = p.returncode
+            entry['pdftotext_stderr'] = p.stderr
+            if txt.exists():
+                text = txt.read_text(encoding='utf-8', errors='replace')
+                pages = text.split('\f')
+                if not pages[-1].strip(): pages.pop()
+                entry.update(text=txt.name, extracted_pages=len(pages), text_characters=len(text))
+                marked = '\n\n'.join(f'===== PDF PAGE {i} =====\n{t}' for i,t in enumerate(pages,1))
+                (ROOT / (key + '_pages.txt')).write_text(marked, encoding='utf-8')
+            info = shutil.which('pdfinfo')
+            if info:
+                p = subprocess.run([info,str(dest)],capture_output=True,text=True,encoding='utf-8',errors='replace')
+                (ROOT / (key+'_pdfinfo.txt')).write_text(p.stdout+p.stderr,encoding='utf-8')
+        print(json.dumps(entry,ensure_ascii=True),flush=True)
+    except Exception as e:
+        entry['error'] = repr(e)
+        print(json.dumps(entry),flush=True)
+    return entry
+
+if __name__ == '__main__':
+    items = json.loads(sys.argv[1])
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
+        entries = list(pool.map(fetch, items))
+    old = json.loads(MANIFEST.read_text(encoding='utf-8')) if MANIFEST.exists() else []
+    MANIFEST.write_text(json.dumps(old+entries,indent=2,ensure_ascii=False),encoding='utf-8')

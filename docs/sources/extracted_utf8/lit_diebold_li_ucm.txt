@@ -1,0 +1,1327 @@
+===== PDF PAGE 1 =====
+JournalofEconometrics ](]]]]) ]]]–]]]
+Forecastingthetermstructureofgovernment
+bondyields
+FrancisX.Diebold a,b,CanlinLi c,/C3
+aDepartment of Economics, University of Pennsylvania, 3718 Locust Walk, Philadelphia,
+PA 19104-6297, USA
+bNBER, 1050 Massachusetts Ave., Cambridge, MA 02138, USA
+cA. Gary Anderson Graduate School of Management, University of California, Riverside,
+CA 92521, USA
+Accepted21March2005
+Abstract
+Despitepowerfuladvancesinyieldcurvemodelinginthelast20years,comparativelylittle
+attention has been paid to the key practical problem of forecasting the yield curve. In this
+paper we do so. We use neither the no-arbitrage approach nor the equilibrium approach.
+Instead,weusevariationsontheNelson–Siegelexponentialcomponentsframeworktomodel
+the entire yield curve, period-by-period, as a three-dimensional parameter evolving
+dynamically.Weshowthatthethreetime-varyingparametersmaybeinterpretedasfactors
+corresponding to level, slope and curvature, and that they may be estimated with high
+efﬁciency.Weproposeandestimateautoregressivemodelsforthefactors,andweshowthat
+ourmodelsareconsistentwithavarietyofstylizedfactsregardingtheyieldcurve.Weuseour
+modelstoproduceterm-structureforecastsatbothshortandlonghorizons,withencouraging
+results.Inparticular,ourforecastsappearmuchmoreaccurateatlonghorizonsthanvarious
+standardbenchmarkforecasts.
+r2005PublishedbyElsevierB.V.
+JEL classiﬁcation: G1;E4;C5
+Keywords:Termstructure;Yieldcurve;Factormodel;Nelson–Siegelcurve
+ARTICLE IN PRESS
+www.elsevier.com/locate/jeconom
+0304-4076/$-seefrontmatter r2005PublishedbyElsevierB.V.
+doi:10.1016/j.jeconom.2005.03.005
+/C3Correspondingauthor.
+E-mail addresses: fdiebold@sas.upenn.edu(F.X.Diebold),canlin.li@ucr.edu(C.Li).
+
+===== PDF PAGE 2 =====
+1. Introduction
+Thelast25yearshaveproducedmajoradvancesintheoreticalmodelsoftheterm
+structureaswellastheireconometricestimation.Twopopularapproachestoterm
+structure modeling are no-arbitrage models and equilibrium models. The no-
+arbitragetraditionfocusesonperfectlyﬁttingthetermstructureatapointintimeto
+ensurethatnoarbitragepossibilitiesexist,whichisimportantforpricingderivatives.
+The equilibrium tradition focuses on modeling the dynamics of the instantaneous
+rate, typically using afﬁne models, after which yields at other maturities can be
+derived under various assumptions about the risk premium.1 Prominent contribu-
+tionsintheno-arbitrageveininclude HullandWhite(1990) andHeathetal.(1992) ,
+and prominent contributions in the afﬁne equilibrium tradition includeVasicek
+(1977),Coxetal.(1985) ,and DufﬁeandKan(1996) .
+Interest rate point forecasting is crucial for bond portfolio management, and
+interest rate density forecasting is important for both derivatives pricing and risk
+management.2 Hence one wonders what the modern models have to say about
+interestrateforecasting.Itturnsoutthat,despitetheimpressivetheoreticaladvances
+in the ﬁnancial economics of the yield curve, surprisingly little attention has been
+paidtothekeypracticalproblemofyieldcurveforecasting.Thearbitrage-freeterm
+structureliteraturehaslittletosayaboutdynamicsorforecasting,asitisconcerned
+primarily with ﬁtting the term structure at a point in time. The afﬁne equilibrium
+termstructureliteratureisconcernedwithdynamicsdrivenbytheshortrate,andso
+ispotentiallylinkedtoforecasting,butmostpapersinthattradition,suchas deJong
+(2000)andDaiandSingleton(2000) ,focusonlyonin-sampleﬁtasopposedtoout-
+of-sampleforecasting.Moreover,thosethat dofocusonout-of-sampleforecasting,
+notablyDuffee(2002),concludethatthemodelsforecastpoorly.
+Inthispaperwetakeanexplicitlyout-of-sampleforecastingperspective,andwe
+useneithertheno-arbitrageapproachnortheequilibriumapproach.Instead,weuse
+theNelsonandSiegel(1987) exponentialcomponentsframeworktodistilltheentire
+yield curve, period-by-period, into a three-dimensional parameter that evolves
+dynamically.Weshowthatthethreetime-varyingparametersmaybeinterpretedas
+factors.Unlikefactoranalysis,however,inwhichoneestimatesboththeunobserved
+factorsandthefactorloadings,theNelson–Siegelframeworkimposesstructureon
+the factor loadings.3 Doing so not only facilitates highly precise estimation of the
+factors, but, as we show, it also lets us interpret the factors as level, slope and
+curvature.Weproposeandestimateautoregressivemodelsforthefactors,andthen
+weforecasttheyieldcurvebyforecastingthefactors.Ourresultsareencouraging;in
+ARTICLE IN PRESS
+1The empirical literature that models yields as a cointegrated system, typically with one underlying
+stochastictrend(theshortrate)andstationaryspreadsrelativetotheshortrate,issimilarinspirit.See
+DieboldandSharpe(1990) ,Halletal.(1992) ,Shea(1992),SwansonandWhite(1995) ,and Paganetal.
+(1996).
+2Forcomparativediscussionofpointanddensityforecasting,see Dieboldetal.(1998) andDieboldet
+al.(1999).
+3Classicunrestrictedfactoranalysesinclude LittermanandScheinkman(1991) andKnezetal.(1994) .
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]]2
+
+===== PDF PAGE 3 =====
+particular, our models produce one-year-ahead forecasts that are noticeably more
+accuratethanstandardbenchmarks.
+Related work includes the factor models ofLitzenberger et al. (1995), Bliss
+(1997a,b),DaiandSingleton(2000) ,deJongandSanta-Clara(1999) ,deJong(2000) ,
+BrandtandYaron(2001) andDuffee(2002).Particularlyrelevantarethethree-factor
+modelsof Balduzzietal.(1996) ,Chen(1996),andespeciallythe AndersenandLund
+(1997)modelwithstochasticmeanandvolatility,whosethreefactorsareinterpreted
+interms oflevel,slopeandcurvature.Wewillsubsequentlydiscussrelatedworkin
+greaterdetail;fornow,sufﬁceittosaythatlittleofitconsidersforecastingdirectly,
+andthatourapproach,althoughrelated,isindeedverydifferent.
+We proceed as follows. In Section 2 we provide a detailed description of our
+modeling framework, which interprets and extends earlier work in ways linked to
+recentdevelopmentsinmultifactortermstructuremodeling,andwealsoshowhow
+it can replicate a variety of stylized facts about the yield curve. In Section 3 we
+proceed to an empirical analysis, describing the data, estimating the models, and
+examiningout-of-sampleforecastingperformance.InSection4weofferinterpretive
+concludingremarks.
+2. Modeling and forecasting the term structure I: methods
+Hereweintroducetheframeworkthatweuseforﬁttingandforecastingtheyield
+curve.Wearguethatthewell-known NelsonandSiegel(1987) curveiswell-suitedto
+ourultimateforecastingpurposes,andweintroduceanoveltwistofinterpretation,
+showingthatthethreecoefﬁcientsintheNelson–Siegelcurvemaybeinterpretedas
+latentlevel,slopeandcurvaturefactors.Wealsoarguethatthenatureofthefactors
+and factor loadings implicit in the Nelson–Siegel model facilitate consistency with
+various empirical properties of the yield curve that have been cataloged over the
+years. Finally, motivated by our interpretation of the Nelson–Siegel model as a
+three-factor model of level, slope and curvature, we contrast it to various multi-
+factormodelsthathaveappearedintheliterature.
+2.1. Constructing ‘‘Raw’’ yields
+Let us ﬁrst ﬁx ideas and establish notation by introducing three key theoretical
+constructsandtherelationshipsamongthem:thediscountcurve,theforwardcurve,
+andtheyieldcurve.Let PtðtÞdenotethepriceofa t-perioddiscountbond,i.e.,the
+present value at timet of $1 receivablet periods ahead, and letytðtÞ denote its
+continuously compounded zero-coupon nominal yield to maturity. From the yield
+curveweobtainthediscountcurve,
+PtðtÞ¼ e/C0tytðtÞ,
+and from the discount curve we obtain the instantaneous (nominal) forward rate
+curve,
+f tðtÞ¼/C0 P0tðtÞ=PtðtÞ.
+ARTICLE IN PRESS
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]] 3
+
+===== PDF PAGE 4 =====
+Therelationshipbetweentheyieldtomaturityandtheforwardrateistherefore
+ytðtÞ¼ 1t Z t0 f tðuÞdu,
+whichimpliesthatthezero-couponyieldisanequally-weighedaverageofforward
+rates.Giventheyieldcurveorforwardcurve,wecanpriceanycouponbondasthe
+sumofthepresentvaluesoffuturecouponandprincipalpayments.
+In practice, yield curves, discount curves and forward curves are not observed.
+Instead, they must be estimated from observed bond prices. Two popular
+approaches to constructing yields proceed by estimating a smooth discount
+curve and then converting to yields at the relevant maturities via the above
+formulae. The ﬁrst discount-curve approach to yield construction is due to
+McCulloch(1975) andMcCullochandKwon(1993) ,whomodelthediscountcurve
+withacubicspline.Theﬁtteddiscountcurve,however,divergesatlongmaturities
+insteadofconvergingtozero.Hencesuchcurvesprovideapoorﬁttoyieldcurves
+that are ﬂat or have a ﬂat long end, which requires an exponentially decreasing
+discountfunction.
+Asecond discount-curve approach to yield construction is due toVasicek and
+Fong (1982), who ﬁt exponential splines to the discount curve, using a negative
+transformationofmaturityinsteadofmaturityitself,whichensuresthattheforward
+ratesandzero-couponyieldsconvergetoaﬁxedlimitasmaturityincreases.Hence
+theVasicek–Fongmodelismoresuccessfulatﬁttingyieldcurveswithﬂatlongends.
+It has problems of its own, however, because its estimation requires iterative
+nonlinearoptimization,anditcanbehardtorestricttheimpliedforwardratestobe
+positive.
+Athirdandverypopularapproachtoyieldconstructionisdueto FamaandBliss
+(1987), who construct yields not via an estimated discount curve, but rather via
+estimated forward rates at the observed maturities. Their method sequentially
+constructstheforwardratesnecessarytoprice successivelylonger-maturitybonds,
+often called an ‘‘unsmoothed Fama–Bliss’’ forward rates, and then constructs
+‘‘unsmoothed Fama–Bliss yields’’ by averaging the appropriate unsmoothed
+Fama–Bliss forward rates. The unsmoothed Fama–Bliss yields exactly price the
+included bonds. Throughout this paper, we model and forecast the unsmoothed
+Fama–Blissyields.
+2.2. Modeling yields: the Nelson– Siegel yield curve and its interpretation
+At any given time, we have a large set of (Fama–Bliss unsmoothed) yields, to
+which we ﬁt a parametric curve for purposes of modeling and forecasting.
+Throughoutthispaper,weusethe NelsonandSiegel(1987) functionalform,which
+is a convenient and parsimonious three-component exponential approximation. In
+particular,NelsonandSiegel(1987) ,asextendedby SiegelandNelson(1988) ,work
+withtheforwardratecurve,
+f tðtÞ¼ b1t þ b2te/C0ltt þ b3tlte/C0ltt.
+ARTICLE IN PRESS
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]]4
+
+===== PDF PAGE 5 =====
+TheNelson–SiegelforwardratecurvecanbeviewedasaconstantplusaLaguerre
+function, which is apolynomial times an exponential decay term and isa popular
+mathematicalapproximatingfunction. 4 Thecorrespondingyieldcurveis
+ytðtÞ¼ b1t þ b2t
+1 /C0e/C0ltt
+ltt
+/C18/C19
+þ b3t
+1 /C0e/C0ltt
+ltt /C0e/C0ltt
+/C18/C19
+.
+The Nelson–Siegel yield curve also corresponds to a discount curve that begins at
+oneatzeromaturityandapproacheszeroatinﬁnitematurity,asappropriate.
+LetusnowinterprettheparametersintheNelson–Siegelmodel.Theparameter lt
+governstheexponentialdecayrate;smallvaluesof lt produceslowdecayandcan
+betterﬁtthecurveatlongmaturities,whilelargevaluesof lt producefastdecayand
+canbetterﬁtthecurveatshortmaturities. lt alsogovernswheretheloadingon b3t
+achievesitsmaximum. 5
+Weinterpret b1t, b2t and b3t asthreelatentdynamicfactors.Theloadingon b1t is
+1,aconstantthatdoesnotdecaytozerointhelimit;henceitmaybeviewedasa
+long-termfactor.Theloadingon b2t is ð1 /C0e/C0lttÞ=ltt,afunctionthatstartsat1but
+decays monotonically and quickly to 0; hence it may be viewed as a short-term
+factor.Theloadingon b3t is ðð1 /C0e/C0lttÞ=lttÞ/C0 e/C0ltt,whichstartsat0(andisthus
+notshort-term),increases,andthendecaystozero(andthusisnotlong-term);hence
+itmaybeviewedasamedium-termfactor.Weplotthethreefactorloadingsin Fig.
+1.Theyaresimilartothoseobtainedby Bliss(1997a),whoestimatedloadingsviaa
+statisticalfactoranalysis. 6
+An important insight is that the three factors, which following the literature we
+havethusfarcalledlong-term,short-termandmedium-term,mayalsobeinterpreted
+intermsoflevel,slopeandcurvature.Thelong-termfactor b1t,forexample,governs
+the yield curve level. In particular, one can easily verify that ytð1Þ ¼ b1t.
+Alternatively,notethatanincreasein b1t increasesallyieldsequally,astheloading
+isidenticalatallmaturities,therebychangingtheleveloftheyieldcurve.
+The short-term factorb2t is closely related to the yield curve slope, which we
+deﬁne as the ten-year yield minus the three-month yield. In particular,ytð120Þ
+/C0ytð3Þ¼/C0 0:78b2t þ0:06b3t. Some authors such asFrankel and Lown (1994),
+moreover, deﬁne the yield curve slope asytð1Þ /C0 ytð0Þ, which isexactly equal to
+/C0b2t.Alternatively,notethatanincreasein b2t increasesshortyieldsmorethanlong
+yields,becausetheshortratesloadon b2t moreheavily,therebychangingtheslope
+oftheyieldcurve.
+We have seen thatb1t governs the level of the yield curve andb2t governs its
+slope. It is interesting to note, moreover, that the instantaneous yield depends
+on boththelevel andslopefactors,because ytð0Þ¼ b1t þ b2t.Severalothermodels
+have the same implication. In particular,Dai and Singleton (2000)show that the
+ARTICLE IN PRESS
+4See,forexample, CourantandHilbert(1953) .
+5Throughoutthispaper,andforreasonsthatwillbediscussedsubsequentlyindetail,weset lt ¼0:0609
+forall t.
+6Factorsaretypicallynotuniquelyidentiﬁedinfactoranalysis. Bliss(1997a) rotatestheﬁrstfactorso
+thatitsloadingisavectorofones.Inourapproach,theunitloadingontheﬁrstfactorisimposedfromthe
+beginning,whichpotentiallyenablesustoestimatetheotherfactorsmoreefﬁciently.
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]] 5
+
+===== PDF PAGE 6 =====
+three-factormodelsof Balduzzietal.(1996) andChen(1996) imposetherestrictions
+that the instantaneous yield is an afﬁne function of only two of the three state
+variables,apropertysharedbythe AndersenandLund(1997) three-factornonafﬁne
+model.
+Finally,themedium-termfactor b3t iscloselyrelatedtotheyieldcurvecurvature,
+whichwedeﬁneastwicethetwo-yearyieldminusthesumoftheten-yearandthree-
+month yields. In particular, 2ytð24Þ/C0 ytð3Þ/C0 ytð120Þ¼ 0:00053b2t þ0:37b3t. Alter-
+natively,notethatanincreasein b3t willhavelittleeffectonveryshortorverylong
+yields,whichloadminimallyonit,butwillincreasemedium-termyields,whichload
+moreheavilyonit,therebyincreasingyieldcurvecurvature.
+NowthatwehaveinterpretedNelson–Siegelasathree-factoroflevel,slopeand
+curvature,itisappropriatetocontrastitto Litzenbergeretal.(1995) ,whichishighly
+relatedyetdistinct.First,althoughLitzenbergeretal.modelthediscountcurve PtðtÞ
+usingexponentialcomponentsandwemodeltheyieldcurve ytðtÞusingexponential
+components, the yield curve is a log transformation of the discount curve because
+ytðtÞ¼/C0 log PtðtÞ=t,sothetwoapproachesareequivalentintheone-factorcase.In
+themulti-factorcase,however,asumoffactorsintheyieldcurvewillnotbeasumin
+thediscountcurve,sothereisgenerallynosimplemappingbetweentheapproaches.
+ARTICLE IN PRESS
+0 20 40 60 80 100 120
+0
+0.2
+0.4
+0.6
+0.8
+1
+τ (Maturity, in Months)
+Loadings
+β1 Loadings
+β2 Loadings
+β3 Loadings
+Fig.1. Factorloadings.Weplotthefactorloadingsinthethree-factormodel,
+ytðtÞ¼ b1t þ b2t
+1 /C0e/C0lt t
+ltt
+/C18/C19
+þ b3t
+1 /C0e/C0lt t
+ltt /C0e/C0lt t
+/C18/C19
+,
+where the three factors areb1t, b2t, and b3t, the associated loadings are 1,ð1 /C0e/C0lt tÞ=ltt, and
+ð1 /C0e/C0lt tÞ=ltt /C0e/C0lt t,and tdenotesmaturity.Weﬁx lt ¼0:0609.
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]]6
+
+===== PDF PAGE 7 =====
+Second, both we and Litzenberger et al. provide novel interpretations of the
+parametersofﬁttedcurves.Litzenbergeretal.,however,donotinterpretparameters
+directlyasfactors.
+In closing this sub-section, it is worth noting that what we have called the
+‘‘Nelson–Siegel curve’’ is actually a different factorization than the one originally
+advocatedby NelsonandSiegel(1987) ,whoused
+ytðtÞ¼ b1t þ b2t
+1 /C0e/C0ltt
+ltt /C0 b3te/C0ltt.
+Obviously the Nelson–Siegel factorization matches ours withb1t ¼ b1t, b2t ¼ b2tþ
+b3t,a n db3t ¼ b3t. Ours is preferable, however, for reasons that we are now in a
+position to appreciate. First,ð1 /C0e/C0lttÞ=ltt and e/C0ltt have similar monotonically
+decreasingshape,soifweweretointerpret b2 and b3 asfactors,thentheirloadings
+would be forced to be very similar, which creates at least two problems. First,
+conceptually,itwouldbehardtoprovideintuitiveinterpretationsofthefactorsin
+theoriginalNelson–Siegelframework.Second,operationally,itwouldbedifﬁcultto
+estimate the factors precisely, because the high coherence in the factors produces
+multicolinearity.
+2.3. Stylized facts of the yield curve and the model’s potential ability to replicate them
+Agoodmodelofyieldcurvedynamicsshouldbeabletoreproducethehistorical
+stylizedfactsconcerningtheaverageshapeoftheyieldcurve,thevarietyofshapes
+assumedatdifferenttimes,thestrongpersistenceofyieldsandweakpersistenceof
+spreads,andsoon.Itisnoteasyforaparsimoniousmodeltoaccordwithallsuch
+facts.
+Letusconsider someofthemostimportantstylizedfactsandtheability ofour
+modeltoreplicatethem,inprinciple:
+(1) Theaverageyieldcurveisincreasingandconcave.Inourframework,theaverage
+yieldcurveistheyieldcurvecorrespondingtotheaveragevaluesof b1t, b2t and
+b3t.Itiscertainlypossibleinprinciplethatitmaybeincreasingandconcave.
+(2) The yield curve assumes a variety of shapes through time, including upward
+sloping, downward sloping, humped, and inverted humped. The yield curve in
+ourframeworkcanassumeallofthoseshapes.Whetherandhowoftenitdoes
+dependsuponthevariationin b1t, b2t and b3t.
+(3) Yield dynamics are persistent, and spread dynamics are much less persistent.
+Persistentyielddynamicswouldcorrespondtostrongpersistenceof b1t,andless
+persistentspreaddynamicswouldcorrespondtoweakerpersistenceof b2t.
+(4) The short end of the yield curve is more volatile than the long end. In our
+framework,thisisreﬂectedinfactorloadings:theshortenddependspositively
+onboth b1t and b2t,whereasthelongenddependsonlyon b1t.
+(5) Long rates are more persistent than short rates. In our framework, long rates
+depend only onb1t.I fb1t is the most persistent factor, then long rates will be
+morepersistentthanshortrates.
+ARTICLE IN PRESS
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]] 7
+
+===== PDF PAGE 8 =====
+Overall, it seems clear that our framework is consistent, at least in principle, with
+many of the key stylized facts of yield curve behavior. Whether principle accords
+withpracticeisanempiricalmatter,towhichwenowturn.
+3. Modeling and forecasting the term structure II: empirics
+Inthissection,weestimateandassesstheﬁtofthethree-factormodelinatime
+seriesofcrosssections,afterwhichwemodelandforecasttheextractedlevel,slope
+andcurvaturecomponents.Webeginbyintroducingthedata.
+3.1. The data
+We use end-of-month price quotes (bid-ask average) for U.S. Treasuries, from
+January 1985 through December 2000, taken from the CRSP government bonds
+ﬁles. CRSP ﬁlters the data, eliminating bonds with option features (callable and
+ﬂowerbonds),andbondswithspecialliquidityproblems(notesandbondswithless
+thanoneyeartomaturity,andbillswithlessthanonemonthtomaturity),andthen
+converts the ﬁltered bond prices to unsmoothedFama and Bliss (1987)forward
+rates. Then, using programs and CRSP data kindly supplied by Rob Bliss, we
+convert the unsmoothed Fama–Bliss forward rates into unsmoothed Fama–Bliss
+zeroyields.
+Althoughmostofouranalysisdoesnotrequiretheuseofﬁxedmaturities,doing
+so greatly simpliﬁes our subsequent forecasting exercises. Hence we pool the
+data into ﬁxed maturities. Because not every month has the same maturities
+available, we linearly interpolate nearby maturities to pool into ﬁxed maturities
+of3,6,9,12,15,18,21,24,30,36,48,60,72,84,96,108,and120months,wherea
+month isdeﬁned as 30.4375 days.Althoughthereisnobond withexactly30.4375
+daystomaturity,eachmonththerearemanybondswitheither30,31,32,33,or34
+days to maturity. Similarly we obtain data for maturities of 3 months, 6 months,
+etc.7
+The various yields, as well as the yield curve level, slope and curvature deﬁned
+above,willplayaprominentroleinthesequel.Hencewefocusonthemnowinsome
+detail. InFig. 2we provide a three-dimensional plot of our yield curve data. The
+largeamountoftemporalvariationinthelevelisvisuallyapparent.Thevariationin
+slopeandcurvatureislessstrong,butneverthelessapparent.In Table1,wepresent
+descriptivestatisticsfortheyields.Itisclearthatthetypicalyieldcurveisupward
+sloping, that the long rates are less volatile and more persistent than short rates,
+that the level (120-month yield) is highly persistent but varies only moderately
+relative to its mean, that the slope is less persistent than any individual yield but
+quite highly variable relative to its mean, and the curvature is the least persistent
+of all factors and the most highly variable relative to its mean. It is also worth
+ARTICLE IN PRESS
+7Wecheckedthederiveddatasetandveriﬁedthatthedifferencebetweenitandtheoriginaldatasetis
+onlyoneortwobasispoints.
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]]8
+
+===== PDF PAGE 9 =====
+ARTICLE IN PRESS
+2
+4
+6
+8
+10
+12Yield (Percent)
+150
+100
+50
+0 Jan85Jul87
+Jul92
+Jul97
+Jul02
+Jan90
+Jan95
+Jan00
+Maturity (M
+onths)
+Time
+Fig.2. Yieldcurves,1985.01–2000.12.ThesampleconsistsofmonthlyyielddatafromJanuary1985to
+December2000atmaturitiesof3,6,9,12,15,18,21,24,30,36,48,60,72,84,96,108,and120months.
+Table1
+Descriptivestatistics,yieldcurves
+Maturity(Months) Mean Std.dev. Minimum Maximum ^rð1Þ ^rð12Þ ^rð30Þ
+3 5.630 1.488 2.732 9.131 0.978 0.569 /C00.079
+6 5.785 1.482 2.891 9.324 0.976 0.555 /C00.042
+9 5.907 1.492 2.984 9.343 0.973 0.545 /C00.005
+12 6.067 1.501 3.107 9.683 0.969 0.539 0.021
+15 6.225 1.504 3.288 9.988 0.968 0.527 0.060
+18 6.308 1.496 3.482 10.188 0.965 0.513 0.089
+21 6.375 1.484 3.638 10.274 0.963 0.502 0.115
+24 6.401 1.464 3.777 10.413 0.960 0.481 0.133
+30 6.550 1.462 4.043 10.748 0.957 0.479 0.190
+36 6.644 1.439 4.204 10.787 0.956 0.471 0.226
+48 6.838 1.439 4.308 11.269 0.951 0.457 0.294
+60 6.928 1.430 4.347 11.313 0.951 0.464 0.336
+72 7.082 1.457 4.384 11.653 0.953 0.454 0.372
+84 7.142 1.425 4.352 11.841 0.948 0.448 0.391
+96 7.226 1.413 4.433 11.512 0.954 0.468 0.417
+108 7.270 1.428 4.429 11.664 0.953 0.475 0.426
+120(level) 7.254 1.432 4.443 11.663 0.953 0.467 0.428
+Slope 1.624 1.213 /C00.752 4.060 0.961 0.405 /C00.049
+Curvature /C00.081 0.648 /C01.837 1.602 0.896 0.337 /C00.015
+Note:Wepresentdescriptivestatisticsformonthlyyieldsatdifferentmaturities,andfortheyieldcurve
+level,slopeandcurvature,wherewedeﬁnethelevelasthe10-yearyield,theslopeasthedifferencebetween
+the10-yearand3-monthyields,andthecurvatureasthetwicethe2-yearyieldminusthesumofthe3-
+monthand10-yearyields.Thelastthreecolumnscontainsampleautocorrelationsatdisplacementsof1,
+12,and30months.Thesampleperiodis1985:01–2000:12.
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]] 9
+
+===== PDF PAGE 10 =====
+noting, because it will be relevant for our future modeling choices, that level,
+slope and curvature are not highly correlated with each other; all pairwise
+correlationsarelessthan0.40.In Fig.3 wedisplaythemedianyieldcurvetogether
+withpointwiseinterquartileranges.Theearlier-mentionedupwardslopingpattern,
+with long rates less volatile than short rates, is apparent. One can also see that
+thedistributionsofyieldsaroundtheirmedianstendtobeasymmetric,withalong
+righttail.
+3.2. Fitting yield curves
+Asdiscussedabove,weﬁttheyieldcurveusingthethree-factormodel,
+ytðtÞ¼ b1t þ b2t
+1 /C0e/C0ltt
+ltt
+/C18/C19
+þ b3t
+1 /C0e/C0ltt
+ltt /C0e/C0ltt
+/C18/C19
+.
+Wecouldestimatetheparameters yt ¼f b1t; b2t; b3t; ltgbynonlinearleastsquares,
+foreachmonth t.Followingstandardpracticetracingto NelsonandSiegel(1987) ,
+however,weinsteadﬁx lt ataprespeciﬁedvalue,whichletsuscomputethevaluesof
+the two regressors (factor loadings) and use ordinary least squares to estimate the
+betas (factors), for each montht. Doing so enhances not only simplicity and
+convenience,butalsonumericaltrustworthiness,byenablingustoreplacehundreds
+of potentially challenging numerical optimizations with trivial least-squares
+regressions.Thequestionarises,ofcourse,astoanappropriatevaluefor lt.Recall
+that lt determines the maturity at which the loading on the medium-term, or
+curvature,factorachievesitmaximum.Two-orthree-yearmaturitiesarecommonly
+ARTICLE IN PRESS
+0 20 40 60 80 100 120
+5
+5.5
+6
+6.5
+7
+7.5
+8
+8.5
+9
+Maturity (Months)
+Yield (Percent)
+75%
+Median
+25%
+Fig.3. Mediandata-basedyieldcurvewithpointwiseinterquartilerange.Foreachmaturity,weplotthe
+medianyieldalongwiththe25thand75thpercentiles.
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]]10
+
+===== PDF PAGE 11 =====
+usedinthatregard,sowesimplypickedtheaverage,30months.The lt valuethat
+maximizes the loading on the medium-term factor at exactly 30 months is
+lt ¼0:0609.
+Applyingordinaryleastsquarestotheyielddataforeachmonthgivesusatime
+seriesofestimatesof f ^b1t; ^b2t; ^b3tgandacorrespondingpanelofresiduals,orpricing
+errors.Notethat,becausethematuritiesarenotequallyspaced,weimplicitlyweight
+the most ‘‘active’’ region of the yield curve most heavily when ﬁtting the model.8
+Therearemanyaspectstoafullassessmentofthe‘‘ﬁt’’ofourmodel.In Fig.4 we
+plottheimpliedaverageﬁttedyieldcurveagainsttheaverageactualyieldcurve.The
+two agree quite closely. InFig. 5we dig deeper by plotting the raw yield curve
+and the three-factor ﬁtted yield curve for some selected dates. Clearly the three-
+factor model is capable of replicating a variety of yield curve shapes: upward
+sloping, downward sloping, humped, and inverted humped. It does, however,
+have difﬁculties at some dates, especially when yields are dispersed, with multi-
+ple interior minima and maxima. Overall, however, the residual plot inFig. 6
+indicatesagoodﬁt.
+InTable2 wepresentstatisticsthatdescribethein-sampleﬁt.Theresidualsample
+autocorrelationsindicatethatpricingerrorsarepersistent.Asnotedin Bliss(1997b),
+regardless of the term structure estimation method used, there is a persistent
+ARTICLE IN PRESS
+0 20 40 60 80 100 120
+5.6
+5.8
+6
+6.2
+6.4
+6.6
+6.8
+7
+7.2
+7.4
+Maturity (Months)
+Yield (Percent)
+Fitted Nelson-Siegel
+Actual
+Fig.4. Actual(data-based)andﬁtted(model-based)averageyieldcurve.Weshowtheactualaverageyield
+curveandtheﬁttedaverageyieldcurveobtainedbyevaluatingtheNelson–Siegelfunctionatthemean
+valuesof ^b1t, ^b2t and ^b3t fromTable3.
+8Other weightings and loss functions have been explored byBliss (1997b), Soderlind and Svensson
+(1997),and Bates(1999).
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]] 11
+
+===== PDF PAGE 12 =====
+discrepancy between actual bond prices and prices estimated from term structure
+models. Presumably these discrepancies arise from persistent tax and/or
+liquidity effects.9 However, because they persist, they should vanish from ﬁtted
+yieldchanges.
+InFig.7 weplot f ^b1t; ^b2t; ^b3tgalongwiththeempiricallevel,slopeandcurvature
+deﬁnedearlier.Theﬁgureconﬁrmsourassertionthatthethreefactorsinourmodel
+correspond to level, slope and curvature. The correlations between the estimated
+factors and the empirical level, slope, and curvature are rð ^b1t; ItÞ¼ 0:97,
+rð ^b2t; stÞ¼/C0 0:99,and rð ^b3t; ctÞ¼ 0:99,where ðlt; st; ctÞaretheempiricallevel,slope
+and curvature of the yield curve. InTable 3and Fig. 8(left column) we present
+descriptivestatisticsfortheestimatedfactors.Fromtheautocorrelationsofthethree
+factors, we can see that the ﬁrst factor is the most persistent, and that the second
+ARTICLE IN PRESS
+0 20 40 60 80 100 120
+8.9
+9
+9.1
+9.2
+9.3
+9.4
+9.5
+9.6
+9.7
+9.8 Yield Curve on 3/31/1989
+Maturity (Months)
+Yield (Percent)
+0 20 40 60 80 100 120
+7.3
+7.4
+7.5
+7.6
+7.7
+7.8
+7.9
+8 Yield Curve on 7/31/1989
+Maturity (Months)
+Yield (Percent)
+0 20 40 60 80 100 120
+4.8
+4.85
+4.9
+4.95
+5
+5.05
+Yield Curve on 8/31/1998
+Maturity (Months)
+Yield (Percent)
+0 20 40 60 80 100 120
+5
+5.2
+5.4
+5.6
+5.8
+6
+6.2
+6.4
+6.6
+6.8
+Yield Curve on 5/30/1997
+Maturity (Months)
+Yield (Percent)
+Fig.5. Selectedﬁtted(model-based)yieldcurves.Weplotﬁttedyieldcurvesforselecteddates,together
+withactualyields.Seetextfordetails.
+9Although, as discussed earlier, we attempted to remove illiquid bonds, complete elimination is not
+possible.
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]]12
+
+===== PDF PAGE 13 =====
+ARTICLE IN PRESS
+-0.4
+-0.2
+0
+0.2
+0.4
+150
+100
+50
+0 Jan85
+Jan90
+Jan95
+Jan00
+Jul87
+Jul92
+Jul97
+Jul02
+Residual (Percent)
+Maturity (Months)
+Time
+Fig.6. Yieldcurveresiduals,1985.01–2000.12.WeplotresidualsfromNelson–Siegelyieldcurvesﬁtted
+month-by-month.Seetextfordetails.
+Table2
+Descriptivestatistics,yieldcurveresiduals
+Maturity(Months) Mean Std.Dev. Min. Max. MAE RMSE ^rð1Þ ^rð12Þ ^rð30Þ
+3 /C00.018 0.080 /C00.332 0.156 0.061 0.082 0.777 0.157 /C00.360
+6 /C00.013 0.042 /C00.141 0.218 0.032 0.044 0.291 0.257 /C00.046
+9 /C00.026 0.062 /C00.200 0.218 0.052 0.067 0.704 0.216 /C00.247
+12 0.013 0.080 /C00.160 0.267 0.064 0.081 0.563 0.322 /C00.266
+15 0.063 0.050 /C00.063 0.243 0.067 0.080 0.650 0.139 /C00.070
+18 0.048 0.035 /C00.048 0.165 0.052 0.059 0.496 0.183 /C00.139
+21 0.026 0.030 /C00.091 0.101 0.033 0.040 0.370 /C00.044 /C00.011
+24 /C00.027 0.045 /C00.190 0.082 0.037 0.052 0.667 0.212 0.056
+30 /C00.020 0.036 /C00.200 0.098 0.029 0.041 0.398 0.072 /C00.058
+36 /C00.037 0.046 /C00.203 0.128 0.047 0.059 0.597 0.053 /C00.017
+48 /C00.018 0.065 /C00.204 0.230 0.052 0.067 0.754 0.239 /C00.321
+60 /C00.053 0.058 /C00.199 0.186 0.066 0.079 0.758 /C00.021 /C00.175
+72 0.010 0.080 /C00.133 0.399 0.056 0.081 0.904 0.278 /C00.163
+84 0.001 0.062 /C00.259 0.263 0.044 0.062 0.589 0.019 0.000
+96 0.032 0.045 /C00.202 0.111 0.045 0.055 0.697 0.120 /C00.144
+108 0.033 0.046 /C00.161 0.132 0.047 0.057 0.669 0.081 /C00.176
+120 /C00.016 0.071 /C00.256 0.164 0.057 0.073 0.623 0.252 /C00.070
+Note:Weﬁtthethree-factormodel,
+ytðtÞ¼ b1t þ b2t
+1 /C0e/C0lt t
+ltt
+/C18/C19
+þ b3t
+1 /C0e/C0lt t
+ltt /C0e/C0lt t
+/C18/C19
+,
+usingmonthlyyielddata1985:01–2000:12,with lt ﬁxedat0.0609,andwepresentdescriptivestatisticsfor
+the corresponding residuals at various maturities. The last three columns contain residual sample
+autocorrelationsatdisplacementsof1,12,and30months.
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]] 13
+
+===== PDF PAGE 14 =====
+factorismorepersistentthanthethird.AugmentedDickey–Fullertestssuggestthat
+^b1 and ^b2 may have a unit roots, and that^b3 does not.10Finally, the pairwise
+correlationsbetweentheestimatedfactorsarenotlarge.
+ARTICLE IN PRESS
+-2
+-1
+0
+1
+2
+86 88 90 92 94 96 98 00
+Solid Line: 0.3 β3t Dotted Line: Curvatureˆ
+-2
+0
+2
+4
+6
+86 88 90 92 94 96 98 00
+Solid Line: –β2t Dotted Line: Slopeˆ
+4
+6
+8
+10
+12
+14
+86 88 90 92 94 96 98 00
+Solid Line: β1t  Dotted Line: Levelˆ
+Fig. 7. Model-based level, slope and curvature (i.e., estimated factors) vs. data-based level, slope and
+curvature. We deﬁne the level as the 10-year yield, the slope as the difference between the 10-year and 3-
+monthyields,andthecurvatureasthetwicethe2-yearyieldminusthesumofthe3-monthand10-yearyields.
+10WeuseSICtochoosethelagsintheaugmentedDickey–Fullerunit-roottest.TheMacKinnoncritical
+valuesforrejectionofhypothesisofaunitrootare /C03:4518attheonepercentlevel, /C02:8704attheﬁve
+percentlevel,and /C02:5714atthetenpercentlevel.
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]]14
+
+===== PDF PAGE 15 =====
+3.3. Modeling and forecasting yield curve level, slope and curvature
+WemodelandforecasttheNelson–SiegelfactorsasunivariateAR(1)processes.
+The AR(1) models can be viewed as natural benchmarks determined a priori: the
+simplest great workhorse autoregressive models. The yield forecasts based on
+underlyingunivariateAR(1)factorspeciﬁcationsare:
+^ytþh=tðtÞ¼ ^b1;tþh=t þ ^b2;tþh=t 1 /C0e/C0ltlt/C18/C19 þ ^b3;tþh=t 1 /C0e/C0ltlt /C0e/C0lt/C18/C19 ,
+where
+^b1;tþh=t ¼ ^ci þ ^gi ^bit; i ¼1;2;3,
+and ^ci and ^gi areobtainedbyregressing ^bit onaninterceptand ^bi;t/C0h.11
+For comparison, we also produce yield forecasts based on an underlying
+multivariateVAR(1)speciﬁcation,as
+^ytþh=tðtÞ¼ ^b1;tþh=t þ ^b2;tþh=t 1 /C0e/C0ltlt/C18/C19 þ ^b3;tþh=t 1 /C0e/C0ltlt /C0e/C0lt/C18/C19 ,
+where
+^btþh=t ¼ ^c þ ^G ^bt.
+WeincludetheVARforecastsforcompleteness,althoughonemightexpectthemto
+beinferiortotheARforecastsforatleasttworeasons.First,asiswell-knownfrom
+themacroeconomicsliterature,unrestrictedVARstendtoproducepoorforecastsof
+economicvariablesevenwhenthereisimportantcross-variableinteraction,dueto
+the large number of included parameters and the resulting potential for in-sample
+ARTICLE IN PRESS
+Table3
+Descriptivestatistics,estimatedfactors
+Factor Mean Std.Dev. Minimum Maximum ^rð1Þ ^rð12Þ ^rð30Þ ADF
+^b1t 7.579 1.524 4.427 12.088 0.957 0.511 0.454 /C02.410
+^b2t /C02.098 1.608 /C05.616 0.919 0.969 0.452 /C00.082 /C01.205
+^b3t /C00.162 1.687 /C05.249 4.234 0.901 0.353 /C00.006 /C03.516
+Note:Weﬁtthethree-factorNelson–Siegelmodelusingmonthlyyielddata1985:01–2000:12,with lt ﬁxed
+at 0.0609,and we present descriptivestatistics for the three estimatedfactors^b1t, ^b2t, and^b3t. Thelast
+columncontainsaugmentedDickey–Fuller(ADF)unitrootteststatistics,andthethreecolumnstoitsleft
+containsampleautocorrelationsatdisplacementsof1,12,and30months.
+11Notethatwedirectlyregressfactorsat t þ honfactorsat t,whichisastandardmethodofcoaxing
+leastsquaresintooptimizingtherelevantlossfunction, h-month-aheadRMSE,asopposedtotheusuall-
+month-aheadRMSE.Weestimateallcompetitormodelsinthesameway,asdescribedbelow.
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]] 15
+
+===== PDF PAGE 16 =====
+overﬁtting.12Second,ourfactorsindeeddisplaylittlecross-factorinteractionandare
+nothighlycorrelated,sothatanappropriatemultivariatemodelislikelyclosetoa
+stackedsetofunivariatemodels.
+ARTICLE IN PRESS
+-0.4
+-0.2
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+5 10 15 20 25 30 35 40 45 50 55 60
+Displacement
+Autocorrelation
+-0.4
+-0.2
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+5 1 01 52 02 53 03 54 04 55 05 56 0
+Displacement
+Autocorrelation
+-0.4
+-0.2
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+5 1 01 52 02 53 03 54 04 55 05 56 0
+Displacement
+Autocorrelation
+5 1 01 52 02 53 03 54 04 55 05 56 0
+Displacement
+Autocorrelation
+Autocorrelation of β1tˆ
+Autocorrelation of β2tˆ
+Autocorrelation of β3tˆ
+Autocorrelation of ε1tˆ
+Autocorrelation of ε2tˆ
+Autocorrelation of ε3tˆ
+-0.2
+-0.1
+0.0
+0.1
+0.2
+5 1 01 52 02 53 03 54 04 55 05 56 0
+Displacement
+Autocorrelation
+-0.2
+-0.1
+0.0
+0.1
+0.2
+5 1 01 52 02 53 03 54 04 55 05 56 0
+Displacement
+Autocorrelation
+-0.2
+-0.1
+0.0
+0.1
+0.2
+Fig.8. Autocorrelationsandresidualautocorrelationsoflevel,slopeandcurvaturefactors.Weplotthe
+sample autocorrelations of the three estimated factors,^b1t, ^b2t, and ^b3t, as well as the sample
+autocorrelationsofAR(1)modelsﬁttothethreeestimatedfactors,alongwithBarlett’sapproximate95%
+conﬁdencebands.
+12That,ofcourse,isthereasonfortheubiquitoususeofBayesiananalysis,featuringstrongpriorson
+theVARcoefﬁcients,forVARforecasting,aspioneeredby Doanetal.(1984) .
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]]16
+
+===== PDF PAGE 17 =====
+InFig.8 (rightcolumn)weprovidesomeevidence onthegoodnessofﬁtofthe
+AR(1)modelsﬁttotheestimatedlevel,slopeandcurvaturefactors,showingresidual
+autocorrelation functions. The autocorrelations are very small, indicating that the
+modelsaccuratelydescribetheconditionalmeansoflevel,slopeandcurvature.
+3.4. Out-of-sample forecasting performance of the three-factor model
+Agoodapproximationtoyield-curvedynamicsshouldnotonlyﬁtwellin-sample,
+but also forecast well out-of-sample. Because the yield curve depends only on
+f ^b1t; ^b2t; ^b3tg,forecastingtheyieldcurveisequivalenttoforecasting f ^b1t; ^b2t; ^b3tg.In
+thissectionweundertakejustsuchaforecastingexercise.Weestimateandforecast
+recursively,usingdatafrom1985:1tothetimethattheforecastismade,beginningin
+1994:1andextendingthrough2000:12.
+InTables4–6 wecompare h-month-aheadout-ofsampleforecastingresultsfrom
+Nelson–Siegelmodelstothoseofseveralnaturalcompetitors,formaturitiesof3,12,
+ARTICLE IN PRESS
+Table4
+Out-of-sample1-month-aheadforecastingresults
+Maturity ðtÞ Mean Std.Dev. RMSE ^rð1Þ ^rð12Þ
+Nelson–Siegel with AR(1) factor dynamics
+3months /C00.045 0.170 0.176 0.247 0.017
+1year 0.023 0.235 0.236 0.425 /C00.213
+3years /C00.056 0.273 0.279 0.332 /C00.117
+5years /C00.091 0.277 0.292 0.333 /C00.116
+10years /C00.062 0.252 0.260 0.259 /C00.115
+Random walk
+3months 0.033 0.176 0.179 0.220 0.053
+1year 0.021 0.240 0.241 0.340 /C00.153
+3years 0.007 0.279 0.279 0.341 /C00.133
+5years /C00.003 0.276 0.276 0.275 /C00.131
+10years /C00.011 0.254 0.254 0.215 /C00.145
+Slope regression
+3months NANA NANANA
+1year 0.048 0.242 0.247 0.328 /C00.145
+3years 0.032 0.286 0.288 0.373 /C00.146
+5years 0.019 0.284 0.285 0.318 /C00.150
+10years 0.013 0.260 0.260 0.245 /C00.159
+Fama–Bliss forward rate regression
+3months 0.066 0.159 0.172 0.178 0.036
+1year 0.066 0.233 0.242 0.313 /C00.148
+3years 0.024 0.286 0.287 0.380 /C00.157
+5years 0.038 0.277 0.280 0.273 /C00.125
+10years 0.041 0.251 0.254 0.200 /C00.159
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]] 17
+
+===== PDF PAGE 18 =====
+ARTICLE IN PRESS
+Table4( continued)
+Maturity ðtÞ Mean Std.Dev. RMSE ^rð1Þ ^rð12Þ
+Cochrane–Piazzesi forward curve regression
+3months NANA NANANA
+1year /C00.038 0.238 0.241 0.282 /C00.088
+3years /C00.034 0.287 0.289 0.377 /C00.108
+5years /C00.068 0.292 0.300 0.364 /C00.084
+10years /C00.113 0.257 0.281 0.271 /C00.097
+Univariate AR(1)s on yield levels
+3months 0.042 0.177 0.182 0.229 0.060
+1year 0.025 0.238 0.239 0.341 /C00.147
+3years /C00.005 0.276 0.276 0.345 /C00.125
+5years /C00.030 0.274 0.276 0.280 /C00.127
+10years /C00.054 0.252 0.258 0.224 /C00.144
+VAR(1) on yield levels
+3months /C00.013 0.176 0.176 0.229 0.128
+1year /C00.026 0.262 0.263 0.447 /C00.162
+3years /C00.041 0.302 0.305 0.437 /C00.154
+5years /C00.064 0.303 0.310 0.429 /C00.133
+10years /C00.090 0.274 0.288 0.310 /C00.123
+VAR(1) on yield changes
+3months 0.043 0.176 0.181 /C00.019 0.156
+1year 0.029 0.230 0.232 0.157 /C00.149
+3years 0.026 0.276 0.277 0.077 /C00.049
+5years 0.021 0.276 0.277 0.010 /C00.002
+10years 0.020 0.263 0.264 /C00.017 /C00.030
+Note:Wepresenttheresultsofout-of-sample1-month-aheadforecastingusingeightmodels,asdescribed
+indetailinthetext.Weestimateallmodelsrecursivelyfrom1985:1tothetimethattheforecastismade,
+beginningin1994:1andextendingthrough2000:12.Wedeﬁneforecasterrorsat t þ1as ytþ1ðtÞ/C0 ^ytþ1=tðtÞ,
+andwereportthemean,standarddeviationandrootmeansquarederrorsoftheforecasterrors,aswellas
+theirﬁrstand12thsampleautocorrelationcoefﬁcients.
+Table5
+Out-of-sample6-month-aheadforecastingresults
+Maturity ðtÞ Mean Std.Dev. RMSE ^r ð6Þ ^r ð18Þ
+Nelson–Siegel with AR(1) factor dynamics
+3months 0.083 0.510 0.517 0.301 /C00.190
+1year 0.131 0.656 0.669 0.168 /C00.174
+3years /C00.052 0.748 0.750 0.049 /C00.189
+5years /C00.173 0.758 0.777 0.069 /C00.273
+10years /C00.251 0.676 0.721 0.058 /C00.288
+Random walk
+3months 0.220 0.564 0.605 0.381 /C00.214
+1year 0.181 0.758 0.779 0.139 /C00.150
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]]18
+
+===== PDF PAGE 19 =====
+ARTICLE IN PRESS
+Table5( continued)
+Maturity ðtÞ Mean Std.Dev. RMSE ^r ð6Þ ^r ð18Þ
+3years 0.099 0.873 0.879 0.018 /C00.211
+5years 0.048 0.860 0.861 0.008 /C00.249
+10years /C00.020 0.758 0.758 0.019 /C00.271
+Slope regression
+3months NANA NA NA NA
+1year 0.422 0.811 0.914 0.109 /C00.113
+3years 0.281 0.944 0.985 0.116 /C00.198
+5years 0.209 0.939 0.962 0.103 /C00.235
+10years 0.145 0.832 0.845 0.096 /C00.256
+Fama–Bliss forward rate regression
+3months 0.494 0.549 0.739 0.208 /C00.072
+1year 0.373 0.821 0.902 0.194 /C00.150
+3years 0.255 0.964 0.997 0.092 /C00.211
+5years 0.220 0.932 0.958 0.050 /C00.248
+10years 0.223 0.794 0.825 0.038 /C00.268
+Cochrane–Piazzesi forward curve regression
+3months NANA NA NA NA
+1year /C00.155 0.845 0.859 0.220 /C00.110
+3years /C00.210 0.910 0.934 0.179 /C00.218
+5years /C00.224 0.910 0.937 0.193 /C00.270
+10years /C00.345 0.837 0.905 0.192 /C00.287
+Univariate AR(1)s on yield levels
+3months 0.224 0.539 0.584 0.405 /C00.210
+1year 0.160 0.707 0.725 0.193 /C00.155
+3years /C00.030 0.800 0.801 0.075 /C00.211
+5years /C00.144 0.789 0.802 0.061 /C00.253
+10years /C00.286 0.699 0.755 0.073 /C00.278
+VAR(1) on yield levels
+3months /C00.138 0.659 0.673 0.289 /C00.160
+1year /C00.195 0.880 0.901 0.133 /C00.169
+3years /C00.218 0.926 0.951 0.122 /C00.240
+5years /C00.258 0.919 0.955 0.140 /C00.273
+10years /C00.406 0.811 0.907 0.137 /C00.293
+VAR(1) on yield changes
+3months 0.312 0.661 0.731 0.319 /C00.256
+1year 0.310 0.845 0.900 0.172 /C00.181
+3years 0.276 0.941 0.981 0.059 /C00.210
+5years 0.246 0.917 0.949 0.048 /C00.242
+10years 0.192 0.809 0.831 0.043 /C00.259
+Note:Wepresenttheresultsofout-of-sample6-month-aheadforecastingusingeightmodels,asdescribed
+indetailinthetext.Weestimateallmodelsrecursivelyfrom1985:1tothetimethattheforecastismade,
+beginningin1994:1andextendingthrough2000:12.Wedeﬁneforecasterrorsat t þ6as ytþ6ðtÞ/C0 ^ytþ6=tðtÞ,
+andwereportthemean,standarddeviationandrootmeansquarederrorsoftheforecasterrors,aswellas
+theirsixthandeighteenthsampleautocorrelationcoefﬁcients.
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]] 19
+
+===== PDF PAGE 20 =====
+ARTICLE IN PRESS
+Table6
+Out-of-sample12-month-aheadforecastingresults
+Maturity ðtÞ Mean Std.Dev. RMSE ^r ð12Þ ^r ð24Þ
+Nelson–SiegelwithAR(1)factordynamics
+3months 0.150 0.724 0.739 /C00.288 0.001
+1year 0.173 0.823 0.841 /C00.332 /C00.004
+3years /C00.123 0.910 0.918 /C00.408 0.015
+5years /C00.337 0.918 0.978 /C00.412 0.003
+10years /C00.531 0.825 0.981 /C00.433 /C00.003
+Nelson–Siegel with VAR(1) factor dynamics
+3months /C00.463 1.000 1.102 /C00.163 /C00.111
+1year /C00.416 1.224 1.293 /C00.265 /C00.065
+3years /C00.576 1.268 1.393 /C00.317 /C00.036
+5years /C00.673 1.210 1.385 /C00.315 /C00.039
+10years /C00.721 1.056 1.279 /C00.299 /C00.037
+Random walk
+3months 0.416 0.930 1.019 /C00.118 /C00.109
+1year 0.388 1.132 1.197 /C00.268 /C00.019
+3years 0.236 1.214 1.237 /C00.419 0.060
+5years 0.130 1.184 1.191 /C00.481 0.072
+10years /C00.033 1.051 1.052 /C00.508 0.069
+Slope regression
+3months NANA NA NANA
+1year 0.896 1.235 1.526 /C00.187 /C00.024
+3years 0.641 1.316 1.464 /C00.212 0.024
+5years 0.515 1.305 1.403 /C00.255 0.035
+10years 0.362 1.208 1.261 /C00.268 0.042
+Fama–Bliss forward rate regression
+3months 0.942 1.010 1.381 /C00.046 /C00.096
+1year 0.875 1.276 1.547 /C00.142 /C00.039
+3years 0.746 1.378 1.567 /C00.291 0.035
+5years 0.587 1.363 1.484 /C00.352 0.040
+10years 0.547 1.198 1.317 /C00.403 0.062
+Cochrane–Piazzesi forward curve regression
+3months NANA NA NANA
+1year /C00.162 1.275 1.285 /C00.179 /C00.079
+3years /C00.377 1.275 1.330 /C00.274 /C00.028
+5years /C00.529 1.225 1.334 /C00.301 /C00.021
+10years /C00.760 1.088 1.327 /C00.307 /C00.020
+Univariate AR(1)s on yield levels
+3months 0.246 0.808 0.845 /C00.213 /C00.073
+1year 0.182 0.953 0.970 /C00.271 /C00.004
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]]20
+
+===== PDF PAGE 21 =====
+ARTICLE IN PRESS
+Table6( continued)
+Maturity ðtÞ Mean Std.Dev. RMSE ^r ð12Þ ^r ð24Þ
+3years /C00.113 0.996 1.002 /C00.380 0.061
+5years /C00.301 0.961 1.007 /C00.433 0.058
+10years /C00.603 0.835 1.030 /C00.431 0.020
+VAR(1) on yield levels
+3months /C00.276 1.006 1.043 /C00.219 /C00.099
+1year /C00.390 1.204 1.266 /C00.322 /C00.058
+3years /C00.467 1.240 1.325 /C00.345 /C00.015
+5years /C00.540 1.201 1.317 /C00.348 /C00.012
+10years /C00.744 1.060 1.295 /C00.328 /C00.010
+VAR(1) on yield changes
+3months 0.717 1.072 1.290 /C00.068 /C00.127
+1year 0.704 1.240 1.426 /C00.223 /C00.041
+3years 0.627 1.341 1.480 /C00.399 0.051
+5years 0.559 1.281 1.398 /C00.459 0.070
+10years 0.408 1.136 1.207 /C00.491 0.072
+ECM(1) with one common trend
+3months 0.738 0.982 1.228 /C00.163 /C00.123
+1year 0.767 1.143 1.376 /C00.239 /C00.072
+3years 0.546 1.203 1.321 /C00.278 /C00.013
+5years 0.379 1.191 1.250 /C00.278 /C00.003
+10years 0.169 1.095 1.108 /C00.224 0.009
+ECM(1) with two common trends
+3months 0.778 1.037 1.296 /C00.175 /C00.129
+1year 0.868 1.247 1.519 /C00.286 /C00.033
+3years 0.586 1.186 1.323 /C00.288 /C00.034
+5years 0.425 1.155 1.231 /C00.304 /C00.014
+10years 0.220 1.035 1.058 /C00.274 0.015
+Direct regression on three AR(1) principal components
+3months 0.162 0.785 0.802 /C00.298 /C00.020
+1year 0.416 0.979 1.064 /C00.305 0.042
+3years /C00.127 1.014 1.022 /C00.372 0.054
+5years /C00.393 1.013 1.087 /C00.335 0.038
+10years /C00.394 0.929 1.009 /C00.284 0.066
+Note: We present the results of out-of-sample 12-month-ahead forecasting using twelve models, as
+describedindetailinthetext.Weestimateallmodelsrecursivelyfrom1985:1tothetimethattheforecast
+is made, beginning in 1994:1 and extending through 2000:12. We deﬁne forecast errors att þ12 as
+ytþ12ðtÞ/C0 ^ytþ12=tðtÞ, and we report the mean, standard deviation and root mean squared errors of the
+forecasterrors,aswellastheir12thand24thsampleautocorrelationcoefﬁcients.
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]] 21
+
+===== PDF PAGE 22 =====
+36,60and120months,andforecasthorizonsof h ¼1;6and12months.Letusnow
+describethecompetitorsintermsofhowtheirforecastsaregenerated.
+(1) Randomwalk:
+^ytþh=tðtÞ¼ ytðtÞ.
+Theforecastisalways‘‘nochange.’’
+(2) Sloperegression:
+^ytþh=tðtÞ/C0 ytðtÞ¼ ^cðtÞþ ^gðtÞðytðtÞ/C0 ytð3ÞÞ.
+Theforecastedyieldchangeisobtainedfromaregressionofhistoricalyield
+changesonyieldcurveslopes.
+(3) Fama–Blissforwardrateregression:
+^ytþh=tðtÞ/C0 ytðtÞ¼ ^cðtÞþ ^gðtÞðf ht ðtÞ/C0 ytðtÞÞ,
+where f ht ðtÞistheforwardratecontractedattime tforloansfromtime t þ hto
+time t þ h þ t.Hencetheforecastedyieldchangeisobtainedfromaregression
+ofhistoricalyieldchangesonforwardspreads.Notethat,becausetheforward
+rateisproportionaltothederivativeofthediscountfunction,theinformation
+usedtoforecastfutureyieldsinforwardrateregressionsisverysimilartothat
+insloperegressions.
+(4) CochraneandPiazzesi(2002) forwardcurveregression:
+^ytþh=tðtÞ/C0 ytðtÞ¼ ^cðtÞþ ^g0ðtÞytð12Þþ
+X9
+k¼1
+^gkðtÞf12kt ð12Þ.
+Note that the Fama–Bliss forward regression is a special case of the
+Cochrane–Piazzesiforwardregression. 13
+(5) AR(1)onyieldlevels:
+^ytþh=tðtÞ¼ ^cðtÞþ ^gytðtÞ.
+(6) VAR(l)onyieldlevels:
+^ytþh=t ¼ ^c þ ^Gyt,
+where yt ¼½ ytð3Þ; ytð12Þ; ytð36Þ; ytð60Þ; ytð120Þ/C1380.
+(7) VAR(l)onyieldchanges:
+^ztþh=t ¼ ^c þ ^Gzt,
+where zt /C17½ytð3Þ/C0yt/C01ð3Þ; ytð12Þ/C0yt/C01ð12Þ; ytð36Þ/C0yt/C01ð36Þ; ytð60Þ/C0 yt/C01ð60Þ;
+ytð120Þ/C0 yt/C01ð120Þ/C1380.
+ARTICLE IN PRESS
+13NotethatthisisanunrestrictedversionofthemodelestimatedbyCochraneandPiazzesi.Imposition
+oftheCochrane–Piazzesirestrictionsproducedqualitativelyidenticalresults.
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]]22
+
+===== PDF PAGE 23 =====
+(8) ECM(1)withonecommontrend:
+^ztþh=t ¼ ^c þ ^Gzt,
+where zt /C17½ytð3Þ/C0yt/C01ð3Þ; ytð12Þ/C0 ytð3Þ; ytð36Þ/C0 ytð3Þ; ytð60Þ/C0 ytð3Þ; ytð120Þ/C0
+ytð3Þ/C1380.
+(9) ECM(1)withtwocommontrends:
+^ztþh=t ¼ ^c þ ^Gzt,
+where zt /C17½ytð3Þ/C0yt/C01ð3Þ; ytð12Þ/C0yt/C01ð12Þ; ytð36Þ/C0ytð3Þ; ytð60Þ/C0ytð3Þ; ytð120Þ
+/C0ytð3Þ/C1380.
+(10) DirectregressiononthreeAR(1)principalcomponents
+Weﬁrstperformaprincipalcomponentsanalysisonthefullsetofseventeen
+yields yt, effectively decomposing the yield covariance matrix asQLQT,
+wherethediagonalelementsof Laretheeigenvaluesandthecolumnsof Q
+are the associated eigenvectors. Denote the largest three eigenvalues byl1,
+l2,and l3,anddenotetheassociatedeigenvectorsby q1, q2,and q3.Theﬁrst
+three principal componentsxt ¼½ x1t; x2t; x3t/C138are then deﬁned byxit ¼ q0iyt,
+i ¼1;2;3. We then use a univariate AR(1) model to produceh-step-ahead
+forecastsoftheprincipalcomponents:
+^xi;tþh=t ¼ ^ci þ ^gixit; i ¼1;2;3,
+andweproduceforecastsforyields yt /C17½ ytð3Þ; ytð12Þ; ytð36Þ; ytð60Þ; ytð120Þ/C1380 as
+^ytþh=tðtÞ¼ q1ðtÞ ^x1;tþh=t þ q2ðtÞ ^x2;tþh=t þ q3ðtÞ ^x3;tþh=t,
+where qiðtÞistheelementintheeigenvector qi thatcorrespondstomaturity t.
+Wedeﬁneforecasterrorsat t þ has ytþhðtÞ/C0 ^ytþh=tðtÞ.Notewellthat,ineachcase,
+theobjectbeingforecast ðytþhðtÞÞisafutureyield,notafutureNelson–Siegelﬁtted
+yield. We will examine a number of descriptive statistics for the forecast errors,
+including mean, standard deviation, root mean squared error (RMSE), and
+autocorrelationsatvariousdisplacements.
+Ourmodel’s1-month-aheadforecastingresults,reportedin Table4,areincertain
+respectshumbling.Inabsoluteterms,theforecastsappearsuboptimal:theforecast
+errors appear serially correlated. In relative terms, RMSE comparison at various
+maturitiesrevealsthatourforecasts,althoughslightlybetterthantherandomwalk
+and slope regression forecasts, are indeed only very slightly better. Finally, the
+Diebold and Mariano (1995)statistics reported inTable 7 indicate universal
+insigniﬁcance of the RMSE differences between our 1-month-ahead forecasts and
+thosefromrandomwalksorFama–Blissregressions.
+The1-month-aheadforecastdefectslikelycomefromavarietyofsources,someof
+whichcouldbeeliminated.First,forexample,pricingerrorsduetoilliquiditymaybe
+highly persistent and could be reduced by including variables that may explain
+mispricing. It is worth noting, moreover, that related papers such asBliss (1997b)
+anddeJong(2000) alsoﬁndseriallycorrelatedforecasterrors,oftenwithpersistence
+muchstrongerthanours.
+ARTICLE IN PRESS
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]] 23
+
+===== PDF PAGE 24 =====
+Matters improve radically, however, as the forecast horizon lengthens. Our
+model’s 6-month-ahead forecasting results, reported inTable 5, are noticeably
+improved,andourmodel’s12-month-aheadforecastingresults,reportedin Table6,
+aremuchimproved.Inparticular,ourmodel’s12-monthaheadforecastsoutperform
+thoseofallcompetitorsatallmaturities,oftenbyawidemargininbothrelativeand
+absolute terms. Seven of the 10 Diebold–Mariano statistics inTable 7indicate
+signiﬁcant 12-month-ahead RMSE superiority of our forecasts at the ﬁve percent
+level. The strong yield curve forecastability at the 12-month-ahead horizon is, for
+example, very attractive from the vantage point of active bond trading and the
+vantagepointofcreditportfolioriskmanagement. 14Moreover,our12-month-ahead
+forecasts, like their 1- and 6-month-ahead counterparts, could be improved upon,
+becausetheforecasterrorsremainseriallycorrelated. 15
+It is worth noting thatDuffee (2002)ﬁnds that even the simplest random walk
+forecasts dominate those from theDai and Singleton (2000)afﬁne model, which
+therefore appears largely useless for forecasting. Hence Duffee proposes a less-
+restrictive ‘‘essentially afﬁne’’ model and shows that it forecasts better than the
+random walk in most cases, which is appropriately viewed as a victory. A
+comparisonofourresultsandDuffee’s,however,revealsthatourthree-factormodel
+ARTICLE IN PRESS
+Table7
+Out-of-sampleforecastaccuracycomparisons
+Maturity ðtÞ 1-Monthhorizon 12-Monthhorizon
+AgainstRW AgainstFB AgainstRW AgainstFB
+3months /C00.27 0.18 /C01.65/C3 /C02.43/C3
+1year /C00.64 /C00.56 /C02.04/C3 /C02.31/C3
+3years /C00.02 /C00.58 /C02.11/C3 /C02.18/C3
+5years 0.97 0.57 /C01.61 /C01.90/C3
+10years 0.49 0.34 /C00.63 /C01.35
+Note:WepresentDiebold–Marianoforecastaccuracycomparisontestsofourthree-factormodelforecasts
+(using univariate AR(1) factor dynamics) against those of the random walk model (RW) and the
+Fama–Bliss forward rate regressionmodel (FB). The null hypothesis is that the two forecasts have the
+same meansquarederror. Negative valuesindicatesuperiorityof our three-factor modelforecasts,and
+asterisksdenotesigniﬁcancerelativetotheasymptoticnulldistributionatthe10percentlevel.
+14Note thatNelson–Siegelloadingsimplya verysmoothyieldcurve,whichin turn suggeststhatour
+model, although not arbitrage-free, would not likely generate extreme portfolio positions. Competitors
+suchasregressiononprincipalcomponents,incontrast,havenosmoothcross-sectionalrestrictionsand
+may well generate extreme portfolio positions in practice. This is one important way in which our
+approach is superior to directs regression on principal components, despite the fact that our estimated
+factorsareclosetotheﬁrstthreeprincipalcomponents.(Fourmorearegivenbelow.)
+15Wereport12-month-aheadforecasterrorserialcorrelationcoefﬁcientsatdisplacementsof12and24
+months,incontrasttothoseatdisplacementsof1and12monthsreportedforthe1-month-aheadforecast
+errors, because the 12-month-ahead errors would naturally have moving-average structure even if the
+forecastswerefullyoptimal,duetotheoverlap.
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]]24
+
+===== PDF PAGE 25 =====
+produces larger percentage reductions in out-of-sample RMSE relative to the
+random walk than does Duffee’s best essentially afﬁne model. Our forecasting
+success is particularly notable in light of the fact that Duffee forecasts only the
+smoothedyieldcurve,whereasweforecasttheactualyieldcurve. 16
+Finally,wenotethatalthoughourapproachiscloselyrelatedtodirectprincipal
+components regression, neither our approach nor our results are identical.
+Interestingly, there is reason to prefer our approach on both empirical and
+theoreticalgrounds.Empirically,ourresultsindicatethatourapproachhassuperior
+forecasting performance on our sample of yields. Theoretically, other methods,
+including regression on principal components and regression on ad hoc empirical
+level,slopeandcurvature,oftenhaveunappealingfeatures,including:
+(1) theycannotbeusedtoproduceyieldsatmaturitiesotherthanthoseobservedin
+thedata,
+(2) theydonotguaranteeasmoothyieldcurveandforwardcurve,
+(3) theydonotguaranteepositiveforwardratesatallhorizons,and
+(4) theydonotguaranteethatthediscountfunctionstartsat1andapproaches0as
+maturityapproachesinﬁnity.
+4. Concluding remarks
+We have re-interpreted the Nelson–Siegel yield curve as a dynamic model that
+achieves dimensionality reduction via factor structure (level, slope and curvature),
+and we have explored the model’s performance in out-of-sample yield curve
+forecasting.Althoughthe1-month-aheadforecastingresultsarenobetterthanthose
+of random walk and other leading competitors, the 1-year-ahead results are much
+superior.
+Anumber of authors have proposed extensions to Nelson–Siegel to enhance
+ﬂexibility, including Bliss (1997b), Soderlind and Svensson (1997), Bjo¨rk and
+Christensen (1999),Filipovic (1999, 2000),Bjo¨rk (2000),Bjo¨rk andLande´n (2000)
+and Bjo¨rk and Svensson (2001). From the perspective of interest rate forecasting
+accuracy,however,thedesirabilityoftheabovegeneralizationsofNelson–Siegelis
+notobvious,whichiswhywedidnotpursuethemhere.Forexample,althoughthe
+BlissandSoderlind–Svenssonextensionscanhavein-sampleﬁtnoworsethanthat
+of Nelson–Siegel, because they include Nelson–Siegel as a special case, there is no
+guarantee of better out-of-sample forecasting performance. Indeed, accumulated
+experience suggest that parsimonious models are often more successful for out-of-
+sampleforecasting.17
+Some of the extensions alluded to above are designed to make Nelson–Siegel
+consistent with no-arbitrage pricing. It is not obvious to us, however, that use of
+ARTICLE IN PRESS
+16Wenote,however,thatourenthusiasmmustbetemperedbythefactthatourin-sampleandout-of-
+sampleperiodsarenotidenticaltoDuffee’s,sodeﬁnitivecomparisonscannotbemade.
+17SeeDiebold(2004).
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]] 25
+
+===== PDF PAGE 26 =====
+arbitrage-free models is necessary or desirable for producing good forecasts.18
+Indeed we have shown that our model, which is not arbitrage-free, can produces
+goodforecasts.
+In closing, we would like to elaborate on the likely reason for the forecasting
+success of our approach, which relies heavily on a broad interpretation of the
+shrinkage principle. The essence of our approach is intentionally to impose
+substantial a priori structure, motivated by simplicity, parsimony, and theory, in
+an explicit attempt to avoid data mining and hence enhance out-of-sample
+forecasting ability. This includes our use of atightly parametric model thatplaces
+strict structure on factor loadings in accordance with simple theoretical desiderata
+forthediscount function,ourdecisiontoﬁx l,ouremphasisonsimpleunivariate
+modeling of the factors based upon our theoretically derived interpretation of the
+model as one of approximately orthogonal level, slope and curvature factors, and
+our emphasis on the simplest possible AR(1) factor dynamics. All of this is in
+keepingwithabroadinterpretationofthe‘‘shrinkageprinciple,’’whichhasaﬁrm
+foundation in Bayes–Stein theory, in empirical intuition, and in an accumulated
+trackrecordofgoodperformance(e.g., Garcia-Ferreretal.,1987;ZellnerandHong,
+1989;ZellnerandMin,1993 ).Hereweinterprettheshrinkageprincipleastheinsight
+that imposition of restrictions, which will of course degrade in-sample ﬁt, may
+neverthelessbehelpfulforout-of-sampleforecasting,eveniftherestrictionsarefalse.
+Thefactthattheshrinkageprincipleworksintheyield-curvecontext,asitdoesinso
+manyothercontexts,ispreciselywhattheoryandempiricalexperiencewouldlead
+one to expect. This is not to say, of course, that our speciﬁcation is in any sense
+uniquelybest,andwemakenoclaimstothateffect.Rather,thebroadlessonofthe
+paper is to show in the yield-curve context that the shrinkage perspective, which
+tendstoproduceseeminglynaivebuttrulysophisticatedlysimplemodels(ofwhich
+ours is one example), may be very appealing when the goal is forecasting. Put
+differently,thepaperemphasizes intheyieldcurvecontext Zellner’s(1992) ‘‘KISS
+principle’’offorecasting—‘‘Keepitsophisticatedlysimple.’’
+Acknowledgements
+TheNationalScienceFoundation,theWhartonFinancialInstitutionsCenter,and
+theGuggenheimFoundationprovidedresearchsupport.Forhelpfulcommentswe
+aregratefultotheEditor(ArnoldZellner),theAssociateEditor,andthreereferees,
+aswellasDaveBackus,RobBliss,Michael Brandt,ToddClark,QiangDai,Ron
+Gallant, Mike Gibbons, David Marshall, Monika Piazzesi, Eric Renault, Glenn
+Rudebusch, Til Schuermann, and Stan Zin, and seminar participants at Geneva,
+Georgetown, Wharton, the European Central Bank, and the National Bureau of
+EconomicResearch.We,however,bearfullresponsibilityforallremainingﬂaws.
+ARTICLE IN PRESS
+18SeeDaiandSingleton(2002) foraninterestinganalysisthatexplorescertainaspectsofthetradeoff
+betweenfreedomfromarbitrageandforecastingperformance.
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]]26
+
+===== PDF PAGE 27 =====
+References
+Andersen, T.G., Lund, J., 1997. Stochastic volatility and mean drift in the short term interest rate
+diffusion:sourceofsteepness,levelandcurvatureintheyieldcurve.WorkingPaper214,Department
+ofFinance,KelloggSchool,NorthwesternUniversity.
+Balduzzi, P., Das, S.R., Foresi, S., Sundaram, R., 1996. Asimple approach to three-factor afﬁne term
+structuremodels.JournalofFixedIncome6,43–53.
+Bates,D.,1999.Financialmarkets’assessmentofEMU.Carnegie–RochesterConferenceSeriesonPublic
+Policy51,229–269.
+Bjo¨rk,T.,2000.Ageometricviewofinterestratetheory.HandbookofMathematicalFinance.Cambridge
+UniversityPress,Cambridgeforthcoming.
+Bjo¨rk,T.,Christensen,B.,1999.Interestratedynamicsandconsistentforwardratecurves.Mathematical
+Finance9,323–348.
+Bjo¨rk,T.,Lande ´n,C.,2000.Ontheconstructionofﬁnitedimensionalrealizationsfornonlinearforward
+ratemodels.Manuscript,StockholmSchoolofEconomics.
+Bjo¨rk,T.,Svensson,L.,2001.Ontheexistenceofﬁnitedimensionalrealizationsfornonlinearforwardrate
+models.MathematicalFinance11,205–243.
+Bliss, R., 1997a. Movements in the term structure of interest rates. Economic Review Federal Reserve
+BankofAtlanta82,16–33.
+Bliss,R.,1997b.Testingtermstructureestimationmethods.AdvancesinFuturesandOptionsResearch9,
+97–231.
+Brandt,M.W.,Yaron,A.,2001.Time-consistentno-arbitragemodelsofthetermstructure.Manuscript,
+UniversityofPennsylvania.
+Chen,L.,1996.StochasticMeanandStochasticVolatility—AThreeFactorModeloftheTermStructure
+ofInterestRatesanditsApplicationtothePricingofInterestRateDerivatives.BlackwellPublishers,
+London.
+Cochrane,J.H.,Piazzesi,M.,2002.Bondriskpremia.Manuscript,UniversityofChicagoandUCLA.
+Courant,E.,Hilbert,D.,1953.MethodsofMathematicalPhysics.JohnWiley,NewYork.
+Cox,J.C.,Ingersoll,J.E.,Ross,S.A.,1985.Atheoryofthetermstructureofinterestrates.Econometrica
+53,385–407.
+Dai,Q.,Singleton,K.,2000.Speciﬁcationanalysisofafﬁnetermstructuremodels.JournalofFinance55,
+1943–1978.
+Dai, Q., Singleton, K.J., 2002. Expectation puzzles, time-varying risk premia, and afﬁne models of the
+termstructure.JournalofFinancialEconomics63,415–441.
+deJong,F.,2000.Timeseriesandcrosssectioninformationinafﬁnetermstructuremodels.Journalof
+BusinessandEconomicStatistics18,300–314.
+deJong,F.,Santa-Clara,P.,1999.Thedynamicsoftheforwardinterestratecurve:aformulationwith
+statevariables.JournalofFinancialandQuantitativeAnalysis31,131–157.
+Diebold,F.X.,2004.ElementsofForecasting,thirded.South-Western,Cincinnati.
+Diebold,F.X.,Mariano,R.S.,1995.Comparingpredictiveaccuracy.JournalofBusinessandEconomic
+Statistics13,253–263.
+Diebold,F.X.,Sharpe,S.,1990.Post-deregulationbankdepositratepricing:themultivariatedynamics.
+JournalofBusinessandEconomicStatistics8,281–293.
+Diebold,F.X.,Gunther,T.,Tay,A.S.,1998.Evaluatingdensityforecasts,withapplicationstoﬁnancial
+riskmanagement.InternationalEconomicReview39,863–883.
+Diebold, F.X., Hahn, J., Tay, A.S., 1999. Multivariate density forecast evaluation and calibration in
+ﬁnancial risk management: high-frequency returns on foreign exchange. Review of Economics and
+Statistics81,661–673.
+Doan, T., Litterman, R., Sims, C., 1984. Forecasting and conditional projection using realistic prior
+distributions.EconometricReviews3,1–100.
+Duffee,G.,2002.Termpremiaandinterestrateforecastsinafﬁnemodels.JournalofFinance57,405–443.
+Dufﬁe,D.,Kan,R.,1996.Ayield-factormodelofinterestrates.MathematicalFinance6,379–406.
+ARTICLE IN PRESS
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]] 27
+
+===== PDF PAGE 28 =====
+Fama,E.,Bliss,R.,1987.Theinformationinlong-maturityforwardrates.AmericanEconomicReview
+77,680–692.
+Filipovic,D.,1999.AnoteontheNelson–Siegelfamily.MathematicalFinance9,349–359.
+Filipovic,D.,2000.Exponential-polynomialfamiliesandthetermstructureofinterestrates.Bernoulli6,
+1–27.
+Frankel, J.A., Lown, C.S., 1994. An indicator of future inﬂation extracted from the steepness of the
+interestrateyieldcurvealongitsentirelength.QuarterlyJournalofEconomics109,517–530.
+Garcia-Ferrer,A.,Highﬁeld,R.A.,Palm,F.,Zellner,A.,1987.Macroeconomicforecastingusingpooled
+internationaldata.JournalofBusinessandEconomicStatistics5,53–67.
+Hall, A.D., Anderson, H.M., Granger, C.W.J., 1992. A cointegration analysis of treasury bill yields.
+ReviewofEconomicsandStatistics74,116–126.
+Heath, D., Jarrow, R., Morton, A., 1992. Bond pricing and the term structure of interest rates: a new
+methodologyforcontingentclaimsvaluation.Econometrica60,77–105.
+Hull, J., White, A., 1990. Pricing interest-rate-derivative securities. Review of Financial Studies 3,
+573–592.
+Knez,P.,Litterman,R.,Scheinkman,J.,1994.Explorationintofactorsexplainingmoneymarketreturns.
+JournalofFinance49,1861–1882.
+Litterman,R.,Scheinkman,J.,1991.Commonfactorsaffectingbondreturns.JournalofFixedIncome1,
+54–61.
+Litzenberger,R.,Squassi,G.,Weir,N.,1995.Splinemodelsofthetermstructureofinterestratesandtheir
+applications.WorkingPaper,Goldman,SachsandCompany.
+McCulloch,J.H.,1975.Thetaxadjustedyieldcurve.JournalofFinance30,811–830.
+McCulloch,J.H.,Kwon,H.,1993.U.S.termstructuredata,1947–1991.Workingpaper93-6,OhioState
+University.
+Nelson,C.R.,Siegel,A.F.,1987.Parsimoniousmodelingofyieldcurve.JournalofBusiness60,473–489.
+Pagan,A.R.,Hall,A.D.,Martin,V.,1996.Modelingthetermstructure.In:Rao,C.R.,Maddala,G.S.
+(Eds.),HandbookofStatistics.North-Holland,Amsterdam,pp.91–118.
+Shea,G.S.,1992.Benchmarkingtheexpectationshypothesisoftheinterest-ratetermstructure:ananalysis
+ofcointegrationvectors.JournalofBusinessandEconomicStatistics10,347–366.
+Siegel, A.F., Nelson, C.R., 1988. Long-term behavior of yield curves. Journal of Financial and
+QuantitativeAnalysis23,105–110.
+Soderlind, P., Svensson, L.E.O., 1997. New techniques to extract market expectations from ﬁnancial
+instruments.JournalofMonetaryEconomics40,383–430.
+Swanson, N.R., White, H., 1995. Amodel-selection approach to assessing the information in the term
+structure using linear models and artiﬁcial neural networks. Journal of Business and Economic
+Statistics13,265–275.
+Vasicek,O.,1977.Anequilibriumcharacterizationofthetermstructure.JournalofFinancialEconomics
+5,177–188.
+Vasicek,O.A.,Fong,H.G.,1982.Termstructuremodelingusingexponentialsplines.JournalofFinance
+37,339–348.
+Zellner, A., 1992. Statistics Science and Public Policy (ASA Presidential Address). Journal of the
+AmericanStatisticalAssociation87,1–6.
+Zellner,A.,Hong,C.,1989.ForecastinginternationalgrowthratesusingBayesianshrinkageandother
+procedures.JournalofEconometrics40,183–202.
+Zellner,A.,Min,C.,1993.Bayesianandnon-Bayesianmethodsforcombiningmodelsandforecastswith
+applicationstoforecastinginternationalgrowthrates.JournalofEconometrics56,89–118.
+ARTICLE IN PRESS
+F.X. Diebold, C. Li / Journal of Econometrics ] (]]]]) ]]]–]]]28

@@ -1,0 +1,1355 @@
+===== PDF PAGE 1 =====
+JournalofEconometrics160(2011)246–256
+Contents lists available at ScienceDirect
+JournalofEconometrics
+journal homepage: www.elsevier.com/locate/jeconom
+Volatilityforecastcomparisonusingimperfectvolatilityproxies
+✩
+AndrewJ.Patton ∗
+DepartmentofEconomics,DukeUniversity,USA
+Oxford-ManInstituteofQuantitativeFinance,UniversityofOxford,UK
+a r t i c l e i n f o
+Articlehistory:
+Availableonline6March2010
+JELclassification:
+C53
+C52
+C22
+Keywords:
+Forecastevaluation
+Forecastcomparison
+Lossfunctions
+Realisedvariance
+Range
+a b s t r a c t
+Theuseofaconditionallyunbiased,butimperfect,volatilityproxycanleadtoundesirableoutcomesin
+standardmethodsforcomparingconditionalvarianceforecasts.Wemotivateourstudywithanalytical
+resultsonthedistortionscausedbysomewidelyusedlossfunctions,whenusedwithstandardvolatility
+proxiessuchassquaredreturns,theintra-dailyrangeorrealisedvolatility.Wethenderivenecessaryand
+sufficientconditionsonthefunctionalformofthelossfunctionfortherankingofcompetingvolatility
+forecaststoberobusttothepresenceofnoiseinthevolatilityproxy,andderivesomeusefulspecialcases
+ofthisclassof‘‘robust’’lossfunctions.Themethodsareillustratedwithanapplicationtothevolatilityof
+returnsonIBMovertheperiod1993to2003.
+©2010PublishedbyElsevierB.V.
+1. Introduction
+Manyforecastingproblemsineconomicsandfinanceinvolve
+a variable of interest that is unobservable, evenex post. The
+most prominent example of such a problem is the forecasting
+ofvolatilityforuseinfinancialdecisionmaking.Otherproblems
+include forecasting the true rates of inflation, GDP growth or
+unemployment (not simply the announced rates); forecasting
+tradeintensities;andforecastingdefaultprobabilitiesor‘crash’
+probabilities.Whileevaluatingandcomparingeconomicforecasts
+isawell-studiedproblem,datingbackatleastto Cowles(1933),
+ifthevariableofinterestislatentthentheproblemofforecast
+evaluationandcomparisonbecomesmorecomplicated. 1
+Thiscomplicationcanberesolved,atleastpartly,ifanunbiased
+estimatorofthelatentvariableofinterestisavailable.Involatility
+forecasting, for example, the squared return on an asset over
+theperiod t (assumingazeromeanreturn)canbeinterpreted
+as a conditionally unbiased estimator of the true unobserved
+✩ Matlabcodeusedinthispaperisavailablefrom
+http://econ.duke.edu/~ap172/code.html.
+∗ Correspondingaddress:DepartmentofEconomics,DukeUniversity,213Social
+SciencesBuilding,Box90097,DurhamNC27708-0097,USA.
+E-mailaddress:andrew.patton@duke.edu.
+1 Forrecentsurveysoftheforecastevaluationliteraturesee Clements(2005)and
+West(2006).Forrecentsurveysofthevolatilityforecastingliterature,see Andersen
+etal. (2006),PoonandGranger(2003)andShephard(2005).
+conditionalvarianceoftheassetovertheperiod t.2Manyofthe
+standardmethodsforforecastevaluationandcomparison,such
+asthe MincerandZarnowitz(1969)regressionandthe Diebold
+andMariano(1995)and West(1996)tests,canbeshowntobe
+applicablewhensuchaconditionallyunbiasedproxyisused,see
+HansenandLunde(2006)forexample.However,itisnottrue
+thatusingaconditionallyunbiasedproxywill alwaysleadtothe
+sameoutcomeasifthetruelatentvariablewereused: Andersen
+andBollerslev(1998)and Andersenetal. (2005),amongstothers,
+studythereductioninfinite-samplepoweroftestsbasedonnoisy
+volatilityproxies;wefocus,like HansenandLunde(2006),on
+distortionsintherankingsofcompetingforecaststhatcanarise
+whenusinganoisyvolatilityproxyinsomecommonlyusedtests
+forforecastcomparison.
+Forexample,inthevolatilityforecastingliteraturenumerous
+authorshaveexpressedconcernthatafewextremeobservations
+mayhaveanundulylargeimpactontheoutcomesofforecast
+evaluation and comparison tests, seeBollerslev and Ghysels
+(1994), Andersen et al.(1999) andPoon and Granger (2003)
+amongst others. One common response to this concern is to
+employforecastlossfunctionsthatare‘‘lesssensitive’’tolarge
+observationsthantheusualsquaredforecasterrorlossfunction,
+such as absolute error or proportional error loss functions. In
+2 Thehigh/lowrangeandrealisedvolatility,see Parkinson(1980)and Andersen
+etal. (2003)forexample,havealsobeenusedasvolatilityproxies.Theseare
+discussedindetailbelow.
+0304-4076/$–seefrontmatter ©2010PublishedbyElsevierB.V.
+doi:10.1016/j.jeconom.2010.03.034
+
+===== PDF PAGE 2 =====
+A.J.Patton/JournalofEconometrics160(2011)246–256 247
+thispaperweshowanalyticallythatsuchapproachescanlead
+toincorrectinferencesandtheselectionofinferiorforecastsover
+betterforecasts.
+We focus on volatility forecasting as a specific case of the
+moregeneralproblemoflatentvariableforecasting.InSection 5
+wediscusstheextensionofourresultstootherlatentvariable
+forecastingproblems.Ourresearchbuildsonworkby Andersen
+andBollerslev(1998),Meddahi(2001) andHansenandLunde
+(2006), who were among the first to analyse the problems
+introduced by the presence of noise in a volatility proxy. This
+paperextendstheexistingliteratureintwoimportantdirections,
+discussedbelow.
+Firstly,wederiveexplicitanalyticalresultsforthedistortions
+thatmayarisewhensomecommonlossfunctionsareemployed,
+consideringthethreemostcommonlyusedvolatilityproxies:the
+dailysquaredreturn,theintra-dailyrangeandarealisedvariance
+estimator.Weshowthatthesedistortionscanbelarge,evenfor
+favourablescenarios(suchasGaussianity).Further,weshowthat
+thedistortionsvarygreatlywiththechoiceoflossfunction,thus
+providingatheoreticalexplanationforthewidespreadfindingof
+conflictingrankingsofvolatilityforecastswhen‘‘non-robust’’loss
+functions(definedpreciselyinSection 2)areusedinappliedwork,
+seeLamoureuxandLastrapes(1993),HamiltonandSusmel(1994),
+Bollerslev and Ghysels (1994) andHansen and Lunde (2005),
+amongstmanyothers. 3
+Secondly,weprovidenecessaryandsufficientconditionsonthe
+functionalformofthelossfunctiontoensurethattherankingof
+variousforecastsispreservedwhenusinganoisyvolatilityproxy.
+Theseconditionsarerelatedtothoseof Gourierouxetal. (1984)
+forquasi-maximumlikelihoodestimation.Interestingly,wefind
+thatthereareaninfinitenumberoflossfunctionsthatsatisfy
+theseconditions,andthattheselossfunctionsdifferinmeaningful
+ways(suchasthepenaltyappliedtoover-predictionversusunder-
+prediction).Thusourclassof‘‘robust’’lossfunctionsisnotsimply
+thequadraticlossfunctionorminorvariationsthereof.
+The canonical problem in point forecasting is to find the
+forecastthatminimisestheexpectedloss,conditionalontime t
+information.Thatis,
+ˆY ∗t+h,t ≡argmin
+ˆy∈Y
+E
+
+L
+
+Yt+h, ˆy
+
+|Ft
+
+(1)
+whereYt+histhevariableofinterest, Listheforecastuser’sloss
+function, Yisthesetofpossibleforecasts,and Ft isthetime t
+informationset.Startingwiththeassumptionthattheforecast
+userisinterestedintheconditionalvariance,weeffectivelytake
+thesolutionoftheoptimisationproblemabove(theconditional
+variance) as given, and consider the loss functions that will
+generate the desired solution. This approach is unusual in the
+economicforecastingliterature:themorecommonapproachis
+totaketheforecastuser’slossfunctionasgivenandderivethe
+optimalforecastforthatlossfunction;relatedpapershereare
+Granger(1969),Engle(1993),ChristoffersenandDiebold(1997),
+ChristoffersenandJacobs(2004) andPattonandTimmermann
+(2007),amongstothers.Thefactthatweknowtheforecastuser
+desires a variance forecast places limits on the class of loss
+functionsthatmaybeusedforvolatilitycomparison,rulingout
+3 Alloftheresultsinthispaperapplydirectlytotheproblemofforecasting
+integratedvariance(IV),which Andersenetal. (2010),amongstothers,argueis
+amore‘‘relevant’’notionofvariability.Wefocusontheproblemofconditional
+varianceforecastingduetoitsprevalenceinappliedworkinthepasttwodecades.
+IfwetakeexpectedIVratherthantheconditionalvarianceasthelatentobject
+ofinterest,thenweonlyrequirethatanunbiasedrealisedvarianceestimator
+isavailablefortheresultstogothrough.Inthepresenceofjumpsintheprice
+process,quadraticvariation(QV)isamoreappropriatemeasureofrisk,andasimilar
+extensionispossible.
+somechoicespreviouslyusedintheliterature.Howeverweshow
+thattheclassof‘‘robust’’lossfunctionsstilladmitsawidevarietyof
+lossfunctions,allowingmuchflexibilityinrepresentingvolatility
+forecastusers’preferences.
+Onepracticalimplicationofthispaperisthatthestatedgoal
+offorecastingtheconditionalvarianceisnotconsistentwiththe
+use of some loss functions when an imperfect volatility proxy
+is employed. However, these loss functions arenot inherently
+invalid or inappropriate: if the forecast user’s preferences are
+indeeddescribedbyan‘‘non-robust’’lossfunction,thenthissimply
+impliesthattheobjectofinteresttothatforecastuserisnotthe
+conditionalvariancebutrathersomeotherquantity. 4Inacademic
+researchthepreferencesoftheend-useroftheforecastareoften
+unknown,andacommonresponsetothistoistoselectforecasts
+basedontheiraveragedistance,somehowmeasured,tothetrue
+latentconditionalvariance.Insuchcases,themethodsoutlinedin
+thispapercanbeappliedtoidentifytheforecastthatisclosestto
+thetrueconditionalvariancebyusingimperfectvolatilityproxy
+anda‘‘robust’’lossfunction.
+The remainder of this paper is as follows. In Section2we
+analyticallyconsidervolatilityforecastcomparisontestsusingan
+imperfectvolatilityproxy,showingtheproblemsthatarisewhen
+usingsomecommonlossfunctions.Weinitiallyconsiderusing
+squareddailyreturnsastheproxy,andthenconsiderusingthe
+rangeandrealisedvariance.InSection 3weprovidenecessaryand
+sufficientconditionsonthefunctionalformofalossfunctionfor
+therankingofcompetingvolatilityforecaststoberobusttothe
+presenceofnoiseinthevolatilityproxy,andderivesomeuseful
+specialcasesofthisclassofrobustlossfunctions.Oneofthese
+specialcasesisaparametricfamilyoflossfunctionsthatneststwo
+ofthemostwidelyusedlossfunctionsintheliterature,namelythe
+MSEandQLIKElossfunctions(definedinEqs. (5)and(6)below).
+InSection 4wepresentanempiricalillustrationusingtwowidely
+usedvolatilityforecastingmethods,andinSection 5weconclude
+andsuggestextensions.Allproofsandderivationsareprovidedin
+Appendix.
+1.1. Notation
+Letrtbethevariablewhoseconditionalvarianceisofinterest,
+usuallyadailyormonthlyassetreturninthevolatilityforecast-
+ingliterature.Theinformationsetusedindefiningtheconditional
+varianceofinterestisdenoted Ft−1,whichisassumedtocontain
+σ (rt−j,j ≥ 1),butmayalsoincludeothervariablesand/orvari-
+ablesmeasuredatahigherfrequencythan rt(suchasintra-daily
+returns).Denote V [rt |Ft−1] ≡Vt−1[rt ] ≡σ2t.Wewillassume
+throughoutthat E[rt |Ft−1] ≡Et−1[rt ] =0,andso σ2t =Et−1[r2t ].
+Let εt ≡ rt /σtdenotethe‘standardisedreturn’.Letaforecastof
+theconditionalvarianceof rtbedenoted ht,or hi,tifthereismore
+thanoneforecastunderanalysis.Wewilltakeforecastsas‘‘primi-
+tive’’,andnotconsiderthespecificmodelsandestimatorsthatmay
+havegeneratedtheforecasts.Thelossfunctionoftheforecastuser
+isL : R+ × H → R+,wherethefirstargumentof Lis σ2t orsome
+proxyfor σ2t,denoted ˆσ2t,andthesecondis ht. R+and R++denote
+thenon-negativeandpositivepartsofthereallinerespectively,
+and Hisacompactsubsetof R++.Commonlyusedvolatilityprox-
+iesarethesquaredreturn, r2t,realisedvolatility,RV t,andtherange,
+RGt.Optimalforecastsforagivenlossfunctionandproxyarede-
+notedh∗tandaredefinedas:
+h∗t ≡argmin
+h∈H
+E
+
+L
+
+ˆσ2t ,h |Ft−1 . (2)
+4 For example, the utility of realised returns on a portfolio formed using a
+volatilityforecast,ortheprofitsobtainedfromanoptiontradingstrategybasedona
+volatilityforecast,see Westetal.(1993)andEngleetal.(1993)forexample,define
+economicallymeaningfullossfunctions,eventhoughtheoptimalforecastsunder
+thoselossfunctionswillnotgenerallybethetrueconditionalvariance.
+
+===== PDF PAGE 3 =====
+248 A.J.Patton/JournalofEconometrics160(2011)246–256
+2. Volatility forecast comparison using an imperfect volatility
+proxy
+Weconsidervolatilityforecastcomparisonsbasedonexpected
+loss,ordistancetothetrueconditionalvariance.Thesecompar-
+isons can be implemented in finite samples using the tests of
+DieboldandMariano(1995)andWest(1996),(henceforthDMW).
+Ifwedefine ui,t ≡ L(σ2t ,hi,t ),where Listheforecastuser’sloss
+function,andlet dt = u1,t −u2,t,thenaDMWtestofequal
+predictiveaccuracycanbeconductedasasimpleWaldtestthat
+E[dt ] =0.5
+Of primary interest is whether the feasible ranking of two
+forecasts obtained using an imperfect volatility proxy is the
+sameastheinfeasiblerankingthatwouldbeobtainedusingthe
+unobservabletrueconditionalvariance.Insuchacaseweareable
+tocompareaverageforecastaccuracyeventhoughthevariableof
+interestisunobservable.Wedefinelossfunctionsthatyieldsuch
+anequivalenceas‘‘robust’’:
+Definition 1. Alossfunction, L,is‘‘robust’’iftherankingofanytwo
+(possiblyimperfect)volatilityforecasts, h1tandh2t,byexpected
+loss is the same whether the ranking is done using the true
+conditionalvariance, σ2t,orsomeconditionallyunbiasedvolatility
+proxy, ˆσ2t.Thatis,
+E
+
+L
+
+σ2t ,h1t  RE L σ2t ,h2t 
+⇔E
+
+L
+
+ˆσ2t ,h1t  RE L  ˆσ2t ,h2t  (3)
+forany ˆσ2t s.t.E[ ˆσ2t |Ft−1] =σ2t.
+Meddahi(2001)showedthattherankingofforecastsonthe
+basisofthe R2fromtheMincer–Zarnowitzregression:
+ˆσ2t = β0 + β1hit +eit (4)
+isrobusttonoisein ˆσ2t.HansenandLunde(2006)showedthat
+theR2fromaregressionoflog ( ˆσ2t )onaconstantandlog (ht )is
+notrobusttonoise,andshowedmoregenerallythatasufficient
+conditionforalossfunctiontoberobustisthat ∂2L(σ2,h)/∂(σ2)2
+doesnotdependon h.InSection 3wegeneralisethisresultby
+providingnecessaryandsufficientconditionsforalossfunctionto
+berobust.6,7
+It is worth noting that although the ranking obtained from
+a robust loss function will be invariant to noise in the proxy,
+the actuallevel of expected loss obtained using a proxy will
+be larger than that which would be obtained when using the
+trueconditionalvariance.Thispointwascompellinglypresented
+inAndersenandBollerslev(1998) andAndersenet al.(2004).
+Andersenetal.(2005)provideamethodtoestimatethedistortion
+inthelevelofexpectedlossandtherebyobtainanestimatorofthe
+5 Thekeydifferencebetweentheapproachesof DieboldandMariano(1995)
+andWest(1996)isthatthelatterexplicitlyallowsforforecaststhatarebased
+onestimatedparameters,whereasthenullofequalpredictiveaccuracyisbased
+onpopulationparameters,see West(2006).Theproblemsweidentifybelowarise
+evenintheabsenceofestimationerrorintheforecasts,thusourtreatmentofthe
+forecastsasprimitive,andsoforourpurposesthesetwoapproachescoincide.
+6 Ouruseoftheadjective‘‘robust’’isrelated,thoughnotequivalent,toitsusein
+estimationtheory,whereitappliestoestimatorsthatinsensitive/lesssensitiveto
+thepresenceofoutliersinthedata,see Huber(1981)forexample.A‘‘robust’’loss
+function,inthesenseof Definition1,willgenerallynotberobusttothepresenceof
+outliers.
+7 In recent workGiacomini and White (2006) propose ranking forecasts by
+expectedlossconditionalonsomeinformationset Gt,ratherthanbyunconditional
+expectedlossasin Definition1.Thenumericalexamplesprovidedbelowwilldiffer
+inthismoregeneralcase,ofcourse,howeverthetheoreticalresultsinthispapergo
+throughif Gt ⊆ Ft−1,whichistrueforalloftheexamplesconsideredby Giacomini
+andWhite(2006).
+levelofexpectedlossthatwouldbeobtainedusingthetruelatent
+variableofinterest.
+Itfollowsdirectlyfromthedefinitionofarobustlossfunction
+that the true conditional variance is the optimal forecast (we
+formally show this in the proof ofProposition 1), and thus a
+necessaryconditionforalossfunctiontoberobusttonoiseisthat
+thetrueconditionalvarianceistheoptimalforecast.Inthissection
+wedeterminewhetherthisconditionholdsforsomecommonloss
+functions,andanalyticallycharacterisethedistortionforthose
+caseswhereitisviolated.
+A common response to the concern that a few extreme
+observations drive the results of volatility forecast comparison
+studies is to employ alternative measures of forecast accuracy
+totheusualMSElossfunction,see PaganandSchwert(1990),
+BollerslevandGhysels(1994);Bollerslevetal. (1994),Diebold
+and Lopez (1996), Andersen et al.(1999), Poon and Granger
+(2003)and HansenandLunde(2005),forexample.Acollection
+oflossfunctionsemployedintheliteratureonvolatilityforecast
+evaluationispresentedbelow. 8Inthenexttwosub-sectionswe
+willstudythepropertiesoftheselossfunctionsandshowthatfor
+almostallchoicesofvolatilityproxymostoftheselossfunctions
+arenot robust and can lead to incorrect rankings of volatility
+forecasts.
+MSE :L
+
+ˆσ2,h =  ˆσ2 −h2 (5)
+QLIKE :L
+
+ˆσ2,h =logh + ˆσ2
+h
+(6)
+MSE-LOG :L
+
+ˆσ2,h = log ˆσ2 −logh2 (7)
+MSE-SD :L
+
+ˆσ2,h =  ˆσ − √h2 (8)
+MSE-prop :L
+
+ˆσ2,h =  ˆσ2
+h
+−1
+2
+(9)
+MAE :L
+
+ˆσ2,h =  ˆσ2 −h (10)
+MAE-LOG :L
+
+ˆσ2,h = log ˆσ2 −logh (11)
+MAE-SD :L
+
+ˆσ2,h =  ˆσ − √h (12)
+MAE-prop :L
+
+ˆσ2,h =  ˆσ2h −1 . (13)
+2.1. Usingsquaredreturnsasavolatilityproxy
+In this section we will focus on the use of daily squared
+returnsforvolatilityforecastevaluation,andinSection 2.2we
+willexaminetheuseofrealisedvolatilityandtherange.Wewill
+deriveourresultsunderthreeassumptionsfortheconditional
+distributionofdailyreturns:
+rt |Ft−1 ∼
+
+
+
+Ft
+
+0, σ2t 
+Student’st
+
+0, σ2t , ν
+N
+
+0, σ2t 
+where Ft (0, σ2t ) is some unspecified distribution with mean
+zeroandvariance σ2t,andStudent’s t(0, σ2t , ν)isaStudent’s t
+distributionwithmeanzero,variance σ2t and νdegreesoffreedom.
+8 Some of these loss functions are called different names by different
+authors:MSE-propisalsoknownas‘‘heteroskedasticity-adjustedMSE(HMSE)’’;
+MAE-prop is also known as ‘‘mean absolute percentage error (MAPE)’’ or as
+‘‘heteroskedasticity-adjustedMAE(HMAE)’’.
+
+===== PDF PAGE 4 =====
+A.J.Patton/JournalofEconometrics160(2011)246–256 249
+Inallcasesitisclearthat Et−1[r2t ] =σ2t,andsothesquareddaily
+returnisavalidvolatilityproxy.
+ItistrivialtoshowthattheMSElossfunctiongeneratesanop-
+timalforecastequaltotheconditionalvariance: h∗t =Et−1[r2t ] =
+σ2t,andthussatisfiesthenecessaryconditionforrobustness.Fur-
+ther,theMSElossfunctionalsosatisfiesthesufficientcondition
+ofHansenandLunde(2006),andthusMSEisa‘‘robust’’lossfunc-
+tion.AnothercommonlyusedlossfunctionistheMSElossfunction
+onstandarddeviationsratherthanvariances,MSE-SD,seeEq. (8).
+Themotivationforthislossfunctionisthattakingsquarerootof
+thetwoargumentsofthesquared-errorlossfunctionshrinksthe
+largervaluestowardszero,reducingtheimpactofthemostex-
+tremevaluesof rt.Howeveritalsoleadstoanincorrectvolatility
+forecastbeingselectedasoptimal:
+h∗t ≡argmin
+h∈H
+Et−1
+[
+|rt | −
+√
+h
+2]
+FOC0 = ∂∂hEt−1
+[
+|rt | −
+√
+h
+2] 
+h=h∗t
+soh∗t = (Et−1[|rt |])2 (14)
+= σ2t (Et−1[|εt |])2
+=
+
+
+
+ν −2
+π
+
+0
+ ν −1
+2
+ 
+0
+ ν
+2
+2
+σ2t ,
+ifrt |Ft−1 ∼Student’st
+
+0, σ2t , ν , ν >2
+2
+π σ2t ≈0.64σ2t , ifrt |Ft−1 ∼N 0, σ2t  .
+(15)
+ThisdistortionispresentevenunderGaussianity,andexcesskur-
+tosisinassetreturnsexacerbatesthedistortion:Forexample,if
+returnsfollowtheStudent’s tdistributionwithsixdegreesoffree-
+domthenthecoefficienton σ2t intheaboveexpressionis0.56.
+AsmentionedintheIntroduction,iftheforecastuser’sloss
+functiontrulyisthesquareofthedifferencebetweenthe absolute
+returnandthesquarerootoftheforecast,thenthe‘‘distortion’’in
+theoptimalforecastaboveisdesirable,asthisistheforecastthat
+minimiseshis/herexpectedloss.However,ifthegoalistofind
+theforecastthatisclosesttothe trueconditionalvariance ,then
+thisdistortionintheoptimalforecastcanleadtoanincorrect
+rankingofcompetingforecasts. 9ThustheMSE-SDlossfunctionis
+notconsistentwiththegoalofrankingvolatilityforecastsbytheir
+distancetothetrueconditionalvariancewhenusingthesquared
+returnasthevolatilityproxy:eithertheproxyhastobere-scaled
+byatermthatdependscriticallyontheunderlyingconditional
+distributionofreturns,or,moresimply,adifferentlossfunction
+mustbechosen.
+Thecorrespondingcalculationsfortheremaininglossfunctions
+inEqs. (5)to(13)areprovidedin Patton(2006),andtheresults
+aresummarisedin Table1.Thistableshowsthatthedegreeof
+distortionintheoptimalforecastaccordingtosomeoftheloss
+functionsusedintheliteraturecanbesubstantial.Undernormality
+theoptimalforecastundertheselossfunctionsrangesfromabout
+onequarterofthetrueconditionalvariancetothreetimesthetrue
+conditionalvariance.Ifreturnsexhibitexcessconditionalkurtosis
+thentherangeofoptimalforecastsfromtheselossfunctionsis
+evenwider.
+Table1 providesatheoreticalexplanationforthewidespread
+findingofconflictingrankingsofvolatilityforecastswhennon-
+robustlossfunctionsareusedinappliedwork. Lamoureuxand
+Lastrapes (1993), Hamilton and Susmel (1994), Bollerslev and
+9 This distortion remains if the target is instead the conditional standard
+deviation,astheabsolutereturnisnotanunbiasedproxyforthatquantity.
+Ghysels (1994) andHansen and Lunde (2005), amongst many
+others,usesomeoralloftheninelossfunctionsconsideredin
+Table1andfindthatthebest-performingvolatilitymodelchanges
+with the choice of loss function. Given that, for example, the
+MSE-proplossfunctionleadstoanoptimalforecastthatisbiased
+upwardsbyatleastafactorofthree,whiletheMAElossfunction
+leadstoanoptimalforecastthatisbiased downwardsbyatleasta
+factoroftwo,itisnosurprisethatdifferentrankingsofvolatility
+forecastsarefound.
+2.2. Usingbettervolatilityproxies
+It has long been known that squared returns are a rather
+noisy proxy for the true conditional variance. One alternative
+volatilityproxythathasgainedmuchattentionrecentlyis‘‘realised
+volatility’’,seeAndersenetal.(2001,2003),andBarndorff-Nielsen
+andShephard(2002,2004).Anothercommonlyusedalternative
+tosquaredreturnsistheintra-dailyrange.Itiswellknownthat
+ifthelogstockpricefollowsaBrownianmotionthenbothof
+theseestimatorsareunbiasedandmoreefficientthanthesquared
+return.Inthissectionweobtaintherateatwhichthedistortionin
+therankingofalternativeforecastsdisappearswhenusingrealised
+volatilityastheproxy,asthesamplingfrequencyincreases,fora
+simpledatageneratingprocess(DGP).
+Assumethatthereare mequally-spacedobservationspertrade
+day,andlet ri,m,tdenotethe ithintra-dailyreturnonday t.While
+recentworkonrealisedvolatilitywouldenableustoconsidera
+quitegeneralclassofDGPs,inordertoobtainanalyticalresults
+forproblemsinvolvingthe rangeasavolatilityproxyweconsider
+onlyasimpleDGP:zeromeanreturn,nojumps,andconstant
+conditionalvolatilitywithinatradeday. 10PattonandSheppard
+(2009) present the corresponding results for a range of more
+realisticDGPsviasimulation. 11Let
+rt =dlogPt = σtdWt (16)
+στ = σt ∀τ ∈ (t −1,t] (17)
+ri,m,t ≡
+∫ i/m
+(i−1)/m
+rτdτ = σt
+∫ i/m
+(i−1)/m
+dWτ (18)
+so
+
+ri,m,t
+m
+i=1 ∼i.i.d.N
+
+0, σ2t
+m
+
+. (19)
+The‘‘realisedvolatility’’or‘‘realisedvariance’’isdefinedas:
+RV(m)t ≡
+m−
+i=1
+r2i,m,t .
+Realisedvariance,likethedailysquaredreturn(whichisobtained
+intheaboveframeworkbysetting m =1),isaconditionallyunbi-
+asedestimatorofthedailyconditionalvariance.Itsmainadvantage
+isthatitismoreefficientestimatorthanthedailysquaredreturn:
+forthisDGPitcanbeshownthat Et−1[(r2t − σ2t )2] =2σ4t while
+Et−1[(RV(m)t − σ2t )2] =2σ4t /m.ThusRV (m)t →p σ2t asm → ∞,
+undertheseassumptions,andwefindinthiscasethat σ2t isob-
+servable.Asexpected,alldistortionsvanishinthiscase.
+10 Analyticalandempiricalresultsontherangeand‘‘realisedrange’’undermore
+flexibleDGPsarepresentedintworecentpapersby ChristensenandPodolskij
+(2007)andMartensandvanDijk(2007).
+11 WhentheDGPisspecifiedtobelog-normalorGARCHstochasticvolatility
+diffusions,PattonandSheppard(2009)findresultsverysimilartothoseobtained
+forthecasebelow.Usingthesameparameterisationsasthoseinthesimulations
+ofGonçalvesandMeddahi(2009),slightlylargerbiasesfromthenon-robustloss
+functionsarefound,buttheygenerallydifferfromthosein Table2 onlyinthe
+seconddecimalplace.Incontrast,thebiasesarefoundtobemuchlargerunder
+thetwo-factorstochasticvolatilitydiffusionconsideredby GonçalvesandMeddahi
+(2009).
+
+===== PDF PAGE 5 =====
+250 A.J.Patton/JournalofEconometrics160(2011)246–256
+Table 1
+Optimalforecastsundervariouslossfunctions.
+Lossfunction Distributionofdailyreturns
+Ft (0, σ2t ) Student’st(0, σ2t , ν)
+ν ν =6 ν =10 ν → ∞
+MSE σ2t σ2t σ2t σ2t σ2t
+QLIKE σ2t σ2t σ2t σ2t σ2t
+MSE-LOG exp {Et−1[log ε2t ]}σ2t exp Ψ 12  − Ψ  ν2  (ν −2)σ2t 0.22σ2t 0.25σ2t 0.28σ2t
+MSE-SD (Et−1[|εt |])2σ2t ν−2π 0  ν−12  /0  ν2 2 σ2t 0.56σ2t 0.60σ2t 0.64σ2t
+MSE-prop Kurtosis t−1 [rt ]σ2t 3 ν−2ν−4 σ2t 6.00σ2t 4.00σ2t 3.00σ2t
+MAE Median t−1 [r2t ] ν−2ν Median [F1,ν ]σ2t 0.34σ2t 0.39σ2t 0.45σ2t
+MAE-LOG Median t−1 [r2t ] ν−2ν Median [F1,ν ]σ2t 0.34σ2t 0.39σ2t 0.45σ2t
+MAE-SD Median t−1 [r2t ] ν−2ν Median [F1,ν ]σ2t 0.34σ2t 0.39σ2t 0.45σ2t
+MAE-propa n/a
+
+2.36 + 1.00ν + 7.78ν2
+
+σ2t 2.73σ2t 2.55σ2t 2.36σ2t
+Notes:Thistablepresentstheforecastthatminimisestheconditionalexpectedlosswhenthesquaredreturnisusedasavolatilityproxy.Thatis, h∗tminimisesEt−1[L(r2t ,h)],
+forvariouslossfunctions L.Thefirstcolumnpresentsthesolutionswhenreturnshaveanarbitraryconditionaldistribution rt |Ft−1 ∼Ftwithmeanzeroandconditional
+variance σ2t,thesecond,third,andfourthcolumnspresentresultswithreturnshaveaStudent’s tdistributionwithmeanzero,variance σ2t anddegreesoffreedom ν,and
+thefinalcolumnpresentsthesolutionswhenreturnsareconditionallynormallydistributed. 0isthegammafunctionand Ψisthedigammafunction.
+a TheexpressionsgivenforMAE-proparebasedonanumericalapproximation,see Patton(2006)fordetails.
+Therange,orthehigh/low,estimatorhasbeenusedinfinance
+formanyyears,see GarmanandKlass(1980)andParkinson(1980).
+Theintra-dailylograngeisdefinedas:
+RGt ≡maxτ logPτ −minτ logPτ , t −1 < τ≤t. (20)
+UnderthedynamicsinEq. (16)Feller(1951)presentedthedensity
+ofRG t,and Parkinson(1980)presentedaformulaforobtaining
+momentsoftherange,whichenableustocompute:
+Et−1
+
+RG2t  =4log (2) · σ2t ≈2.7726σ2t . (21)
+DetailsonthedistributionalpropertiesoftherangeunderthisDGP
+arepresentedin Patton(2006).Theaboveexpressionshowsthat
+squaredrangeis notaconditionallyunbiasedestimatorof σ2t;we
+willthusfocusbelowonthe adjustedrange:
+RG∗t ≡ RGt
+2
+√
+log (2) ≈0.6006RGt (22)
+which,whensquared,isanunbiasedproxyfortheconditionalvari-
+ance.Notethattheadjustmentfactordependscriticallyonthe
+assumedDGP,whichisapotentialdrawbackoftherangeasa
+volatilityproxy.Usingtheresultsof Parkinson(1980)itissimpleto
+determinethatMSE t−1[RG∗2t ] ≈0.4073σ4t,whichisapproxi-
+matelyone-fifthoftheMSEofthedailysquaredreturn.
+Wenowdeterminetheoptimalforecastsobtainedusingthe
+variouslossfunctionsconsideredabove,when ˆσ2t =RV(m)t or ˆσ2t =
+RG∗2t isusedasaproxyfortheconditionalvarianceratherthan r2t.
+Weinitiallyleave munspecifiedfortherealisedvolatilityproxy,
+andthenspecialisetothreecases: m =1,13and78,correspond-
+ingtotheuseofdaily,half-hourlyand5-minreturns,onastock
+listedontheNewYorkStockExchange(NYSE).
+For MSE and QLIKE the optimal forecast is simply the
+conditionalmeanof ˆσ2t,whichequalstheconditionalvariance,as
+RV(m)t andRG ∗2t arebothconditionallyunbiased.TheMSE-SDloss
+functionyields (Et−1[ ˆσt ])2astheoptimalforecast.Undertheset-
+upabove,
+RV(m)t ≡
+m−
+i=1
+r2t,i = σ2tm m−i=1 ε2t,i
+somσ −2t RV(m)t ∼ χ2m
+soh∗t = σ2tm E [χ2m]2
+E
+[
+χ2m
+]
+≈ √m − 1
+4
+√
+m
+byaTaylorseriesapproximation
+soh∗t ≈ σ2t
+
+1 −
+1
+2m
++
+1
+16m2
+
+≈
+
+
+
+0.5625 · σ2t form =1
+0.9619 · σ2t form =13
+0.9936 · σ2t form =78.
+TheresultsfortheMSE-SDlossfunctionusingrealisedvolatility
+show that reducing the noise in the volatility proxy improves
+theoptimalforecast, 12consistentwith HansenandLunde(2006).
+Usingtherangewefindthat
+h∗t = Et−1 RG∗t 2 = 2πlog2 σ2t ≈0.9184σ2t
+and so the distortion from using the range is approximately
+equaltothatincurredwhenusingarealisedvolatilityconstructed
+using6intra-dailyobservations.Calculationsfortheremaining
+lossfunctionsarecollectedin Patton(2006),andtheresultsare
+summarisedin Table2.
+Theresultsin Table2confirmthatastheproxyusedtomeasure
+thetrueconditionalvariancegetsmoreefficientthedegreeof
+distortiondecreasesforalllossfunctions.Usinghalf-hourreturns
+(13intra-dailyobservations)ortheintra-dailyrangestillleaves
+substantialdistortionsintheoptimalforecasts,butusing5-min
+returns(78intra-dailyobservations)eliminatesalmostallofthe
+bias,atleastinthissimpleframework.Whilehighfrequencydata
+isavailableandreliableforsomeassets(themostliquidassetson
+well-developedexchanges),formostassetsitisnotpossibleto
+obtainreliablehigh-frequencydata,andthustheimpactofnoise
+inthevolatilityproxycannotbeignored.
+3. A class of robust loss functions
+In the previous section we showed that amongst nine loss
+functionscommonlyusedtocomparevolatilityforecasts,onlythe
+MSEandtheQLIKElossfunctionsleadto h∗t = Et−1[ ˆσ2t ] =σ2t,
+whichisanecessaryconditionforalossfunctiontoberobust
+12 Notethattheresultfor m =1isdifferenttothatobtainedinSection 2,which
+wash∗t = 2π σ2t ≈0.6366σ2t.Thisisbecausefor m =1wecanobtaintheexpression
+exactly,usingresultsforthenormaldistribution,whereasforarbitrary mwerelied
+onasecond-orderTaylorseriesapproximation.
+
+===== PDF PAGE 6 =====
+A.J.Patton/JournalofEconometrics160(2011)246–256 251
+Table 2
+Optimalforecastsundervariouslossfunctions,usingrealisedvolatilityandrange.
+Lossfunction Volatilityproxy
+Range Realisedvolatility
+Arbitrarym m =1 m =13 m =78 m → ∞
+MSE σ2t σ2t σ2t σ2t σ2t σ2t
+QLIKE σ2t σ2t σ2t σ2t σ2t σ2t
+MSE-LOGa 0.85σ2t e−1.2741/mσ2t 0.28σ2t 0.91σ2t 0.98σ2t σ2t
+MSE-SD 0 .92σ2t 1m
+
+E
+
+χ2m
+2
+σ2t 0.56σ2t 0.96σ2t 0.99σ2t σ2t
+MSE-prop 1 .41σ2t 1 + 2m  σ2t 3.00σ2t 1.15σ2t 1.03σ2t σ2t
+MAE 0 .83σ2t 1mMedian [χ2m]σ2t 0.45σ2t 0.95σ2t 0.99σ2t σ2t
+MAE-LOG 0 .83σ2t 1mMedian [χ2m]σ2t 0.45σ2t 0.95σ2t 0.99σ2t σ2t
+MAE-SD 0 .83σ2t 1mMedian [χ2m]σ2t 0.45σ2t 0.95σ2t 0.99σ2t σ2t
+MAE-propa 1.19σ2t 1 + 1.3624m  σ2t 2.36σ2t 1.10σ2t 1.02σ2t σ2t
+Notes:Thistablepresentstheforecastthatminimisestheconditionalexpectedlosswhentherangeorrealisedvolatilityisusedasavolatilityproxy.Thatis, h∗t minimises
+Et−1[L( ˆσ2t ,h)],for ˆσ2t =RG∗2t or ˆσ2t =RVt,forvariouslossfunctions L.InallcasesreturnsareassumedtobegeneratedasazeromeanBrownianmotionwithconstant
+volatilitywithineachtradedayandnojumps.Thecasesof m =1,13,78correspondtotheuseofdailysquaredreturns,realisedvariancewith30-minreturnsandrealised
+variancewith5-minreturnsrespectively.Thecasethat m → ∞correspondstothecasewheretheconditionalvarianceisobservableexpostwithouterror.
+a FortheMSE-LOGandMAE-proplossfunctionsweusedsimulations,numericalintegrationandnumericaloptimisationtoobtaintheexpressionsgiven.Detailsonthe
+computationofthefiguresinthistablearegivenin Patton(2006).
+tonoiseinthevolatilityproxy.Thefollowingpropositionisthe
+maintheoreticalcontributionofthepaper;itprovidesanecessary
+andsufficientclassofrobustlossfunctionsforvolatilityforecast
+comparison,whicharerelatedtotheclassoflinear-exponential
+densitiesofGourierouxetal.(1984),andtotheworkof Gourieroux
+etal.(1987).Wewillshowbelowthatthisclasscontainsaninfinite
+numberoflossfunctions,andallowsforasymmetricpenalties
+tobeappliedtoover-versusunder-predictions,aswellasfora
+symmetricpenalty.Wemakethefollowingassumptions:
+A1:Et−1[ ˆσ2t ] =σ2t forall t.
+A2: ˆσ2t |Ft−1 ∼Ft ∈ ˜F,thesetofallabsolutelycontinuousdis-
+tributionfunctionson R+.
+A3:Listwicecontinuouslydifferentiablewithrespectto hand
+ˆσ2,andhasauniqueminimumat ˆσ2 =h.
+A4:Thereexistssome h∗t ∈ int(H)suchthat h∗t = Et−1[ ˆσ2t ],
+where Hisacompactsubsetof R++.
+A5:LandFtaresuchthat:(a) Et−1[L( ˆσ2t ,h)] < ∞forsomeh ∈
+H;(b) |Et−1[∂L( ˆσ2t ,h)/∂h|h=σ2t ]| < ∞;and(c) |Et−1[∂2L( ˆσ2t ,h)/
+∂h2|h=σ2t ]| < ∞,forall t.
+Proposition 1. LetassumptionsA1toA5hold.ThenalossfunctionL
+isrobust,inthesenseof Definition1,ifandonlyifittakesthefollowing
+form:
+L
+
+ˆσ2,h = ˜C (h) +B  ˆσ2 +C (h)  ˆσ2 −h (23)
+whereBandC aretwicecontinuouslydifferentiable,C isastrictly
+decreasingfunctionon H,and ˜Cistheanti-derivativeofC.
+Remark 1. Ifwenormalisethelossfunctiontoyieldzeroloss
+when ˆσ2 =h,then B( ˆσ2) = −˜C( ˆσ2).
+Remark 2. Uptoadditiveandmultiplicativeconstants,MSElossis
+obtainedbysetting C(z) = −z, ˜C(z) = −z2/2and B(z) =z2/2,
+andQLIKEisobtainedbysetting C(z) =1/z, ˜C(z) =log(z)and
+B(z) =0.
+Given the widespread interest in economics and finance
+in loss functions that depend only on the forecast error or
+thestandardisedforecasterror,wepresentbelowasomewhat
+surprisingresultonthesubsetofrobustlossfunctionsthatsatisfy
+oneoftheserestrictions.
+Proposition 2. (i)The‘‘MSE’’lossfunctionistheonlyrobustloss
+functionsatisfyingassumptions A1–A5thatdependssolelyonthe
+forecasterror, ˆσ2 −h.
+(ii)The‘‘QLIKE’’lossfunctionistheonlyrobustlossfunctionsatisfying
+assumptions A1–A5 that depends solely on the standardised
+forecasterror, ˆσ2/h.
+Thestandardisedforecasterrorwillbecentredapproximately
+around 1 (ifh is somewhat accurate) and, more interestingly,
+theconditionalvarianceofthestandardisedforecasterrorwill
+beapproximately2(underGaussianity)regardlessofthelevel
+ofvolatilityofreturns.ThustheaverageQLIKElosswillbeless
+affected (generally) by the most extreme observations in the
+sample.TheMSEloss,ontheotherhand,dependsontheusual
+forecasterror, ˆσ2 −h,whichwillbecentredapproximatelyaround
+zero,butwillhavevariancethatisproportionaltothesquareofthe
+varianceofreturns,i.e., σ4.Asnotedbyseveralpreviousauthors,
+thisimpliesthatMSEissensitivetoextremeobservationsandthe
+levelofvolatilityofreturns.
+Inmosteconomicandfinancialapplications,thechoiceofunits
+ofmeasurementisarbitrary,e.g.,measuringpricesindollarsversus
+cents,ormeasuringreturnsinpercentagesversusdecimals.Given
+this, it is useful to consider the impact of a simple change in
+unitsontherankingoftwocompetingforecastsbyexpectedloss.
+Theclassoflossfunctionspresentedin Proposition1 guarantees
+that the true conditional variance will be chosen (subject to
+samplingvariation)overanyotherforecastregardlessofthechoice
+units. However it does not guarantee that the ranking of two
+imperfect forecastswillbeinvarianttothechoiceofunits.The
+followingpropositionshowsthatbyusinga homogeneousrobust
+lossfunction,therankingofanytwo(possiblyimperfect)forecasts
+is invariant to a re-scaling of the data. It further provides an
+examplewheretherankingcanbereversedsimplywithare-
+scalingofthedataifanon-homogeneousrobustlossfunctionis
+used.
+Proposition 3. RecallthatalossfunctionLishomogeneousoforder
+kif
+L
+
+a ˆσ2,ah =akL  ˆσ2,h ∀a >0forsomek .
+Then:
+(i)Therankingofanytwo(possiblyimperfect)volatilityforecasts
+byexpectedlossisinvarianttoare-scalingofthedataiftheloss
+functionishomogeneous.
+
+===== PDF PAGE 7 =====
+252 A.J.Patton/JournalofEconometrics160(2011)246–256
+(ii)Therankingofanytwo(possiblyimperfect)volatilityforecastsby
+expectedlossmaynotbeinvarianttoare-scalingofthedataifthe
+lossfunctionisrobustbutnothomogeneous.
+Withtheabovemotivationforhomogeneouslossfunctions,
+wenowderivethesubsetofhomogeneous,robustlossfunctions.
+Itturnsoutthatthissubsetoffunctionsisindexedbyasingle
+parameter,whichdeterminesthebothdegreeofhomogeneityand
+theshapeofthelossfunction.Naturally,theMSElossfunctionis
+nestedinthiscase(homogeneousoforder2),asistheQLIKEloss
+function(homogeneousoforderzero).
+Proposition 4. Thefollowingfamilyoflossfunctions,indexedbythe
+scalarparameter b,correspondstotheentiresubsetofrobustand
+homogeneouslossfunctions.Thedegreeofhomogeneityisequalto
+b +2.
+L
+
+ˆσ2,h;b =
+
+
+
+1
+(b +1) (b +2) ( ˆσ2b+4 −hb+2)
+− 1b+1hb+1  ˆσ2 −h , forb ̸∈ {−1, −2}
+h − ˆσ2 + ˆσ2log ˆσ2
+h
+, forb = −1
+ˆσ2
+h
+−log
+ˆσ2
+h
+−1, forb = −2.
+(24)
+TheMSElossfunctionisobtainedwhen b =0andtheQLIKE
+lossfunctionisobtainedwhen b = −2,uptoadditiveandmulti-
+plicativeconstants.In Fig.1 wepresenttheaboveclassoffunc-
+tionsforvariousvaluesof b,rangingfrom1to −5,andinclud-
+ingtheMSEandQLIKEcases.Thisfigureshowsthatthisfamilyof
+lossfunctionscantakeawidevarietyofshapes,rangingfromsym-
+metric(b =0,correspondingtoMSE)toasymmetric,withheav-
+ierpenaltyeitheronunder-prediction( b <0)orover-prediction
+(b >0).Fig.2 plotstheratiooflossesincurredfornegativefore-
+casterrorstothoseincurredforpositiveforecasterrors,tomake
+clearertheformofasymmetriesintheselossfunctions.Othercon-
+siderationswhenchoosingalossfunctionfromtheclassinEq. (24)
+includethemomentconditionsrequiredforformaltestsandthe
+finite-samplepowerofthesetests. Patton(2006)presentsresults
+onhowmomentandmemoryconditionsrequiredforDMWtests
+varywiththeshapeparameter b.Itisnoteworthythatthemoment
+conditionsrequiredunderMSElossaresubstantiallystrongerthan
+thoseusingQLIKEloss.Relatedtothis, PattonandSheppard(2009)
+findthatthepowerofDMWtestsusingQLIKElossarehigherthan
+thoseusingMSEloss,providingfurthermotivationforusingQLIKE
+ratherthanMSEinvolatilityforecastingapplications.
+4. Empirical application to forecasting IBM return volatility
+In this section we consider the problem of forecasting the
+conditional variance of the daily open-to-close return on IBM,
+usingdatafromtheTAQdatabaseovertheperiodfromJanuary
+1993 to December 2003. We consider two simple volatility
+forecasting models that are widely used in industry: a 60-day
+rollingwindowforecast,andtheRiskMetricsvolatilityforecast
+basedondailyreturns:
+Rollingwindow :h1t =
+1
+60
+60−
+j=1
+r2t−j (25)
+RiskMetrics :h2t = λh2t−1 + (1 − λ)r2t−1, λ =0.94. (26)
+Weuseapproximatelythefirstyearofobservations(272obser-
+vations)toinitialisetheRiskMetricsforecasts,andtheremaining
+2500observationstocomparetheforecasts.Aplotofthevolatility
+forecastsisprovidedin Fig.3.Recallthatthetheoryintheprevious
+Fig. 1. Lossfunctionsforvariouschoicesof b.True σ2 =2inthisexample,with
+thevolatilityforecastrangingbetween0and4. b =0and b = −2correspondto
+theMSEandQLIKElossfunctionsrespectively.
+Fig. 2. Ratiooflossesfromnegativeforecasterrorstopositiveforecasterrors,for
+variouschoicesof b.True σ2 =2inthisexample,withthevolatilityforecastranging
+between0and4. b =0andb = −2correspondtotheMSEandQLIKElossfunctions
+respectively.
+sectionrequiresthatthevolatility proxy ( ˆσ2t )isconditionallyunbi-
+ased,butnosuchassumptionisrequiredforthevolatility forecasts
+(hit ):therollingwindowandRiskMetricsforecastscanbebiased,
+orinaccurateinotherways.(Indeed,Mincer–Zarnowitztestsre-
+portedin Patton(2006)indicatethatbothoftheseforecastsare
+biased.)
+Weemployavarietyofvolatilityproxiesinthecomparison
+oftheseforecasts:thedailysquaredreturn,andrealisedvariance
+(RV)computedusing65-min,15-minand5-minreturns. 13Inorder
+forthetheoryintheprevioussectiontobeapplied,werequirethe
+proxytobeconditionallyunbiased.ForaliquidstocksuchasIBM,
+alloftheseproxiescanplausiblybeconsideredfreefrommarket
+microstructureeffects.Thesameisnotlikelytrueforveryhigh
+13 Weuse65-minreturnsratherthan60-minreturnssothatthereareaneven
+numberofintervalswithintheNYSEtradeday,whichrunsfrom9.30amto4pm.
+
+===== PDF PAGE 8 =====
+A.J.Patton/JournalofEconometrics160(2011)246–256 253
+Fig. 3. ConditionalvarianceforecastsforIBMreturnsfrom60-dayrollingwindowandRiskMetricsmodels,January1994toDecember2003.
+Table 3
+ComparisonofrollingwindowandRiskMetricsforecasts.
+Lossfunction Volatilityproxy
+Dailysquaredreturn 65-minrealisedvol. 15-minrealisedvol. 5-minrealisedvol.
+b =1 −1.58 −1.66 −1.30 −1.35
+b =0(MSE) −0.59 −0.80 −0.03 −0.13
+b = −1 1.30 1.04 1.65 −1.55
+b = −2(QLIKE) 1.94 2.21 ∗ 2.73∗ 2.41∗
+b = −5 −0.17 0.25 1.63 0.65
+Notes:Thistablepresentsthe t-statisticsfromDiebold–Mariano–Westtestsofequalpredictiveaccuracyfora60-dayrollingwindowforecastandaRiskMetricsforecast,for
+IBMovertheperiodJanuary1994toDecember2003.A t-statisticgreaterthan1.96inabsolutevalueindicatesarejectionofthenullofequalpredictiveaccuracyatthe0.05
+level.Thesestatisticsaremarkedwithanasterisk.Thesignofthe t-statisticsindicateswhichforecastperformedbetterforeachlossfunction:apositive t-statisticindicates
+thattherollingwindowforecastproducedlargeraveragelossthantheRiskMetricsforecast,whileanegativesignindicatestheopposite.
+frequencies(suchas1-sor30-s),andmaynotbetruefor5-min
+RVforlessliquidstocks.
+In comparing these forecasts we present the results of
+Diebold–Mariano–Westtestsusingthelossfunctionpresentedin
+Proposition4,forfivedifferentchoicesofthelossfunctionparam-
+eter:b = {1,0, −1, −2, −5}.MSElossandQLIKElosscorrespond
+tob = 0and b = −2respectively. Table3 presentstestscom-
+paringtheRiskMetricsforecastsbasedondailyreturnswiththe
+60-dayrollingwindowvolatilityforecasts.Theonlylossfunction
+forwhichthedifferenceinforecastperformanceissignificantly
+differentfromzeroistheQLIKElossfunction:thedifferenceissig-
+nificantatthe0.05levelusing65-min,15-minand5-minrealised
+variancesasthevolatilityproxy,andsignificantatthe0.10level
+usingdailysquaredreturnsastheproxy.Inallofthesecasesthe
+t-statisticispositive,indicatingthattherollingwindowforecasts
+generatedlargeraveragelossthantheRiskMetricsforecasts.
+Interestingly,underMSEloss,thedifferencesinaverageloss
+favour the rolling window forecasts, though these differences
+arenotstatisticallysignificant.Mincer–Zarnowitztests(presented
+inPatton(2006))revealed,unsurprisingly,thatneitherofthese
+forecastsisoptimal.Robustlossfunctionsaredesignedtoalways
+selectthetrueconditionalvarianceoveranycompetingforecast,
+butwhencomparingtwo imperfectforecaststherankingcan,as
+inthisexample,changedependingonthechoiceoflossfunction.
+Thisemphasisestheflexibilitythatremainsevenwhenwerestrict
+attentiontohomogeneous,robustlossfunctions.
+5. Conclusion
+This paper analytically demonstrated some problems with
+volatilityforecastcomparisontechniquesusedintheliterature.
+Thesetechniquesinvariablyrelyonavolatilityproxy,whichis
+someimperfectestimatorofthetrueconditionalvariance,and
+thepresenceofnoiseinthevolatilityproxycanleadanimperfect
+volatilityforecastbeingselectedoverthetrueconditionalvariance
+forcertainchoicesoflossfunction.Thusnoisyvolatilityproxies
+notonlyreducepower,asdiscussedin AndersenandBollerslev
+(1998)forexample,theycanalsoseriouslyaffecttheasymptotic
+sizeofcommonlyusedtests.Weshowedanalyticallythatless
+noisyvolatilityproxies,suchastheintra-dailyrangeandrealised
+volatility,leadtolessdistortion,thoughinmanycasesthedegree
+ofdistortionisstilllarge.
+We derived necessary and sufficient conditions for the loss
+functiontoyieldrankingsofvolatilityforecaststhatarerobust
+tonoiseintheproxy.Wealsoproposedanewparametricfamily
+ofrobustandhomogeneouslossfunctions,whichyieldinference
+that is invariant to the choice of units of measurement. The
+newfamilyoflossfunctionnestsbothsquared-error(MSE)and
+the‘‘QLIKE’’lossfunctions,twoofthemostwidelyusedinthe
+volatilityforecastingliterature.AsmallempiricalstudyofIBM
+equity volatility illustrated the new loss functions in forecast
+comparisontests.
+Whilst volatility forecasting is a prominent example of a
+problemineconomicswherethevariableofinterestisunobserved,
+therearemanyothersuchexamples:forecastingthetruerate
+of GDP growth (not simply the announced rate); forecasting
+defaultprobabilities;andforecastingcovariancesorcorrelations.
+Thederivationsinthispaperexploitedthefactthatthelatent
+variableofinterestinvolatilityforecasting(namelytheconditional
+variance)isapositiverandomvariable,andtheproxyisnon-
+negativeandcontinuouslydistributed.Extendingtheresultsinthis
+papertohandlelatentvariablesofinterestwithsupportonthe
+entirerealline,aswouldberequiredforapplicationstostudies
+of the ‘‘true’’ rates of growth in macroeconomic aggregates or
+toconditionalcovariances,shouldnotbedifficult.Extendingour
+resultstohandleproxieswithdiscretesupport,suchasthosethat
+wouldbeusedindefaultforecastingapplications,mayrequire
+adifferentmethodofproof.Weleavesuchextensionstofuture
+research.
+
+===== PDF PAGE 9 =====
+254 A.J.Patton/JournalofEconometrics160(2011)246–256
+Acknowledgements
+The author would particularly like to thank Peter Hansen,
+Ivana Komunjer and Asger Lunde for helpful suggestions and
+comments.ThanksarealsoduetoTorbenAndersen,TimBollerslev,
+PeterChristoffersen,RobEngle,ChristianGourieroux,TonyHall,
+Mike McCracken, Nour Meddahi, Roel Oomen, Adrian Pagan,
+NeilShephard,KevinSheppard,andKenWallis.RunquanChen
+provided excellent research assistance. The author gratefully
+acknowledgesfinancialsupportfromtheLeverhulmeTrustunder
+GrantF/0004/AF.Someoftheworkonthispaperwasconducted
+whiletheauthorwasavisitingscholarattheSchoolofFinanceand
+Economics,UniversityofTechnology,Sydney.
+Appendix
+Proof of Proposition 1. Weprovethispropositionbyshowingthe
+equivalenceofthefollowingthreestatements:
+S1:Thelossfunctiontakestheformgiventhestatementofthe
+proposition;
+S2:Thelossfunctionisrobustinthesenseof Definition1;
+S3: The optimal forecast under the loss function is the
+conditionalvariance.
+Wewillshowthat S1 ⇒ S2 ⇒ S3 ⇒ S1.That S1 ⇒
+S2followsfrom HansenandLunde(2006):theirassumption2is
+satisfiedgiventheassumptionsforthepropositionandnotingthat
+∂2L( ˆσ2,h)/∂( ˆσ2)2 =B′′( ˆσ2)doesnotdependon h.
+Wenextshowthat S2 ⇒ S3:bythedefinitionof h∗twehave
+Et−1
+
+L
+
+ˆσ2t ,h∗t  ≤Et−1 L  ˆσ2t , ˜ht 
+foranyothersequenceof Ft−1-measurableforecasts ˜ht.Then
+E
+
+L
+
+ˆσ2t ,h∗t  ≤E L  ˆσ2t , ˜ht bytheLIE
+and E
+
+L
+
+σ2t ,h∗t  ≤E L σ2t , ˜ht sinceLisrobustunder S2.
+ButL( ˆσ2,h)hasauniqueminimumat ˆσ2 = h,andifweset
+˜ht = σ2t thenitmustbethecasethat h∗t = σ2t.
+Proving S3 ⇒ S1ismorechallenging.Forthispartwefollow
+theproofofTheorem1of KomunjerandVuong(2006),adaptedto
+ourproblem.Weseektoshowthatthefunctionalformoftheloss
+functiongiveninthepropositionisnecessaryfor h∗t =Et−1[ ˆσ2t ],
+forany Ft ∈ ˜F.Noticethatwecanwrite
+∂L
+
+ˆσ2t ,ht 
+∂h
+=c
+
+ˆσ2t ,ht  ˆσ2t −ht 
+wherec( ˆσ2t ,ht ) = ( ˆσ2t −ht )−1∂L( ˆσ2t ,ht )/∂h,since ˆσ2t ̸=hta.s.by
+assumptionA2.Nowdecompose c( ˆσ2t ,ht )into
+c
+
+ˆσ2t ,ht  =Et−1 c  ˆσ2t ,ht  + εt
+whereEt−1[εt ] =0.Thus
+Et−1
+
+∂L
+
+ˆσ2t ,h∗t 
+∂h
+
+=Et−1
+
+c
+
+ˆσ2t ,h∗t  ˆσ2t −h∗t 
+=Et−1
+
+c
+
+ˆσ2t ,ht Et−1  ˆσ2t −h∗t  +Et−1 εt  ˆσ2t −h∗t  .
+IfEt−1[∂L( ˆσ2t ,h∗t )/∂h] =0for h∗t = Et−1[ ˆσ2t ],thenitmustbe
+thatEt−1[ ˆσ2t −h∗t ] =0 ⇒ Et−1[εt ( ˆσ2t −h∗t )] =0forall
+Ft ∈ ˜F.EmployingageneralisedFarkaslemma,seeLemma8.1of
+GourierouxandMonfort(1996),thisimpliesthat ∃λ ∈ Rsuchthat
+λ( ˆσ2t −h∗t ) = εt ( ˆσ2t −h∗t )forevery Ft ∈ ˜Fandforall t.Since
+ˆσ2t −h∗t ̸= 0a.s.byassumptionA2thisimpliesthat εt = λa.s.
+forall t.Since Et−1[εt ] =0wethenhave λ =0.Thus c( ˆσ2t ,h∗t ) =
+Et−1[c( ˆσ2t ,h∗t )]forallt,whichimpliesthat c( ˆσ2t ,h∗t ) =c(h∗t ),and
+thusthat ∂L( ˆσ2t ,ht )/∂h =c(ht )( ˆσ2t −ht ).
+Theremainderoftheproofisstraightforward:Anecessarycon-
+ditionfor h∗t tominimise Et−1[L( ˆσ2t ,h)]isthat Et−1[∂2L( ˆσ2t ,h∗t )/
+∂h2] ≥0,usingA5tointerchangeexpectationanddifferentiation.
+Usingthepreviousresultwehave:
+Et−1
+
+∂2L  ˆσ2t ,h∗t 
+∂h2
+
+=Et−1
+
+c′ h∗t  ˆσ2t −h∗t  −c h∗t 
+= −c
+
+h∗t 
+whichisnon-negativeiff c(h∗t )isnon-positive.Fromassumption
+A4weknowthattheoptimumisintheinteriorof Handsowe
+knowthat c ̸=0,andthus c(h) <0 ∀h ∈ H.Toobtaintheloss
+functioncorrespondingtothegivenfirstderivativewesimplyin-
+tegrateup:
+L
+
+ˆσ2,h = ˆσ2
+∫
+c (h)dh −
+∫
+c (h)hdh
+=B
+
+ˆσ2 + ˆσ2C (h) −C (h)h + ∫ C (h)dh
+= ˜C (h) +B  ˆσ2 +C (h)  ˆσ2 −h
+whereCisastrictlydecreasingfunction(i.e. C ′ ≡ cisnegative)
+and ˜Cistheanti-derivativeof C.ByassumptionA3both BandC
+aretwicecontinuouslydifferentiable.Thus S3 ⇒ S1,completing
+theproof. 
+Proof of Proposition 2. Withoutlossofgenerality,weworkbe-
+lowwithlossfunctionsthathavebeennormalisedtoimplyzero
+losswhentheforecasterroriszero: L( ˆσ2,h) = ˜C(h) − ˜C( ˆσ2) +
+C(h)( ˆσ2 −h).
+(i)Wewanttofindthegeneralsub-setoflossfunctionsthat
+satisfyL( ˆσ2,h) = ˜L( ˆσ2 −h) ∀( ˆσ2,h)forsomefunction ˜L.This
+conditionimplies
+∂L
+
+ˆσ2,h
+∂ ˆσ2 = −∂L
+
+ˆσ2,h
+∂h
+∀
+
+ˆσ2,h
+−C
+
+ˆσ2 +C (h) +C ′ (h)  ˆσ2 −h =0 ∀  ˆσ2,h .
+Takingthederivativeofbothsidesw.r.t. ˆσ2weobtain:
+−C ′  ˆσ2 +C ′ (h) =0 ∀  ˆσ2,h
+whichimplies C ′ (h) = κ1 ∀h
+andsinceweknow Cisstrictlydecreasing,wealsohave κ1 <0.
+soC (h) = κ1h + κ2
+
+ˆσ2
+˜C (h) =1
+2
+κ1h2 + κ2  ˆσ2h + κ3  ˆσ2
+where κ2, κ3areconstantsofintegration,andmaybefunctionsof
+ˆσ2.Thusthelossfunctionbecomes
+L
+
+ˆσ2,h = 1
+2
+κ1h2 + κ2  ˆσ2h + κ3  ˆσ2 −12 κ1 ˆσ4
+− κ2
+
+ˆσ2 ˆσ2 − κ3  ˆσ2 + κ1h + κ2  ˆσ2 ˆσ2 −h
+= −
+1
+2
+κ1
+
+ˆσ2 −h2 .
+Sinceproportionalityconstantsdonotaffectthelossfunction,
+wefindthattheonlylossfunctionthatdependson ( ˆσ2,h)only
+throughtheforecasterror, ˆσ2 −h,istheMSElossfunction.
+(ii)Wenextwanttofindthegeneralsub-setoflossfunctions
+thatsatisfy L( ˆσ2,h) = ˜L( ˆσ2/h) ∀( ˆσ2,h)forsomefunction ˜L.Note
+thatthisconditionimpliesthat Lishomogeneousofdegreezero.
+
+===== PDF PAGE 10 =====
+A.J.Patton/JournalofEconometrics160(2011)246–256 255
+UsingProposition4below,thisimpliesthatthelossfunctionmust
+beoftheform:
+L
+
+ˆσ2,h = ˆσ2
+h
+−log
+ˆσ2
+h
+−1
+whichistheQLIKElossfunctionuptoadditiveandmultiplicative
+constants. 
+Proof of Proposition 3. (i) IfL is homogeneous thenE[L(a ˆσ2t ,
+ah1t )] ≥E[L(a ˆσ2t ,ah2t )] ⇔E[akL( ˆσ2t ,h1t )] ≥E[akL( ˆσ2t ,h2t )] ⇔
+E[L( ˆσ2t ,h1t )] ≥E[L( ˆσ2t ,h2t )],forany a >0.
+(ii) Here we need only provide an example. Consider the
+followingstylisedcase: σ2t = 1a.s. ∀t, (h1t ,h2t ) = (γ1, γ2) ∀t,
+and ˆσ2t issuchthat Et−1[ ˆσ2t ] =1a.s. ∀t.Asarobustbutnon-
+homogeneouslosswewillusetheonegeneratedbythefollowing
+specificationforC ′:
+C ′ (h) = −log (1 +h)
+soC (h) =h − (1 +h)log (1 +h)
+and ˜C (h) =1
+4
+
+h (3h +2) −2 (1 +h)2log (1 +h) .
+Forsmall hthislossfunctionresemblesthe b = 1lossfunction
+fromProposition4 (uptoascalingconstant),butformedium
+to largeh this loss function does not correspond to any in
+Proposition4.
+Giventhisset-up,wehave
+E
+
+L
+
+a ˆσ2t ,ahit  =14 aγi (3aγi +2) −2 (1 +aγi)2log (1 +aγi)
+−E
+
+˜C a ˆσ2t  +a[aγi − (1 +aγi)log (1 +aγi)] (1 − γi) .
+Thendefine
+dt (γ1, γ2,a) ≡L
+
+a ˆσ2t ,aγ1 −L a ˆσ2t ,aγ2
+E[dt (γ1, γ2,a)] =a4 (γ1 − γ2) (2 −4a −a (γ1 + γ2))
++
+1
+2
+
+a2 (γ1 −1)2 − (1 +a)2log (1 +aγ1)
+−
+1
+2
+
+a2 (γ2 −1)2 − (1 +a)2log (1 +aγ2) .
+Leth1t = γ1 = 1/3andlet h2t = γ2 = 3/2.Then E[dt (h1t ,
+h2t ,1)] = −0.0087,andsothefirstforecasthaslowerexpected
+lossthanthesecondusingthe‘‘original’’scalingofthedata.But
+E[dt (h1t ,h2t ,2)] =0.0061,andsoifallvariablesaremultiplied
+by2thenthesecondforecasthaslowerexpectedlossthanthe
+first. 
+Proof of Proposition 4. Weseekthesubsetofrobustlossfunc-
+tionsthatarehomogeneousoforder k :L(a ˆσ2,ah) =akL( ˆσ2,h)
+∀a >0.Let
+λ
+
+ˆσ2,h ≡ ∂L  ˆσ2,h /∂h
+=C ′ (h)  ˆσ2 −hforrobustlossfunctions .
+SinceLishomogeneousoforder k, λishomogeneousoforder (k −
+1).Thisimplies λ(a ˆσ2,ah) =ak−1λ( ˆσ2,h) =ak−1C ′(h)( ˆσ2 −h),
+whiledirectsubstitutionyields λ(a ˆσ2,ah) = aC ′(ah)( ˆσ2 −h).
+ThusC ′(ah) = ak−2C ′(h) ∀a > 0,thatis, C ′ishomogeneousof
+order (k −2).
+NextweapplyEuler’sTheoremto C ′:C ′′(h)h = (k −2)C ′(h)
+∀h >0,andso
+(2 −k)C ′ (h) +C ′′ (h)h =0.
+Wecansolvethisfirst-orderdifferentialequationtofind:
+C ′ (h) = γhk−2
+where γisanunknownscalar.Since C ′ <0weknowthat γ <0,
+andasthisisjustascalingparameterwesetitto −1withoutloss
+ofgenerality.
+C ′ (h) = −hk−2
+C (h) =
+ 1
+1 −k
+hk−1 +z1 k ̸=1
+−logh +z1 k =1
+˜C (h) =
+
+
+
+z1h +
+1
+k (1 −k)
+hk +z2 k ̸∈ {0,1}
+z1h +h −hlogh +z2 k =1
+z1h +logh +z2 k =0
+wherez1andz2areconstantsofintegration.Finally,wesubstitute
+theexpressionsfor Cand ˜CintoEq.(23),setB = −˜C,andsimplify
+toobtainthelossfunctionsinEq. (24)withk =b +2. 
+References
+Andersen,T.G.,Bollerslev,T.,1998.Answeringtheskeptics:yes,standardvolatility
+models do provide accurate forecasts. International Economic Review 39,
+885–905.
+Andersen,T.G.,Bollerslev,T.,Christoffersen,P.F.,Diebold,F.X.,2006.Volatilityand
+correlationforecasting.In:Elliott,G.,Granger,C.W.J.,Timmermann,A.(Eds.),
+HandbookofEconomicForecasting.NorthHollandPress,Amsterdam.
+Andersen,T.G.,Bollerslev,T.,Diebold,F.X.,2010.Parametricandnonparametric
+volatilitymeasurement.In:Hansen,L.P.,Aït-Sahalia,Y.(Eds.),Handbookof
+FinancialEconometrics.North-HollandPress,Amsterdam.
+Andersen,T.G.,Bollerslev,T.,Diebold,F.X.,Ebens,H.,2001.Thedistributionof
+realizedstockreturnvolatility.JournalofFinancialEconomics61,43–76.
+Andersen,T.G.,Bollerslev,T.,Diebold,F.X.,Labys,P.,2003.Modelingandforecasting
+realizedvolatility.Econometrica71(2),579–625.
+Andersen,T.G.,Bollerslev,T.,Lange,S.,1999.Forecastingfinancialmarketvolatility:
+samplefrequencyvis-à-visforecasthorizon.JournalofEmpiricalFinance6,
+457–477.
+Andersen,T.G.,Bollerslev,T.,Meddahi,N.,2005.Correctingtheerrors:volatility
+forecast evaluation using high-frequency data and realized volatilities.
+Econometrica73(1),279–296.
+Andersen,T.G.,Bollerslev,T.,Meddahi,N.,2004.Analyticevaluationofvolatility
+forecasts.InternationalEconomicReview45,1079–1110.
+Barndorff-Nielsen, O.E., Shephard, N., 2002. Econometric analysis of realised
+volatilityanditsuseinestimatingstochasticvolatilitymodels.Journalofthe
+RoyalStatisticalSociety,SeriesB64,253–280.
+Barndorff-Nielsen, O.E., Shephard, N., 2004. Econometric analysis of realized
+covariation:highfrequencybasedcovariance,regressionandcorrelationin
+financialeconomics.Econometrica72(3),885–925.
+Bollerslev, T., Engle, R.F., Nelson, D.B., 1994. ARCH models. In: Engle, R.F.,
+McFadden, D. (Eds.), Handbook of Econometrics. North Holland Press,
+Amsterdam.
+Bollerslev,T.,Ghysels,E.,1994.Periodicautoregressiveconditionalheteroscedas-
+ticity.JournalofBusinessandEconomicStatistics14(2),139–151.
+Christensen,K.,Podolskij,M.,2007.Realizedrange-basedestimationofintegrated
+variance.JournalofEconometrics141,323–349.
+Christoffersen,P.F.,Diebold,F.X.,1997.Optimalpredictionunderasymmetricloss.
+EconometricTheory13,808–817.
+Christoffersen,P.F.,Jacobs,K.,2004.Theimportanceofthelossfunctioninoption
+valuation.JournalofFinancialEconomics72,291–318.
+Clements,M.P.,2005.EvaluatingEconometricForecastsofEconomicandFinancial
+Variables.PalgraveMacMillan,UnitedKingdom.
+Cowles, A., 1933. Can stock market forecasters forecast? Econometrica 1 (3),
+309–324.
+Diebold, F.X., Lopez, J.A., 1996. Forecast evaluation and combination. In: Mad-
+dala,G.S.,Rao,C.R.(Eds.),HandbookofStatistics.North-Holland,Amsterdam,
+pp.241–268.
+Diebold, F.X., Mariano, R.S., 1995. Comparing predictive accuracy. Journal of
+BusinessandEconomicStatistics13(3),253–263.
+Engle, R.F., 1993. A comment on Hendry and Clements on the limitations of
+comparingmeansquareforecasterrors.JournalofForecasting12,642–644.
+Engle,R.F.,Hong,C.-H.,Kane,A.,Noh,J.,1993.Arbitragevaluationofvariance
+forecastswithsimulatedoptions.In:Chance,D.,Tripp,R.(Eds.),Advancesin
+FuturesandOptionsResearch.JIAPress,Greenwich,USA.
+Feller, W., 1951. The asymptotic distribution of the range of sums of random
+variables.AnnalsofMathematicalStatistics22,427–432.
+Garman,M.B.,Klass,M.J.,1980.Ontheestimationofsecuritypricevolatilitiesfrom
+historicaldata.JournalofBusiness53(1),67–78.
+Giacomini,R.,White,H.,2006.Testsofconditionalpredictiveability.Econometrica
+74(6),1545–1578.
+Gonçalves,S.,Meddahi,N.,2009.Bootstrappingrealizedvolatility.Econometrica77
+(1),283–306.
+Gourieroux, C., Monfort, A., 1996. Statistics and Econometric Models, Vol. 1.
+CambridgeUniversityPress,GreatBritain,(Q.Vuong,Trans.)(inFrench).
+Gourieroux,C.,Monfort,A.,Renault,E.,1987.Consistent M-estimatorsinasemi-
+parametricmodel,CEPREMAPWorkingPaper8720.
+
+===== PDF PAGE 11 =====
+256 A.J.Patton/JournalofEconometrics160(2011)246–256
+Gourieroux, C., Monfort, A., Trognon, A., 1984. Pseudo maximum likelihood
+methods:theory.Econometrica52(3),681–700.
+Granger, C.W.J., 1969. Prediction with a generalized cost function. Operations
+ResearchQuarterly20,199–207.
+Hamilton,J.D.,Susmel,R.,1994.Autoregressiveconditionalheteroskedasticityand
+changesinregime.JournalofEconometrics64(1–2),307–333.
+Hansen,P.R.,Lunde,A.,2006.Consistentrankingofvolatilitymodels.Journalof
+Econometrics131(1–2),97–121.
+Hansen,P.R.,Lunde,A.,2005.Aforecastcomparisonofvolatilitymodels:does
+anythingbeataGARCH(1,1)?JournalofAppliedEconometrics20(7),873–889.
+Huber,P.J.,1981.RobustStatistics.Wiley,NewYork,USA.
+Komunjer,I.,Vuong,Q.,2006.Efficienttconditionalquantileestimation:thetime
+seriescase,WorkingPaper2006–10,DepartmentofEconomics,UC-SanDiego.
+Lamoureux,C.G.,Lastrapes,W.D.,1993.Forecastingstockreturnvariance:toward
+anunderstandingofstochasticimpliedvolatilities.ReviewofFinancialStudies
+6(2),293–326.
+Martens,M.,vanDijk,D.,2007.Measuringvolatilitywiththerealizedrange.Journal
+ofEconometrics138,181–207.
+Meddahi, N., 2001. A theoretical comparison between integrated and realized
+volatilities,Manuscript,UniversitédeMontréal.
+Mincer,J.,Zarnowitz,V.,1969.Theevaluationofeconomicforecasts.In:Zarnowitz,J.
+(Ed.), Economic Forecasts and Expectations. National Bureau of Economic
+Research,NewYork.
+Pagan, A.R., Schwert, G.W., 1990. Alternative models for conditional volatility.
+JournalofEconometrics45,267–290.
+Parkinson,M.,1980.Theextremevaluemethodforestimatingthevarianceofthe
+rateofreturn.JournalofBusiness53(1),61–65.
+Patton,A.J.,2006.Volatilityforecastcomparisonusingimperfectvolatilityproxies,
+Research Paper 175, Quantitative Finance Research Centre, University of
+TechnologySydney.
+Patton, A.J., Sheppard, K., 2009. Evaluating volatility and correlation forecasts.
+In:Andersen,T.G.,Davis,R.A.,Kreiss,J.-P.,Mikosch,T.(Eds.),TheHandbookof
+FinancialTimeSeries.SpringerVerlag.
+Patton, A.J., Timmermann, A., 2007. Properties of optimal forecasts under
+asymmetriclossandnonlinearity.JournalofEconometrics140(2),884–918.
+Poon,S.-H.,Granger,C.W.J.,2003.Forecastingvolatilityinfinancialmarkets.Journal
+ofEconomicLiterature41,478–539.
+Shephard, N., 2005. Stochastic Volatility: Selected Readings. Oxford University
+Press,UnitedKingdom.
+West,K.D.,2006.Forecastevaluation.In:Elliott,G.,Granger,C.W.J.,Timmermann,A.
+(Eds.),HandbookofEconomicForecasting.NorthHollandPress,Amsterdam.
+West,K.D.,1996.Asymptoticinferenceaboutpredictiveability.Econometrica64,
+1067–1084.
+West,K.D.,Edison,H.J.,Cho,D.,1993.Autility-basedcomparisonofsomemodelsof
+exchangeratevolatility.JournalofInternationalEconomics35,23–45.

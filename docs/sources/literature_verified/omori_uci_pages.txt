@@ -1,0 +1,1399 @@
+===== PDF PAGE 1 =====
+        Stochastic volatility with leverage:
+       fast and efficient likelihood inference
+
+                               Yasuhiro Omori
+Faculty of Economics, University of Tokyo, Tokyo 113-0033, Japan
+
+                           omori@e.u-tokyo.ac.jp
+
+                               Siddhartha Chib
+  Olin School of Business, Washington University, St Louis, USA
+
+                                chib@wustl.edu
+
+                                Neil Shephard
+   Nuffield College, University of Oxford, Oxford OX1 1NF, UK
+
+                       neil.shephard@nuf.ox.ac.uk
+
+                              Jouchi Nakajima
+Faculty of Economics, University of Tokyo, Tokyo 113-0033, Japan
+
+                          n_sophia@f3.dion.ne.jp
+
+                                   August 2004,
+                           Revised September 2005
+
+                                               Abstract
+
+This paper is concerned with the Bayesian analysis of stochastic volatility (SV) models
+
+with leverage. Specifically, the paper shows how the often used Kim, Shephard, and Chib
+
+(1998) method that was developed for SV models without leverage can be extended to models
+
+with leverage. On letting the errors in the outcome yt and volatility specifications be t and
+
+t, respectively, the approach relies on the novel idea of approximating the joint distribution
+
+of (log  2  ,  t  )|sign(yt)  by  a  suitably  constructed  ten-component  mixture  of  bivariate  normal
+         t
+
+distributions. The resulting posterior distribution is summarized by MCMC methods and
+
+the small approximation error in working with the mixture approximation is corrected by a
+
+reweighting procedure. The overall procedure is fast and highly efficient. We illustrate the
+
+ideas on daily returns of the Tokyo Stock Price Index. Finally, extensions of the method are
+
+described for superposition models (where the log-volatility is made up of a linear combina-
+
+tion of heterogenous and independent autoregressions) and heavy-tailed error distributions
+
+(student and log-normal).
+
+Key words: Leverage effect, Markov chain Monte Carlo, Mixture sampler, Stochastic volatil-
+ity, Stock returns.
+
+                                               1
+
+
+===== PDF PAGE 2 =====
+1 Introduction
+
+There is by now a large literature on the fitting of stochastic volatility (SV) models (see, for ex-
+ample, the reviews in Ghysels, Harvey, and Renault (1996) and Shephard (2005)). Particularly
+well studied are SV models without leverage for which the Bayesian approach of Kim, Shephard,
+and Chib (1998) has become well established (for example, Mahieu and Schotman (1998), Prim-
+iceri (2005) and Stroud, Muller, and Polson (2003)). A salient feature of the Kim, Shephard, and
+Chib (1998) approach is that it produces samples from the posterior distribution of interest by
+sampling a more tractable approximate posterior distribution; the small approximation error is
+corrected by reweighting the sampled draws. This procedure is highly efficient in the sense that
+the sampled draws display weak serial dependence, a desirable feature of any well constructed
+MCMC algorithm. It has long been believed, however, that the Kim, Shephard, and Chib (1998)
+approach cannot be extended to the broader and more realistic class of SV models with leverage.
+The purpose of this paper is to show that in fact such an extension is eminently possible and
+that the modified approach retains all the appealing characteristics of the original approach -
+simplicity, ease of implementation, and weak serial dependence in the sampled draws.
+
+    The simplest model we study is the discrete time log-normal SV model given by
+
+                                   yt = t exp(ht/2),                                                     (1)
+
+                            ht+1 = � + (ht - �) + t, t = 0, 1, . . . , n,
+
+where yt is the observed response, {ht} are unobserved log-volatilities, || < 1,
+
+                                t   i.i.d. N (0, ) , and  =  1                  .                        (2)
+                                                              2
+                               t
+
+In this model, the parameter  measures the correlation between t and t and, when negative,
+captures the increase in volatility that follows a drop in equity returns (e.g. Black (1976) and
+
+Nelson (1991)).
+
+In the context of models without leverage, Kim, Shephard, and Chib (1998) approximate the
+
+distribution of log  2  by  a  mixture  of  seven  Gaussian  distributions  to  match  its  first  four  moments.
+                     t
+
+Conditioned on the latent mixture component indicators st, (t = 1, 2, . . . , n), this produces a
+
+model that is linear and Gaussian, with all its attendant benefits. Essentially, it then becomes
+possible to efficiently sample the posterior distribution of s = {st}nt=1, the latent volatilities
+h = {ht}nt=1 and the parameters by MCMC methods. One key feature of their method is that it
+permits the joint sampling of h conditioned on s thus leading to posterior draws that mix better
+
+than approaches that rely on one-at-a-time sampling of the volatilities. The sampling is finished
+
+by a reweighting step to compensate for any error arising from the mixture approximation. In
+
+this paper we show how this basic idea can be extended to SV models with leverage by starting
+
+with the joint distribution of log 2t , t|sign(yt) and approximating this distribution by a suitably
+constructed ten-component mixture of normal distributions. Our approach effectively solves the
+
+problems of fitting SV models with leverage. We also show how our new approach can be further
+
+extended to cover more general SV models than those given in (1).
+
+                                                   2
+
+
+===== PDF PAGE 3 =====
+    For a deeper understanding of the model we analyze in this paper it is worth noting that
+the model in Jacquier, Polson, and Rossi (2004) where t and t-1 are correlated is distinct and
+different. The model in (2) is appealing because it is an Euler approximation to the log-normal
+OU SV model with leverage. Thus, the methods we develop in this paper, combined with those
+of Elerian, Chib, and Shephard (2001), Eraker (2001) and Roberts and Stramer (2001), can
+be used to fit the corresponding continuous time model with discretely sampled data. Another
+distinction is that a model with correlated t and t-1 implies that yt|y1, ..., yt-1 can be skewed,
+while models which correlate t and t have symmetric yt|y1, ..., yt-1 unless t is skewed itself.
+On the other hand, in the alternative specification  has two roles, leverage and skewness. In our
+view, the use of a single parameter to model two effects is not appealing because it makes the
+parameter difficult to interpret. Another downside of this specification is that yt is no longer a
+martingale difference sequence. A more desirable way of introducing skewness in the distribution
+of yt|y1, ..., yt-1 is by modeling t as asymmetric within the setup of (2). This allows the SV model
+to maintain the martingale difference property in parallel fashion to what is done in the GARCH
+literature and in the literature on time-changed L�vy processes and L�vy based SV models. Yu
+(2005) provides further discussion of some of these issues alongside empirical evidence that the
+model in (2) is better supported in a real data example.
+
+    The rest of the paper is organized as follows. In Section 2 we develop in detail our approach
+to dealing with SV models with leverage. Section 3 illustrates the performance of this method
+both on its own terms and in relation to a single move method that appears in Jacquier, Polson,
+and Rossi (2004) in which the {ht} and the parameters are sampled one at a time, conditioned on
+the remaining values. In Section 4 we illustrate our techniques on data from the Japanese stock
+market. Section 5 deals with extensions of the method to superposition models (where the log-
+volatility is made up of a linear combination of heterogenous and independent autoregressions)
+and heavy-tailed error distributions (student and log-normal). Concluding remarks are contained
+in Section 6.
+
+2 Efficient auxiliary mixture sampler
+
+2.1 Reformulation in the no leverage case
+
+To motivate our technique, recall from Nelson (1988), Harvey, Ruiz, and Shephard (1994) and
+Harvey and Shephard (1996) that the process for yt in (1) can equivalently be expressed in terms
+of the the bivariate observations (dt, yt) where
+
+                                 dt = I( t  0) - I( t < 0),  (3)
+
+yt = log yt2 = ht + t,                                       (4)
+
+and                                  t = log t2.
+In other words, we have the map  yt = dt exp(yt/2).
+
+                                 3
+
+
+===== PDF PAGE 4 =====
+When  = 0 it is easy to see that the signs of y = (y1, ..., yn) are independent of y = (y1, ..., yn)
+which means that we can neglect d = (d1, ..., dn) and focus on the model in terms of {yt} which
+is linear in {ht} with an i.i.d. error t that follows a log 12 density
+
+           f (t)    =  1    exp  t - exp(t)  ,   t  R.
+                         2              2
+
+Although the latter distributional form still precludes direct and simple inference, Kim, Shephard,
+and Chib (1998) (KSC) introduced the idea of accurately approximating the log 21 distribution
+by a matched mixture of normal distributions
+
+                       K
+
+                g(t) = pifN (t|mi, vi2), t  R,                         (5)
+
+                       i=1
+
+where fN (t|mi, vi2) denotes the density function of a normal distribution with mean mi and
+variance vi2. The values of pi, mi and vi2 found by KSC on the basis of K = 7 components
+are reproduced in the first block of columns in Table 1. They proceeded to develop an efficient
+
+Bayesian MCMC method for sampling the resulting posterior distribution and then reweighted
+
+the sampled draws in a way to ensure that the variates corresponded to the posterior under the
+log 12 sampling density. The entire approach was shown to be efficient and readily implementable.
+
+    In our current work we have favored a tighter approximation to the density of the log 12
+distribution that utilizes K = 10 components. The component parameters are given in the
+
+second block of Table 1. For the moment, the columns in the table labeled ai and bi can be
+ignored.
+
+           KSC                                   K = 10
+
+i   pi          mi     vi2       pi          mi  vi2     ai  bi
+
+1 0.04395  1.50746 0.16735 0.00609   1.92677 0.11265 1.01418 0.50710
+
+2 0.24566 0.52478 0.34023 0.04775 1.34744 0.17788 1.02248 0.51124
+
+3 0.34001 -0.65098 0.64009 0.13057 0.73504 0.26768 1.03403 0.51701
+
+4 0.25750 -2.35859 1.26261 0.20674 0.02266 0.40611 1.05207 0.52604
+
+5 0.10556 -5.24321 2.61369 0.22715 -0.85173 0.62699 1.08153 0.54076
+
+6 0.00002 -9.83726 5.17950 0.18842 -1.97278 0.98583 1.13114 0.56557
+
+7 0.00730 -11.40039 5.79596 0.12047 -3.46788 1.57469 1.21754 0.60877
+
+8                           0.05591 -5.55246 2.54498 1.37454 0.68728
+
+9                           0.01575 -8.68384 4.16591 1.68327 0.84163
+
+10                          0.00115 -14.65000 7.33342 2.50097 1.25049
+
+   Table 1: Selection of (pi, mi, vi2, ai, bi). Left hand side was determined by Kim, Shephard and Chib,
+   the ones on the right hand side are new and represent a better approximation.
+
+    That the move to K = 10 components leads to a superior approximation is illustrated
+in Figure 1 where we plot the difference between the density of the log 21 distribution and
+the approximating mixture distribution, evaluated over the range from the first to the 99th
+percentiles. It can be seen from the first row of this figure that the new mixture with K =
+10 components provides a much closer fit. The second row of the figure shows that the new
+approximation is also close for the density of 12.
+
+                                                              4
+
+
+===== PDF PAGE 5 =====
+0.010   (a) Difference of densities: Log of 21                 0.010    (b) Difference of densities: Log of 21
+
+        KSC (K=7)                                                           K=10
+
+0.005                                                          0.005
+
+0.000                                                          0.000
+
+-0.005                                                         -0.005
+
+        -8 -6                -4          -2          0     2   2        -8        -6         -4         -2           0     2   2
+        (c) Difference of  densities:  Square  root  of     1           (d) Difference of  densities:  Square  root  of     1
+
+0.2     KSC (K=7)                                                 0.2       K=10
+
+0.1                                                               0.1
+
+0.0                                                               0.0
+
+-0.1                                                              -0.1
+
+-0.2                                                              -0.2
+
+-0.3                                                              -0.3
+
+0.0     0.5        1.0     1.5                 2.0             2.5 0.0      0.5       1.0  1.5                 2.0             2.5
+
+Figure 1: The difference between the approximate and the true densities (for the range from the 1st
+percentile to the 99th percentile). The log 12 density (top) and the 12 density (bottom).
+
+2.2 Reformulation in general case
+
+Now consider the general case of  = 0. The conditional distribution of  is
+
+                           t|dt, t  N dt exp (t/2) , 2(1 - 2) ,                                                            (6)
+
+which shows that we have two complications: dt is not ignorable and t enters both (4) and (6).
+Our idea now is to approximate the bivariate conditional density of
+
+                                                          t, t|dt
+
+as a mixture of bivariate normal densities. To develop our approximation we start with the usual
+marginal-conditional decomposition
+
+                                       f (t, t|dt) = f (t|dt)f (t|t, dt)
+
+                                                           = f (t)f (t|t, dt).                                             (7)
+
+                                                               5
+
+
+===== PDF PAGE 6 =====
+We now approximate f (t) by the mixture distribution given in (5) and let the approximation
+take the form
+
+                               K
+
+    g(t, t|dt) = pifN (t|mi, vi2)fN t|dt exp(mi/2) {ai + bi (t - mi)} , 2(1 - 2) , (8)
+
+                              i=1
+
+where the second term in the ith component
+
+                           fN t|dt exp(mi/2) {ai + bi (t - mi)} , 2(1 - 2)
+
+is intended to match the density of t|dt, t given in (6). Specifically, on inspection of the form
+of the density in (6), it can be seen that we are approximating
+
+                                         exp (t/2) exp(-mi/2)
+
+by
+                                                  (ai + bi (t - mi)),
+
+given t  N (mi, vi2). We focus on this approximation because it does not depend upon .
+Interestingly,  does not affect the quality of the approximation as we show below. To find the
+values (ai, bi), i = 1, ..., 10, we consider the mean square norm and let
+
+(ai  ,  bi)  =  arg  min   E{exp  (t/2)  exp(-mi/2)-a-b      (t  -  mi)}2,  t  N (mi, vi2),     i = 1, 2, ..., 10.
+
+                      a,b
+
+By calculation, we get
+
+                           ai = exp(vi2/8),
+
+                           bi  =  E{zt   exp(vizt/2)}  =  1  exp    vi2  ,  i = 1, 2, ..., 10,
+                                                          2         8
+
+which are evaluated and reproduced in Table 1.
+
+Remark 1 The key question is how well (8) approximates (7). We give results for  = -0.3, -0.6
+
+and -0.9. Figure 2 shows f and g for t|t, dt = 1 evaluated with t set at its 25th, 50th and
+75th percentiles. Likewise Figure 3 shows f and g for t|t, dt = 1 evaluated with t = -0.67,
+0, 0.67. The results suggest the approximation is quite good for it is very hard to see any
+
+difference between the true densities f and the approximations g. Further, Figure 4 shows the
+
+marginal density of t given dt = 1. It is clear that the true conditional joint density given dt is
+well approximated by the stated bivariate normal mixture.
+
+                                                          6
+
+
+===== PDF PAGE 7 =====
+         = -0.3, t=log 21(0.25)              = -0.3, t=log 21(0.5)                     = -0.3, t=log 21(0.75)
+         True    Approx                 4                                         4
+4
+                                                                                  2
+2                                       2
+
+      -0.25        0.00   21(0.250).25        -0.25        0.00   21(0.5)0.25          -0.25        0.00    21(0.750).25
+        = -0.6,   t =log                        = -0.6,   t =log                         = -0.6,   t =log
+
+4                                       4                                         4
+
+2                                       2                                         2
+
+10.0  -0.25        0.00   21(0.250).25  10.0  -0.25        0.00   21(0.5)0.25  10.0    -0.25        0.00    21(0.750).25
+        = -0.9,   t =log                        = -0.9,   t =log                         = -0.9,   t =log
+
+7.5                                     7.5                                       7.5
+
+5.0                                     5.0                                       5.0
+
+2.5                                     2.5                                       2.5
+
+      -0.25      0.00     0.25                -0.25         0.00  0.25                 -0.25          0.00  0.25
+
+Figure 2: The conditional density of t given dt = 1 and t = log 21(0.25), log 21(0.5), log 21(0.75)
+(left, middle, right) for  = -0.3, -0.6, -0.9 (top, middle, bottom).
+
+2.3 MCMC algorithm
+
+2.3.1 Broad principles
+The SV model can be expressed as
+
+                                 yt     =                ht       + t .
+
+                          ht+1                � + (ht - �)                     t
+
+Now on using the mixture approximation (8) to the density t, t|dt and introducing the mixture
+component indicator st  {1, 2, ..., K} we have that
+
+      t  |dt, st = i =L                        mi + vizt                               ,          zt  i.i.d. N (0, I),
+      t                   dt(ai + bivizt) exp(mi/2) +  1 - 2zt                                    zt
+
+where A =L B implies that A and B have the same distribution. If we let s = (s1, ..., sn),
+ = (, , ) and assume that h1|�  N (�, 2/(1 - 2)), then under the auxiliary notation
+
+                                        �1 = �2 = ... = �n = �,
+
+                                                         7
+
+
+===== PDF PAGE 8 =====
+0.3  = -0.3, t= -0.67                 0.3 = -0.3, t= 0              0.3 = -0.3, t= 0.67
+     True  Approx                     0.2                           0.2
+                                      0.1                           0.1
+0.2
+
+0.1
+
+     -10 -5                     0              -10 -5          0              -10 -5     0
+0.3 = -0.6, t= -0.67                  0.3 = -0.6, t= 0              0.3 = -0.6, t= 0.67
+
+0.2                                   0.2                           0.2
+
+0.1                                   0.1                           0.1
+
+     -10 -5                     0              -10 -5          0              -10 -5     0
+0.4 = -0.9, t= -0.67                  0.4 = -0.9, t= 0              0.4 = -0.9, t= 0.67
+
+0.2                                   0.2                           0.2
+
+     -10 -5                     0              -10 -5          0              -10 -5     0
+
+Figure 3: The conditional density of t given dt = 1 and t = -0.67, 0, 0.67 (left, middle, right) for
+ = -0.3, -0.6, -0.9 (top, middle, bottom). The value of  is set to 1 in this example.
+
+we have that the SV model with leverage can be expressed in linear Gaussian state space form
+(e.g. Harvey (1989), West and Harrison (1997) and Durbin and Koopman (2001))
+
+                                 yt                    ht           t                       (9)
+                                ht+1   =       �t + (ht - �t)   +   t   ,
+
+                                �t+1              �t                0
+
+for t = 1, 2, . . . , n, and
+
+                              h1  N        �0  ,  2/(1 - 2) + 02 20           .          (10)
+                              �1           �0
+                                                        20             02
+
+Under a given prior () on  and a normal prior on � (�  N (�0, 02)), it is now possible to
+effectively sample the posterior density
+
+                                g(s, h, , �|y, d), where h = (h1, ..., hn) ,             (11)
+
+by MCMC techniques (see for example Chib (2001) for a review of these methods). Of course,
+due to the approximation of t, t|dt, this posterior is not exactly the correct one, but we will
+
+                                                  8
+
+
+===== PDF PAGE 9 =====
+     = -0.3                      = -0.6                                      = -0.9
+                          5.0                                         5.0
+     True        Approx
+                          2.5                                         2.5
+5.0
+
+2.5
+
+     -0.25 0.00 0.25                     -0.25 0.00 0.25              -0.25 0.00 0.25
+
+Figure 4: The marginal density of t given dt = 1 for  = -0.3, -0.6, -0.9 (left, middle, right). The
+value of  is set to 1 in this example.
+
+see in subsection 2.4 that it is easy to correct the small error by reweighting the sampled draws.
+    There are a number of different ways of sampling the posterior density above but the scheme
+
+given next is relatively simple, fast and effective as we will show. First we initialize s, h, � and
+, and then iterate the following steps to obtain a posterior sample.
+
+   1. Draw s|h, �, , y, d.
+
+   2. Draw (h, �, )|s, y, d by
+
+        (a) Drawing |s, y, d.
+        (b) Drawing �, h|, s, y, d.
+
+2.3.2 Step 1
+
+We first define
+
+                         t = yt - ht, t = (ht+1 - �) - (ht - �),
+
+then evaluate for each i = 1, 2, ..., K
+
+(st = i|h, �, , y, d)
+
+      (st = i|t, t, dt, �, )
+
+      Pr(st = i)vi-1 exp  - (t           - mi)2  -  [t  -  dt exp(mi/2) {ai +     bi  (t  -  mi)}]2  .
+                                         2vi2                           2(1 - 2)
+
+This discrete distribution is sampled by the inverse distribution method.
+
+2.3.3 Step 2
+In Step 2a we sample the density
+
+                                          (|s, y, d)  g(y|d, s, )(),
+
+                                                 9
+
+
+===== PDF PAGE 10 =====
+marginalized over �. The density g(y|d, s, ) is found from the output of the Kalman filter
+recursions applied to the model in (9) and (10). As one of the elements of the state vector is �,
+which is time-invariant, this density can also be computed by the so-called augmented Kalman
+filter (e.g. Durbin and Koopman (2001)) but this procedure is computationally more involved.
+For the sampling we rely on the Metropolis-Hastings algorithm with a proposal density based
+on truncated Gaussian approximation of (|s, y, d) (Chib and Greenberg (1994) and Chib and
+Greenberg (1995)). We define  = (^, 2, ^) which maximizes (or approximately maximizes)
+g(y|d, s, )(). Then we generate a candidate  from the normal distribution truncated on
+the region R, TNR(, ), where
+
+         - 1                    =    -  2 log g(y|d, s, )()              ,
+                                                  
+                                                                     =b
+
+and R = { : || < 1, 2 > 0, || < 1}. Alternatively, we may generate a candidate from
+an untruncated Gaussian proposal using a transformation 1 = log(1 + ) - log(1 - ), 2 =
+log 12, 3 = log(1 + ) - log(1 - ).
+
+    The proposal values are accepted or rejected according to the Metropolis-Hastings probability
+of move. When the Hessian matrix is not negative definite (e.g. when |^|  1), we take a normal
+proposal TNR(, c0I) using some large constant c0.
+
+    Step 2b, the sampling of g(h, �|d, s, ), is simple and is implemented with the help of the
+Gaussian simulation smoother (Fr�hwirth-Schnatter (1994), Carter and Kohn (1994), de Jong
+and Shephard (1995) and Durbin and Koopman (2002)). Software for carrying out Gaussian
+simulation smoothing is widely available (Koopman, Shephard, and Doornik (1999)).
+
+2.4 Correcting for misspecification
+
+In our approach we approximate the true bivariate density f (t, t|dt, ) with our convenient
+mixture density g(t, t|dt, ). Thus the draws from our MCMC procedure
+
+                                             hj, �j, j, j = 1, 2, ..., M,
+
+are from the approximate posterior density g(h, �, |y, d). To produce draws from the correct
+posterior density f (h, �, |y, d) we simply re-weight the sampled draws. Define
+
+         jt = yt - hjt , jt = (htj+1 - �j) - j(htj - �j).
+
+Then we compute the weights
+
+         wj                  =   n   f (tj,  tj |dt ,  j)  ,  j = 1, 2, ..., M,
+                                t=1  g(jt ,  jt |dt,   j)
+
+and let                                                wj
+
+                                        wj =           M      wi  .
+                                                       i=1
+
+                                              10
+
+
+===== PDF PAGE 11 =====
+We can now acquire a sample from (h, �, |y, d) by resampling the sampled variates with
+weights proportional to wj. Furthermore, posterior moments can be computed by weighted
+averaging of the MCMC draws as in Kim, Shephard, and Chib (1998). For example, we can
+estimate the posterior mean of g() as
+
+                                                                                  M
+
+                                             E^[g()] = wjg(j).
+
+                                                                                 j=1
+
+We will see in the Monte Carlo experiments and in the empirical work that the variance of these
+weights is small, a consequence of the accuracy of our approximation. This implies, therefore,
+that the effect of the reweighting is modest.
+
+2.5 Associated particle filter
+
+We complete our methodological developments for this model by presenting a simulation-based
+approach to filtering. In particular, we show how we can recursively sample the distributions
+ht|y1, ..., yt, ht+1|y1, ..., yt and yt+1|y1, ..., yt, all conditional on �, , , . These sampled variates
+are needed in order to calculate marginal likelihoods, Bayes factors and goodness of fit statistics.
+We implement the filtering and associated computations by particle filter methods (e.g., in this
+context, Kim, Shephard, and Chib (1998) and Pitt and Shephard (1999) or more generally
+Doucet, de Freitas, and Gordon (2001)).
+
+    To describe the particle filtering, let t = (ht+1, ht) denote the state. With this definition,
+the SV model with leverage can be expressed in the form of a non-linear, non-Gaussian state
+space model consisting of the measurement density
+
+f (yt|t, �, ) = fN (yt|t-1 exp(ht/2), 1 - 2 exp(ht)),                              (12)
+
+where                    t = (ht+1 - �) - (ht - �),
+and evolution equations
+
+ht+2 = �(1 - ) +  0             ht+1 + t+1 .                                       (13)
+ht+1                     0  10  ht                             0
+
+Our particle filtering method is based on draws from (13) followed by evaluations of the density
+in (12).
+
+1. Initialize t = 0, 0i from its unconditional distribution for i = 1, 2, ..., I.
+
+2. For each i simulate
+
+                            it,+j1|it, �, , j = 1, 2, ..., J,                      (14)
+
+from the evolution equation (13). Compute wi,j = f (yt+1|it,+j1, �, ) and
+
+                            Wi,j = F (yt+1|ti,+j 1, �, ),
+
+                            11
+
+
+===== PDF PAGE 12 =====
+and record                J    I                          J    I
+                         j=1  i=1                        j=1  i=1
+            wt+1  =   1            wi,j ,  W t+1  =   1            Wi,j .
+                     IJ                              IJ
+
+3. Resample ti,+j1 with probabilities proportional to wi,j to produce a sample of size I, which
+   we label as t1+1, 2t+1, ..., It+1.
+
+4. Increment t and go to 2.
+
+It can be shown that as I, J  , wt+1 p f (yt+1|y1, ..., yt, �, ), and
+
+                  W t+1 p F (yt+1|y1, ..., yt, �, ),
+
+the predictive distribution function. In addition, the draws on t+1 are particles from t+1|y1, ..., yt,
+while the resampled items at stage 3 are samples from t+1|y1, ..., yt+1. It therefore follows that
+
+            n                 n
+                  log wt p log f (yt|y1, ..., yt-1, �, ),
+
+            t=1               t=1
+
+is a consistent estimate of the conditional log-likelihood and can be used in the method of Chib
+(1995) to calculate the marginal likelihood. Likewise the sequence of W t, and its reflected version
+2 W t - 1/2 , can be used to check for model fit as these are approximately i.i.d. standard uniform
+if the model is correctly specified. This diagnostic was introduced into econometrics by Kim,
+Shephard, and Chib (1998), following the earlier work of Shephard (1994), Smith (1985) and
+Rosenblatt (1952). Diagnostic checking of this type has been further popularized by Diebold,
+Gunther, and Tay (1998).
+
+3 Illustrative example
+
+3.1 Auxiliary mixture sampler
+
+This section gives illustrative examples to show the performance of the approximation discussed
+above. Throughout we use yt = log(yt2+c) where the offset c is used to deal with very small values
+of yt2 as in Kim, Shephard, and Chib (1998). Because our ten component mixture approximation
+provides an improved fit to the left tail of the log 21 density we set c equal to 0.0001 which is
+smaller than the value of c = 0.001 used by Kim, Shephard, and Chib (1998).
+
+    We simulated the data from the stochastic volatility model (1) where we set  = 0.97,
+  exp(�/2) = 0.65,  = 0.15 and  = -0.3. These values are based on the estimates reported
+by KSC and Yu (2005) in their analysis of daily returns on foreign exchange rates and the S&P500
+index. In addition, we also consider models with  = 0, -0.6, -0.9 to investigate the effect of 
+on the quality of our inferences. In each case, we consider samples with n = 1, 000 observations.
+
+                                   12
+
+
+===== PDF PAGE 13 =====
+The results are based on the prior distribution
+
+                      �  N (0, 1),          +1              Beta(20, 1.5),
+                                              2
+
+                      -2  Gamma             5     ,  0.05      ,      U (-1, 1),
+                                            2         2
+
+where U (-1, 1) denotes a uniform distribution on (-1, 1). The priors for  and 2 are the same
+as those used by Kim, Shephard, and Chib (1998). In particular we use a beta prior on ( + 1)/2
+to ensure the stationarity of the latent volatility process. To reflect the high persistence of the
+process in the previous empirical literature, we set E() = 0.86 and V ar() = 0.11. In the
+MCMC sampling of the posterior distribution, the initial 500 variates are discarded and the
+subsequent M = 5, 000 values are retained for purposes of analysis. Figure 5 shows the sample
+autocorrelations function, the sample paths and the posterior densities of parameters for the case
+ = -0.3. The sample paths look stable and the autocorrelations decay quickly. In Table 2, the
+summary statistics are given for the cases  = -0.3, -0.6 and -0.9. The posterior means are
+close to the true values, and all true values are contained in the 95% credible intervals.
+
+1                     1                               1                           1 exp(�/2)
+
+0                     0                               0                           0
+
+     0      50        100 0             50        100 0                 50        100 0  50                100
+1.00    2000                        2000              0.00          2000                 exp (� /2)  4000
+
+0.95                      0.25
+
+0.90                  0.20                           -0.25                        0.8
+     0
+                      0.15                           -0.50
+  40 
+  30                                                                              0.6
+  20
+                      0.10                           -0.75
+
+                4000        0               4000            0               4000       0 2000
+                                                                                         exp (� /2)
+
+                      15                              3                           7.5
+
+                      10                              2                           5.0
+
+10                    5                               1                           2.5
+
+    0.90 0.95 1.00             0.1 0.2 0.3                          -0.5 0.0             123
+
+Figure 5: Asymmetric stochastic volatility model ( = -0.3). Sample autocorrelation functions, sample
+paths and estimated posterior densities.
+
+To measure how well the chain mixes, we calculate the inefficiency factors (the inverse of
+
+                                                  13
+
+
+===== PDF PAGE 14 =====
+inefficiency factor is also known as numerical efficiency in Geweke (1992)). The inefficiency fac-
+
+tor (equivalently the autocorrelation time) is defined as 1 + 2       s  where  s  is  the  sample
+                                                                 s=1
+
+autocorrelation at lag s calculated from the sampled values.1 It is also the ratio of the numerical
+
+variance of the posterior sample mean to the variance of the posterior sample mean from the
+
+hypothetical uncorrelated draws. Thus it suggests the relative number of correlated draws nec-
+
+essary to attain the same variance of the posterior sample mean from the uncorrelated draws. In
+
+Kim, Shephard, and Chib (1998), where the  = 0 case was considered, the inefficiency factors
+
+were between 30 and 150 (Table 5, KSC) for the original mixture sampler and between 10 and
+
+16 for the improved integration sampler (Table 6, KSC). In our MCMC implementation, these
+
+values are still small for  = -0.3, -0.6 and -0.9, showing that our sampler is highly effective.
+
+Among the parameters (, , , ), the inefficiency factor of  is the smallest while that of 
+
+tends to be the largest. The leverage effect parameter  may have relatively larger values for
+
+higher negative correlations.
+
+In order to judge the quality of our approximation we next report the distribution of the
+
+weights as discussed above. Figures 6 and 7 shows the distribution of log(w(i) � M ), which
+
+would all have been zero if the approximation were exact. Figure 6 looks at the case of  = 0
+
+and compares the K = 7 component analysis used by Kim, Shephard, and Chib (1998) to our
+
+more refined K = 10 component analysis. While the standard deviation of the log-weights based
+
+on K = 7 is 0.92, it is 0.05 when K = 10. KSC demonstrated that reweighting had little impact
+
+on posterior inference about , �, so we would expect that the improvement here is small from a
+
+practical viewpoint.
+
+      (a) log-weights: KSC (K=7)      7.5 (b) log-weights: New (K=10)
+
+            N(s=0.917)                            N(s=0.0535)
+
+0.4                                   5.0
+
+0.2
+                                                        2.5
+
+-4 -3 -2 -1 0 1 2 3 4                                        -0.2 -0.1 0.0 0.1 0.2
+
+Figure 6: Histogram of the log(w(i) � M ) where M = 5, 000 is a number of samples for a symmetric
+stochastic volatility model ( = 0). Left: KSC (K = 7). Right: New (K = 10). Other line: the normal
+density function setting its mean and variance equal to the sample mean and sample variance.
+
+    In Figure 7, the distributions of log(w(i) � M ) are shown for our new approximation in an
+asymmetric volatility model ( = -0.3, -0.6, -0.9). For  = -0.3, its standard deviation is 0.41,
+which is much smaller than that of KSC in the symmetric volatility model. For  = -0.6, the
+
+    1We have used 2, 500 lags in the estimation of the inefficiency factors.
+
+                                  14
+
+
+===== PDF PAGE 15 =====
+       (a) log-weights: New (=-0.3, K=10)              (b) log-weights: New (=-0.6, K=10)
+
+              N(s=0.413)                          0.6  N(s=0.826)
+
+1.0                                               0.4
+
+0.5                                               0.2
+
+     -3         -2  -1  0                  1           -6          -4  -2  0               2
+     (c) log-weights: New (=-0.9, K=10)
+
+     N(s=1.73)
+
+0.3
+
+0.2
+
+0.1
+
+     -25 -20 -15 -10 -5 0                     5
+
+Figure 7: Histogram of the log(w(i) � M ) where M = 5, 000 is a number of samples for an asymmetric
+stochastic volatility model. Top right: New ( = -0.3, K = 10). Top left: New ( = -0.6, K = 10).
+Bottom left: New ( = -0.9, K = 10). Other line: the normal density function setting its mean and
+variance equal to the sample mean and sample variance.
+
+distribution is skewed to the left, and we have a slightly larger but still small standard deviation,
+0.83. For  = -0.9, the distribution is skewed to the left and the standard deviation is 1.73.
+This latter case is, however, somewhat special because in our analysis of real financial data we
+usually find that  is between -0.3 and -0.5.
+
+3.2 Comparison with a single move sampler
+
+In this subsection, we compare our mixture sampler with a single move sampler in which the
+{ht} and the parameters are sampled one-at-a-time, conditioned on the remaining values. Kim,
+Shephard, and Chib (1998) provide a similar comparison in the no leverage case.
+
+    The single move algorithm we employ in this experiment is essentially the algorithm developed
+by Jacquier, Polson, and Rossi (2004). A straightforward modification of their algorithm is
+needed, however, to account for the different manner in which leverage is modeled; as discussed
+in the introduction, in the latter paper, t and t-1 are correlated whereas in our case the
+dependence is in terms of t and t.
+
+    For comparability, the data set and prior is the same as in the previous section although the
+
+                                              15
+
+
+===== PDF PAGE 16 =====
+Parameter  True value    Unweighted        Weighted      95% interval      Inefficiency
+               0.97     Mean Stdev.     Mean Stdev.      [0.9420, 0.9880]            8.4
+               0.15     0.9685 0.0122   0.9686 0.0121    [0.1174, 0.2184]           10.1
+               -0.3     0.1644 0.0265   0.1644 0.0264  [-0.6579, -0.1532]            6.8
+               0.65    -0.4351 0.1295  -0.4338 0.1301    [0.5118, 0.7475]            2.1
+               0.97     0.6105 0.0723   0.6108 0.0751    [0.9429, 0.9865]            7.4
+               0.15     0.9680 0.0113   0.9685 0.0112    [0.1214, 0.2273]            7.8
+               -0.6     0.1684 0.0261   0.1681 0.0260  [-0.8242, -0.4340]            7.2
+               0.65    -0.6528 0.1004  -0.6501 0.0996    [0.5284, 0.7479]            3.1
+               0.97     0.6130 0.0585   0.6132 0.0580    [0.9349, 0.9766]            8.7
+               0.15     0.9595 0.0102   0.9592 0.0101    [0.1271, 0.2195]           11.2
+               -0.9     0.1694 0.0236   0.1688 0.0240  [-0.9693, -0.7159]
+               0.65    -0.8613 0.0662  -0.8515 0.0627    [0.6106, 0.7466]           14.7
+                        0.6807 0.0345   0.6841 0.0225                                5.3
+
+Table 2: Auxiliary mixture sampler. Summary statistics for three simulation experiments using a
+variety of values of . Sample size is 1,000 throughout.
+
+Parameter  True value   Mean           Stdev.    95% interval      Inefficiency
+               0.97     0.9629         0.0133    [0.9330, 0.9848]         598.7
+               0.15     0.1712         0.0295    [0.1201, 0.2342]        1350.4
+               -0.3    -0.4043         0.1235  [-0.6223, -0.1418]         620.5
+               0.65     0.5910         0.0522    [0.5046, 0.7042]           73.6
+               0.97     0.9615         0.0129    [0.9309, 0.9819]        1427.5
+               0.15     0.1763         0.0258    [0.1351, 0.2416]        1722.8
+               -0.6    -0.6026         0.0979  [-0.7769, -0.3909]
+               0.65     0.5743         0.0437    [0.5008, 0.6686]        2591.0
+               0.97     0.9619         0.0043    [0.9532, 0.9702]         384.1
+               0.15     0.1467         0.0041    [0.1390, 0.1549]        1166.8
+               -0.9    -0.8777         0.0185  [-0.9091, -0.8374]        5928.3
+               0.65     0.7085         0.0221    [0.6645, 0.7516]
+                                                                         8405.3
+                                                                          510.0
+
+Table 3: Single move sampler. Summary statistics for three simulation experiments using a variety
+of values of . Sample size is 1,000 throughout.
+
+burn-in is now 25,000 and the MCMC sample size is M = 250, 000, both considerably larger
+than before because of the high serial correlation in the output from the single move method.
+The average acceptance rates of the latent variable ht's in the Metropolis-Hastings algorithms
+are 71%, 55% and 29% for  = -0.3, -0.6 and -0.9. It appears that it gets increasingly difficult
+to find competitive proposal values in this method as the leverage correlation becomes more
+negative.
+
+    Our results from the single move method are given in Table 3 and Figure 8. Clearly, the
+sample autocorrelation functions decay markedly slowly and the inefficiency factors in several
+cases are in the thousands.2 Notice also a considerable worsening of the sample autocorrelations
+and inefficiency factors of (, ) for the cases  = -0.6 and  = -0.6. On comparing the
+corresponding results given in Table 2 it is apparent that the mixing properties of our method
+
+    2Due to the slowly declining serial correlations the inefficiency factors are based on 25, 000 lags. In addition,
+even though this algorithm is about 3 times faster per cycle than our algorithm, the high inefficiency factors imply
+that the single move method must be run for a substantially longer period to generate the same effective sample
+size.
+
+                                                             16
+
+
+===== PDF PAGE 17 =====
+1               1               1                                 1 exp(�/2)
+0               0               0                                 0
+
+ 0 1000 2000     0 1000 2000     0 1000 2000                       0 1000 2000
+1               1               1                                 1 exp (�/2)
+
+0               0               0                                 0
+
+ 0 1000 2000     0 1000 2000     0 1000 2000                       0 1000 2000
+1               1               1                                 1 exp (�/2)
+
+0               0               0                                 0
+
+   0 1000 2000     0 1000 2000     0 1000 2000                       0 1000 2000
+
+Figure 8: Single move sampler. Sample autocorrelation functions of parameters for asymmetric sto-
+chastic volatility models with  = -0.3, -0.6, -0.9.
+
+are strikingly better than those of the single move method.
+
+4 Empirical example
+
+In this section, we apply our approach to daily returns on the TOPIX (Tokyo Stock Price Index)
+which are calculated as the differences in the logarithm of the daily closing value of TOPIX. The
+sample period is from January 5, 1998 through December 30, 2002 leading to a sample of 1, 232
+days on which the market was open. Table 4 gives the summary statistics of the data. The mean
+and standard deviation of the returns are -0.026 and 1.284 respectively. In addition, there were
+602 days when yt > 0 and 630 days when yt  0.
+
+                     TOPIX (1998/1/5 - 2002/12/30)
+
+   Obs. Mean Stdev Max Min pos(+) neg(-)
+
+   1,232 -0.0255 1.2839 5.3749 -5.6819 602                   630
+
+                      Table 4: Summary statistics for TOPIX return data (log-difference).
+
+    We use the same prior distribution given in Section 3.1, while again the initial 500 MCMC
+iterations are discarded and the following 5, 000 values are recorded. Figure 9 shows the sample
+
+                                                             17
+
+
+===== PDF PAGE 18 =====
+autocorrelation functions, the sample paths and the posterior densities of (, , ,  = exp(�/2)).
+The sample autocorrelations decay quickly and the output mixes well.
+
+1                       1                    1                                 1 exp(�/2)
+
+0                       0                    0                                 0
+
+     0 400 800 1200          0 400 800 1200                    0 400 800 1200      0 400 800 1200
+                                                                               1.4 exp(�/2)
+
+0.95                                         0.00                              1.2
+0.90
+                        0.2                  -0.25                             1.0
+     0 2000 4000                                                                   0 2000 4000
+                                                        -0.50                         exp (� /2)
+                        0.1
+  20                                                                           7.5
+  10                       0 2000 4000        0 2000 4000                      5.0
+                                             3                                 2.5
+                                             2
+                        15                   1
+                        10
+                         5
+
+   0.85 0.90 0.95 1.00       0.1 0.2 0.3                       -0.5  0.0          1.00 1.25 1.50
+
+Figure 9: Estimation result for TOPIX. Sample autocorrelation functions, sample paths of MCMC
+output and estimated posterior densities.
+
+    Table 5 shows the estimated posterior means, standard deviations, the 95% credible intervals
+and inefficiency factors.3 These factors are small, suggesting that the the posterior moments
+of the parameters could be estimated with relatively economical sample sizes. The posterior
+means of , ,  are 0.95, 0.13 and 1.21 respectively, which are typical of the values found in
+prior analysis of these data.
+
+    The posterior mean of  is -0.36 and negative as expected, suggesting the presence of leverage.
+Since its 95% credible interval is [-0.59, -0.11], the posterior probability that  is negative is
+greater than 0.95.
+
+     Unweighted              Weighted
+
+   Parameter Mean Stdev. Mean Stdev. 95% interval Ineff Posterior correlation
+
+     0.9511 0.0185 0.9512 0.0185 [0.908, 0.980] 9.3 1 -.66 -.30 -.06
+
+     0.1343 0.0262 0.1341 0.0264 [0.091, 0.193] 13.0                                       1 .19 -.08
+
+     -0.3617 0.1265 -0.3578 0.1257 [-0.593,-0.107] 6.8                                             1 .13
+
+     1.2056 0.0573 1.2052 0.0571 [1.089, 1.318] 2.7                                                1
+
+   Table 5: Estimation result for TOPIX. Sample size was 5,000, based on 5,500 MCMC draws,
+   discarding the first 500. Posterior correlation denotes the posterior correlation matrix.
+
+    3The inefficiency factors are based on 100 lags of the autocorrelation functions and do not change materially
+when more lags (say a 1, 000) are involved.
+
+                                                               18
+
+
+===== PDF PAGE 19 =====
+    Figure 10 shows the distributions of log(w(i) � M ) for the proposed sampler. As in the
+illustrative examples when  = -0.3, the log weights are concentrated around zero, and the
+standard deviation is 0.34. In contrast, Kim, Shephard, and Chib (1998) in the context of the
+basic SV model report a standard deviation of around 1.0 in their analysis of similar data. This
+shows that our overall approach is well behaved.
+
+      log-weights
+
+1.50  N(s=0.343)
+
+1.25
+
+1.00
+
+0.75
+
+0.50
+
+0.25
+
+-2.5  -2.0         -1.5  -1.0  -0.5  0.0  0.5  1.0  1.5
+
+Figure 10: Sampling result of log-weights log(w(i) � M ) for the TOPIX series. Shows histogram and
+fitted normal density.
+
+    Table 5 shows the effect of reweighting on inference. We see that reweighting has a small
+effect on the estimates of the posterior mean. In the first column of Table 6 we present the log
+of the marginal likelihood for the SV model in the  = 0 case. The marginal likelihood here and
+elsewhere was calculated by the method of Chib (1995), alongside the modification for Metropolis-
+Hastings chains given in Chib and Jeliazkov (2001). The log-likelihood ordinate, which is an input
+into this computation, was calculated by the particle filter method with I = 2, 500 and J = 10.
+The marginal likelihood of this model can be compared to the SV model with leverage given
+in the third column of the table. The results show that the model with leverage improves the
+likelihood, evaluated at the posterior mean, by around 4 at the cost of a single parameter. On the
+basis of the log marginal likelihood, which contains an automatic penalty for model complexity,
+we find that the log of the Bayes factor in favor of the leverage model is around 2.
+
+                                                             19
+
+
+===== PDF PAGE 20 =====
+5 More general dynamics
+
+5.1 Framework
+
+Precisely the same methods can be used to handle flexible models of the type
+
+                                yt = t exp(ht/2), ht = ztt,                           (15)
+
+                                   t+1 = bt + Ttt + t,                                (16)
+
+where zt, bt and Tt are non-stochastic processes, potentially dependent on some parameter .
+
+We assume that
+
+                             t  N (0, ) ,  = 1  .                                     (17)
+                             t                                
+
+In order to simplify the exposition assume that  is non-singular. In principle this framework
+
+can allow general forms of leverage wherein the dependence between t and the elements of t is
+allowed to vary over the individual elements.
+
+This structure implies that
+
+                             t|dt, t  N dt exp (t/2) ,  -  .
+
+Then, if we use our bivariate mixture approximation, we get that
+
+              t    |dt, st = i =L                              mi + vizt           ,
+              t                          dt(ai + bivizt) exp(mi/2) + ( -  )1/2 zt
+
+where (zt, zt) i.i.d. N (0, I). Therefore, except for an increase in the dimension of the problem,
+this extension raises no new issues for our MCMC implementation.
+
+5.2 Example: superposition model
+
+Suppose that                                        r
+
+                                         ht = i,t,
+
+                                                  i=1
+
+where                                                            
+
+                        �     +    1     0 0 ���         0     t -   �     + t,
+                                   0
+              t+1  =    0                2 0 � � �       0           0
+                                   0     0 3 � � �
+                        0           ...   ... ... . . .  0           0
+                        ...                              ...         ...
+
+                        0          0     0 0 � � � r                 0
+
+                                         20
+
+
+===== PDF PAGE 21 =====
+and                                                                                  
+
+                                      =         1  11         22 � � �        r  r    .
+                                                    21          0 ���           0
+      t                N (0, ) ,            11                 22 � � �
+                                            22       0          ... . . .       0
+     t                                               ...                        ...
+                                              ...
+
+                                            rr 0                              r2
+
+Then the log-volatility is made up of the sum of independent autoregressions, each with a different
+
+persistence level and degree of leverage. Superposition models of this type have become popular
+
+in financial econometrics as they are more general than empirically limiting Markov volatility
+
+models while close to corresponding continuous time models (Shephard (1996), Engle and Lee
+
+(1999), Barndorff-Nielsen and Shephard (2001) and Chernov, Gallant, Ghysels, and Tauchen
+
+(2003)). It is easy to check that for  to be positive definite we need        r    i2  <  1.
+                                                                              i=1
+
+Table 6: Marginal likelihood estimation by the Chib (1995) method for the TOPIX data. All values
+are in the natural-log scale. SV, SV-t and SV-g denote the SV models with Gaussian, student t and
+normal log-normal errors. ASV allows  = 0. SP denotes superposition model.
+
+     Likelihood ordinate     SV       SV-t          ASV       ASV-t        ASV-g          SP
+     (S.E.)
+                          -2033.98   -2033.24      -2029.85   -2029.67     -2028.87    -2029.75
+                             (0.38)     (0.33)        (0.54)     (0.50)       (0.57)      (0.25)
+
+     Prior ordinate            3.75    0.16          3.09       0.99            3.38        7.84
+
+     Posterior ordinate        8.87    5.17        10.25        8.46          12.50       14.81
+     (S.E.)                  (0.02)  (0.20)        (0.02)     (0.08)          (0.04)      (0.04)
+
+     Marg Likelihood      -2039.10 -2038.24 -2037.00 -2037.14 -2037.98 -2036.72
+     (S.E.)                  (0.38) (0.39) (0.54) (0.50) (0.57) (0.25)
+
+                      SV     SV-t    ASV        ASV-t         ASV-g     SP
+                      SV-t   -0.37   -0.91        -0.85         -0.49  -1.03
+                      ASV            -0.54        -0.48         -0.11  -0.66
+                      ASV-t                        0.06          0.43  -0.12
+                      ASV-g                                      0.36  -0.18
+                                                                       -0.55
+
+   Table 7: Bayes factors for the TOPIX data. The figures are log (base 10) of Bayes factors for the
+   row model against the column model.
+
+    Column 6 of Table 6 shows that for the TOPIX data set adding a second volatility component
+to the model has a modest effect on the fit of the model as measured by the log marginal
+likelihood. The log of Bayes factors are also given in Table 7. These results are based on a
+prior where (2 + 1)/2  Beta(10, 10) with the side constraint that 2 < 1. Further, we
+assume (2 + 1)/2  Beta(10, 10) with the constraint that 0 < 21 + 22 < 1. Finally, 2-2 
+Gamma(5/2, 0.05/2). To generate a candidate with such constraints, we draw a candidate
+from the untruncated Gaussian proposal using a transformation 1 = log(1 + 1) - log(1 -
+1), 2 = log(1 + 2) - log(1 - 2), 3 = log 12, 4 = log 22, 5 = log(1 + 1) - log(1 - 1) and
+
+                                                             21
+
+
+===== PDF PAGE 22 =====
+6 = log( 1 - 21 + 2) - log( 1 - 12 - 2). Even though the log-likelihood, evaluated at the
+posterior mean of the parameters, is higher than the one component model, the new model has
+
+three extra parameters 2, 2 and 2, which is obviously penalized in the marginal likelihood
+computation.
+
+5.3 Example: heavy-tailed error distribution
+
+Many writers have followed Harvey, Ruiz, and Shephard (1994) in extending the SV model to
+allow for heavier tailed returns. For example, Chib, Nardari, and Shephard (2002) extended the
+basic Kim, Shephard, and Chib (1998) approach by letting
+
+         yt = t t exp(ht/2),                            (18)
+
+         ht+1 = � + (ht - �) + t, t = 0, 1, . . . , n,  (19)
+
+where t is an i.i.d. scale mixture variable and t  ( t, t) ( denotes probabilistic inde-
+pendence). This is relevant empirically and also corresponds to the literature on time-change
+L�vy processes and L�vy based SV models (Carr, Geman, Madan, and Yor (2003), Carr and
+Wu (2004) and Cont and Tankov (2004)). Papers on various inferential aspects of these models
+include Barndorff-Nielsen and Shephard (2005) and Li, Wells, and Yu (2004). In this subsection
+we will assume that
+
+                                               log t  N (-0.5 2,  2),
+
+in which case 1t /2 t has a normal log-normal distribution. This specification is closed in the
+empirical work by assuming that  2  Gamma(1, 1).
+
+    The above model fits into the framework put forward in (15)-(17) by writing
+
+         yt = t exp(ht/2),                              (20)
+
+         ht = ht+1 + t,                                 (21)
+
+         ht+1 = � + (ht - �) + t, t = 0, 1, . . . , n,  (22)
+
+where                                 
+
+          t    N   0                  1  0
+                   0          ,   2 0  .
+         t
+
+         t         -0.5 2      0 0 2
+
+Therefore, this extension again raises no new inferential issues.
+    Table 6 gives results for the three different heavier tailed specifications. In the second (fourth)
+
+column we report the results when  = 0 ( = 0) and t t follows a student-t distribution with
+ degrees of freedom, where   Gamma(16, 0.8). The fifth column reports the results for the
+Gaussian scale mixture SV model with leverage. The fit of the second model is better than the
+basic model, but not over the leverage model. Overall, however, the simple Gaussian SV model
+with leverage is preferred for these data.
+
+                         22
+
+
+===== PDF PAGE 23 =====
+6 Conclusion
+
+In this paper we have extended the Kim, Shephard, and Chib (1998) approach to SV models with
+leverage. This starts with the joint distribution of log 2t , t|sign(yt) which is then approximated
+by a suitably constructed ten-component mixture of bivariate normal distributions. We show
+that this method, which is easy to implement and produces output that mixes well, effectively
+solves the problems of fitting SV models with leverage. We also show how our new method can
+be further extended to cover even more general SV models such as those with heavy-tailed dis-
+tributions and superposition effects. In each case, our algorithm performs as well as the original
+Kim, Shephard, and Chib (1998) algorithm but is applicable under wider conditions. We also
+discuss the computation of the marginal likelihood and Bayes factors and provide an empirical
+analysis of real Japanese stock return data where the SV model with leverage is preferred over
+competing models.
+
+7 Acknowledgement
+
+The authors thank Toshiaki Watanabe, the editor and anonymous referees for their helpful com-
+ments. This work is partially supported by Seimeikai Foundation and Grants-in-Aid for Scientific
+Research 15500181 from the Japanese Ministry of Education, Science, Sports, Culture and Tech-
+nology. The computational results are obtained using Ox (see Doornik (2001)). Shephard's
+research is supported by the ESRC through the grant "High frequency financial econometrics
+based upon power variation."
+
+References
+
+   Barndorff-Nielsen, O. E. and N. Shephard (2001). Non-Gaussian Ornstein�Uhlenbeck-based
+       models and some of their uses in financial economics (with discussion). Journal of the Royal
+       Statistical Society, Series B 63, 167�241.
+
+   Barndorff-Nielsen, O. E. and N. Shephard (2005). Impact of jumps on returns and realised
+       variances: econometric analysis of time-deformed L�vy processes. Journal of Econometrics.
+       Forthcoming.
+
+   Black, F. (1976). Studies of stock price volatility changes. Proceedings of the Business and
+       Economic Statistics Section, American Statistical Association, 177�181.
+
+   Carr, P., H. Geman, D. B. Madan, and M. Yor (2003). Stochastic volatility for L�vy processes.
+       Mathematical Finance 13, 345�382.
+
+   Carr, P. and L. Wu (2004). Time-changed L�vy processes and option pricing. Journal of
+       Financial Economics 71, 113�141.
+
+   Carter, C. K. and R. Kohn (1994). On Gibbs sampling for state space models. Biometrika 81,
+       541�553.
+
+   Chernov, M., A. R. Gallant, E. Ghysels, and G. Tauchen (2003). Alternative models of stock
+       price dynamics. Journal of Econometrics 116, 225�257.
+
+                                                             23
+
+
+===== PDF PAGE 24 =====
+Chib, S. (1995). Marginal likelihood from the Gibbs output. Journal of the American Statistical
+    Association 90, 1313�1321.
+
+Chib, S. (2001). Markov chain Monte Carlo methods: computation and inference. In J. J.
+    Heckman and E. Leamer (Eds.), Handbook of Econometrics, Volume 5, pp. 3569�3649.
+    Amsterdam: North-Holland.
+
+Chib, S. and E. Greenberg (1994). Bayes inference for regression models with ARMA(p, q)
+    errors. Journal of Econometrics 64, 183�206.
+
+Chib, S. and E. Greenberg (1995). Understanding the Metropolis-Hastings algorithm. The
+    American Statistican 49, 327�335.
+
+Chib, S. and I. Jeliazkov (2001). Marginal likelihood from the Metropolis-Hastings output.
+    Journal of the American Statistical Association 96, 270�281.
+
+Chib, S., F. Nardari, and N. Shephard (2002). Markov chain Monte Carlo methods for gener-
+    alized stochastic volatility models. Journal of Econometrics 108, 281�316.
+
+Cont, R. and P. Tankov (2004). Financial Modelling with Jump Processes. London: Chapman
+    and Hall.
+
+de Jong, P. and N. Shephard (1995). The simulation smoother for time series models. Bio-
+    metrika 82, 339�350.
+
+Diebold, F. X., T. A. Gunther, and T. S. Tay (1998). Evaluating density forecasts with appli-
+    cations to financial risk management. International Economic Review 39, 863�883.
+
+Doornik, J. A. (2001). Ox: Object Oriented Matrix Programming, 3.0. London: Timberlake
+    Consultants Press.
+
+Doucet, A., N. de Freitas, and N. J. Gordon (Eds.) (2001). Sequential Monte Carlo Methods
+    in Practice. New York: Springer-Verlag.
+
+Durbin, J. and S. J. Koopman (2001). Time Series Analysis by State Space Methods. Oxford:
+    Oxford University Press.
+
+Durbin, J. and S. J. Koopman (2002). A simple and efficient simulation smoother for state
+    space time series analysis. Biometrika 89, 603�616.
+
+Elerian, O., S. Chib, and N. Shephard (2001). Likelihood inference for discretely observed
+    non-linear diffusions. Econometrica 69, 959�993.
+
+Engle, R. F. and G. G. J. Lee (1999). A permanent and transitory component model of
+    stock return volatility. In R. F. Engle and H. White (Eds.), Cointegration, Causality, and
+    Forecasting. A Festschrift in Honour of Clive W.J. Granger, pp. 475�497. Oxford: Oxford
+    University Press.
+
+Eraker, B. (2001). Markov chain Monte Carlo analysis of diffusion models with application to
+    finance. Journal of Business and Economic Statistics 19, 177�191.
+
+Fr�hwirth-Schnatter, S. (1994). Data augmentation and dynamic linear models. Journal of
+    Time Series Analysis 15, 183�202.
+
+                                                          24
+
+
+===== PDF PAGE 25 =====
+Geweke, J. (1992). Efficient simulation from the multivariate normal and Student-t distribu-
+    tions subject to linear constraints. Computing Science and Statistics: Proceedings of the
+    Twenty-third Symposium, 571�578.
+
+Ghysels, E., A. C. Harvey, and E. Renault (1996). Stochastic volatility. In C. R. Rao and G. S.
+    Maddala (Eds.), Statistical Methods in Finance, pp. 119�191. Amsterdam: North-Holland.
+
+Harvey, A. C. (1989). Forecasting, Structural Time Series Models and the Kalman Filter.
+    Cambridge: Cambridge University Press.
+
+Harvey, A. C., E. Ruiz, and N. Shephard (1994). Multivariate stochastic variance models.
+    Review of Economic Studies 61, 247�264.
+
+Harvey, A. C. and N. Shephard (1996). The estimation of an asymmetric stochastic volatility
+    model for asset returns. Journal of Business and Economic Statistics 14, 429�434.
+
+Jacquier, E., N. G. Polson, and P. E. Rossi (2004). Stochastic volatility models: Univariate
+    and multivariate extensions. Journal of Econometrics 122, 185�212.
+
+Kim, S., N. Shephard, and S. Chib (1998). Stochastic volatility: likelihood inference and
+    comparison with ARCH models. Review of Economic Studies 65, 361�393.
+
+Koopman, S. J., N. Shephard, and J. A. Doornik (1999). Statistical algorithms for models in
+    state space using SsfPack 2.2. The Econometrics Journal 2, 107�166.
+
+Li, H., M. Wells, and L. Yu (2004). A MCMC analysis of time-changed L�vy processes of stock
+    returns. Unpublished paper: Johnson Graduate School of Management, Cornell University,
+    Ithaca, U.S.A.
+
+Mahieu, R. and P. Schotman (1998). An empirical application of stochastic volatility models.
+    Journal of Applied Econometrics 16, 333�359.
+
+Nelson, D. B. (1988). The time series behaviour of stock market volatility and returns. Un-
+    published Ph.D.: MIT.
+
+Nelson, D. B. (1991). Conditional heteroskedasticity in asset pricing: a new approach. Econo-
+    metrica 59, 347�370.
+
+Pitt, M. K. and N. Shephard (1999). Filtering via simulation: auxiliary particle filter. Journal
+    of the American Statistical Association 94, 590�599.
+
+Primiceri, G. (2005). Time varying structural vector autoregressions and monetary policy.
+    Review of Economic Studies 72, 821�852.
+
+Roberts, G. O. and O. Stramer (2001). On inference for nonlinear diffusion models using the
+    Hastings-Metropolis algorithms. Biometrika 88, 603�621.
+
+Rosenblatt, M. (1952). Remarks on a multivariate transformation. Annals of Mathematical
+    Statistics 23, 470�472.
+
+Shephard, N. (1994). Partial non-Gaussian state space. Biometrika 81, 115�131.
+Shephard, N. (1996). Statistical aspects of ARCH and stochastic volatility. In D. R. Cox, D. V.
+
+    Hinkley, and O. E. Barndorff-Nielsen (Eds.), Time Series Models in Econometrics, Finance
+    and Other Fields, pp. 1�67. London: Chapman & Hall.
+
+                                                          25
+
+
+===== PDF PAGE 26 =====
+Shephard, N. (2005). Stochastic Volatility: Selected Readings. Oxford: Oxford University Press.
+Smith, J. Q. (1985). Diagnostic checks of non-standard time series models. Journal of Fore-
+
+    casting 4, 283�291.
+Stroud, J. R., P. Muller, and N. G. Polson (2003). Nonlinear state-space models with state-
+
+    dependent variances. Journal of the American Statistical Association 98, 377�386.
+West, M. and J. Harrison (1997). Bayesian Forecasting and Dynamic Models (2 ed.). New
+
+    York: Springer-Verlag.
+Yu, J. (2005). On leverage in a stochastic volatility model. Journal of Econometrics 127,
+
+    165�178.
+
+                                                          26

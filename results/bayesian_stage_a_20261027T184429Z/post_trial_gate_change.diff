@@ -1,0 +1,16 @@
+--- executed_repair2_source
++++ current_source
+@@ -391,7 +391,12 @@
+     write_csv(out/'diagnostics.csv',diagnostics)
+     write_csv(out/'chain_timings.csv',chain_reports)
+     elapsed=time.perf_counter()-started
+-    report={'status':'diagnostic pilot only; no forecast-comparison claim','accepted_for_rolling':bool(all(r['passes'] for r in diagnostics) and chains>=4),
++    from src.bayesian_stage_a_checks import moment_audit
++    parameter_gate=bool(all(r['passes'] for r in diagnostics) and chains>=4)
++    moment_check=moment_audit(priors[0],len(initial)-1)
++    report={'status':'diagnostic pilot only; no forecast-comparison claim',
++            'parameter_gate_passed':parameter_gate,'predictive_moment_audit':moment_check,
++            'accepted_for_rolling':bool(parameter_gate and moment_check['stage_a_mathematical_gate_passed']),
+             'warmup':warmup,'retained_draws_per_chain':draws,'independent_chains':chains,'training_n':len(initial),
+             'latest_fit_date':dates[initial[-1]].isoformat(),'lambda_per_year':lam,'max_rhat':max(r['rhat'] for r in diagnostics),
+             'min_ess_bulk':min(r['ess_bulk'] for r in diagnostics),'min_ess_tail':min(r['ess_tail'] for r in diagnostics),

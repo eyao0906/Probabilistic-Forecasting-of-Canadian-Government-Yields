@@ -1,0 +1,76 @@
+{
+  "audit_directory": "C:\\Users\\ethan\\Downloads\\MRP\\reproduction\\acquisition_audit_20261027T181110Z",
+  "overall_audit_passed": false,
+  "preservation": {
+    "original_files": 190,
+    "verified_unchanged_files": 183,
+    "missing": [],
+    "changed": [
+      "results/state_space_revised/independent_test_fixture/fit_summary.csv",
+      "results/state_space_revised/independent_test_fixture/metadata.json",
+      "results/state_space_revised/independent_test_fixture/optimizer_diagnostics.json",
+      "results/state_space_revised/independent_test_fixture/verification.json",
+      "results/state_space_revised/test_fixture/fit_summary.csv",
+      "results/state_space_revised/test_fixture/metadata.json",
+      "results/state_space_revised/test_fixture/optimizer_diagnostics.json"
+    ],
+    "passed": false,
+    "raw_and_source_cache_unchanged": true,
+    "nonfixture_results_unchanged": true,
+    "issue": "Full-suite pre-existing M3 tests write timing metadata directly into canonical test_fixture directories. Original hashes are retained, but previous bytes are not recoverable from the repository; preservation gate remains FAILED."
+  },
+  "catalog_equal_after_rebuild": true,
+  "historical_pins_changed": false,
+  "offline": {
+    "passed_required": true,
+    "source_count": 31,
+    "status_counts": {
+      "cached_verified": 24,
+      "documented_access_failure_cached": 6,
+      "error": 1
+    },
+    "errors": [
+      {
+        "id": "lit_delft_record",
+        "status": "error",
+        "error": "Offline source cache missing: lit_delft_record",
+        "required": false,
+        "requested_url": "https://repository.tudelft.nl/record/uuid:8510487e-d59f-4a89-93dd-dc685cd06bb6"
+      }
+    ]
+  },
+  "live": {
+    "attempted_sources": 6,
+    "status_counts": {
+      "downloaded": 5,
+      "error": 1
+    },
+    "readback_verified_downloads": [
+      "boc_original",
+      "fed_original",
+      "metadata_diebold2006forecasting",
+      "lit_omori_uci",
+      "metadata_omori2007stochastic"
+    ],
+    "source_transactions": 6,
+    "robots_transactions": 6,
+    "representative_pdf_pages": 26,
+    "errors": [
+      {
+        "id": "lit_diebold_li_ucm",
+        "status": "error",
+        "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>",
+        "required": true,
+        "requested_url": "https://www.ucm.es/data/cont/media/www/pag-41460/Diebold.pdf"
+      }
+    ]
+  },
+  "tests": {
+    "passed": true,
+    "count": 103,
+    "seconds": 10.409,
+    "log": "tests_full_green.txt"
+  },
+  "executed_code_snapshot_files": 18,
+  "provenance_limitation": "Pinned replay verifies supplied evidence. Reconstructed code/commands and present live transactions do not recover missing exact historical interactive commands or point-in-time data releases."
+}

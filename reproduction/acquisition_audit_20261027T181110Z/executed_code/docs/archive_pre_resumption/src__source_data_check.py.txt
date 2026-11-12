@@ -1,0 +1,40 @@
+"""Non-destructive public source check: cache robots, source page and small data slice."""
+from pathlib import Path
+import urllib.request, json, datetime, csv, io, hashlib, time
+ROOT=Path(__file__).resolve().parents[1]
+OUT=ROOT/'docs/sources';OUT.mkdir(exist_ok=True)
+URLS={
+'boc_robots':'https://www.bankofcanada.ca/robots.txt',
+'boc_source_page':'https://www.bankofcanada.ca/rates/interest-rates/bond-yield-curves/',
+'boc_source_check_2015':'https://www.bankofcanada.ca/stats/results/csv?lookupPage=lookup_yield_curve.php&dFrom=2015-12-01&dTo=2015-12-31',
+'mcs_publisher':'https://www.econometricsociety.org/publications/econometrica/2011/03/01/model-confidence-set'}
+
+def main():
+    results=[]
+    for key,url in URLS.items():
+        dest=OUT/(key+'.txt')
+        try:
+            if dest.exists(): raw=dest.read_bytes(); status='cached'
+            else:
+                with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'MQF-academic-research/1.0'}),timeout=45) as response:
+                    raw=response.read();status=response.status
+                dest.write_bytes(raw);time.sleep(2)
+            results.append({'key':key,'url':url,'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'status':status,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()})
+            print(key,status,len(raw))
+        except Exception as e:results.append({'key':key,'url':url,'error':str(e)});print(key,e)
+    (OUT/'retrieval_log.json').write_text(json.dumps(results,indent=2),encoding='utf-8')
+    p=OUT/'boc_source_check_2015.txt'
+    if p.exists():
+        fresh=list(csv.DictReader(io.StringIO(p.read_text(encoding='utf-8-sig'))))
+        local={r['Date']:r for r in csv.DictReader((ROOT/'data/raw/boc_daily_2000_2026.csv').open())}
+        checks=[]
+        for r in fresh:
+            if r.get('Date') in local:
+                cols=[' ZC025YR',' ZC050YR',' ZC100YR',' ZC200YR',' ZC500YR',' ZC700YR',' ZC1000YR',' ZC3000YR']
+                try:delta=max(abs(float(r[c])-float(local[r['Date']][c])) for c in cols)
+                except ValueError:continue
+                checks.append({'Date':r['Date'],'maximum_absolute_difference_decimal_yield':delta})
+        if checks:
+            report={'matched_dates':len(checks),'max_abs_difference_decimal':max(r['maximum_absolute_difference_decimal_yield'] for r in checks),'checks':checks}
+            (OUT/'source_slice_comparison.json').write_text(json.dumps(report,indent=2),encoding='utf-8');print(report)
+if __name__=='__main__':main()

@@ -1,0 +1,108 @@
+{
+  "stage_a_passed": false,
+  "blocker": "M5 inverse-gamma log-volatility innovation variance implies infinite true posterior-predictive second moments.",
+  "windows": [
+    {
+      "name": "initial",
+      "index": 836,
+      "date": "2016-01-08",
+      "n_training": 836,
+      "targets": {
+        "1": "2016-01-15",
+        "4": "2016-02-05"
+      }
+    },
+    {
+      "name": "stress",
+      "index": 1056,
+      "date": "2020-03-27",
+      "n_training": 1056,
+      "targets": {
+        "1": "2020-04-03",
+        "4": "2020-04-23"
+      }
+    },
+    {
+      "name": "late",
+      "index": 1352,
+      "date": "2025-11-28",
+      "n_training": 1352,
+      "targets": {
+        "1": "2025-12-05",
+        "4": "2025-12-24"
+      }
+    }
+  ],
+  "trials": {
+    "repair1_initial": {
+      "parameter_gate_passed": false,
+      "max_rhat": 1.0201011278371908,
+      "min_bulk_ess": 346.960925274555,
+      "min_tail_ess": 644.7495451866756,
+      "elapsed_s": 135.37068139994517,
+      "failures": [
+        {
+          "model": "M5",
+          "factor": "level",
+          "parameter": "phi",
+          "rhat": 1.0116929773971106,
+          "ess_bulk": 377.38164070028137,
+          "ess_tail": 783.8399929544564,
+          "passes": false
+        },
+        {
+          "model": "M5",
+          "factor": "slope",
+          "parameter": "phi",
+          "rhat": 1.0201011278371908,
+          "ess_bulk": 346.960925274555,
+          "ess_tail": 644.7495451866756,
+          "passes": false
+        },
+        {
+          "model": "M5",
+          "factor": "slope",
+          "parameter": "q",
+          "rhat": 1.0192914968270732,
+          "ess_bulk": 379.8280555315407,
+          "ess_tail": 884.1363670810405,
+          "passes": false
+        }
+      ]
+    },
+    "repair2_initial": {
+      "parameter_gate_passed": true,
+      "max_rhat": 1.004584767040899,
+      "min_bulk_ess": 1185.104795378228,
+      "min_tail_ess": 2858.4651142141024,
+      "elapsed_s": 258.1776713000145,
+      "failures": []
+    },
+    "synthetic": {
+      "parameter_gate_passed": true,
+      "max_rhat": 1.0087613581323265,
+      "min_bulk_ess": 773.4622983315517,
+      "min_tail_ess": 1160.7467629967362,
+      "elapsed_s": 14.962334199808538,
+      "failures": []
+    }
+  },
+  "three_window_parameter_gate_completed": false,
+  "independent_predictive_stability_completed": false,
+  "rolling_forecasts_executed": false,
+  "manuscript_modified_by_this_stage": false,
+  "protected_files_count": 37,
+  "protected_artifacts_preserved": true,
+  "changed_protected_files": [],
+  "original_sampler_snapshot_sha256": "3f819c4cccea634595155d7bcdff89aa26c212df7a42305590959355d5dc05e2",
+  "current_sampler_sha256": "3bf5fd44aebf3212fca550cb6752323c74ff050a872a4ab4533fbfd29ea7aa5a",
+  "environment": {
+    "python": "3.14.7 (tags/v3.14.7:823f032, Aug  5 2026, 10:51:32) [MSC v.1944 64 bit (AMD64)]",
+    "packages": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "numba": "0.68.0",
+      "arviz": "1.3.0"
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "status": "rejected_optimizer_start_sensitivity",
+  "numerical_implementation_checks": "passed",
+  "fit_accept_count": 122,
+  "fit_reject_origins": [
+    "2023-02-24",
+    "2023-03-24",
+    "2023-04-21",
+    "2023-05-19",
+    "2023-06-16",
+    "2023-07-14",
+    "2023-08-10",
+    "2023-09-08"
+  ],
+  "origins_verified": 130,
+  "records_verified": 260,
+  "scenarios_per_record": 1024,
+  "independent_batch_nll_max_abs_difference": 6.912159733474255e-11,
+  "independent_mean_max_abs_difference": 1.7763568394002505e-15,
+  "independent_covariance_max_abs_difference": 2.7755575615628914e-17,
+  "min_predictive_eigenvalue": 0.00019990554552499855,
+  "maximum_all_start_projected_gradient_per_observation": 1.9998939959499985e-07,
+  "start_likelihoods_independently_verified": 390,
+  "maximum_start_nll_spread": 36.92949411707741,
+  "maximum_start_forecast_mean_difference": {
+    "1": 0.14464794196065167,
+    "4": 0.14420778446587956
+  },
+  "maximum_start_forecast_covariance_difference": {
+    "1": 0.028413382566989318,
+    "4": 0.030340268551239863
+  },
+  "pilot_independent_gradient_and_start_checks": [
+    {
+      "origin_date": "2016-01-08",
+      "independent_central_difference_gradient_max_abs_error": 2.5271133948836773e-07,
+      "across_start_forecast_mean_max_abs_difference": 3.6603631370368817e-07,
+      "across_start_forecast_covariance_max_abs_difference": 6.495947810214453e-08
+    },
+    {
+      "origin_date": "2020-12-31",
+      "independent_central_difference_gradient_max_abs_error": 3.140732056873251e-07,
+      "across_start_forecast_mean_max_abs_difference": 1.5568242647812092e-07,
+      "across_start_forecast_covariance_max_abs_difference": 3.104259366226714e-08
+    },
+    {
+      "origin_date": "2025-11-28",
+      "independent_central_difference_gradient_max_abs_error": 7.333891778316115e-07,
+      "across_start_forecast_mean_max_abs_difference": 8.109242752851742e-07,
+      "across_start_forecast_covariance_max_abs_difference": 3.570714145195719e-08
+    }
+  ],
+  "active_bound_origin_counts": {
+    "3": 130,
+    "4": 130,
+    "10": 130,
+    "13": 130
+  },
+  "boundary_profiles_checked": 520,
+  "outward_profiles_improving_likelihood": 520,
+  "accepted_baselines_unchanged": true,
+  "common_targets_equal_accepted_baselines": true,
+  "exact_scenarios_reproduced": true,
+  "all_scores_and_pooled_summaries_recomputed": true,
+  "elapsed_s": 18.609389299992472,
+  "output_sha256": {
+    "fit_summary.csv": "59c86fe386396d6d36e592bd1fd26294a9e03a834c150eafc273a56337103fc3",
+    "forecasts.npz": "af71c2ab64d2feb90b63602b35997cad19549ea8568b1f3908b6a8311131bf16",
+    "maturity_by_origin.csv": "4aaf944dcb5eeca96d4acb17050c77b938482def52c03b508666268e8f834b79",
+    "origin_audit.csv": "9e834bdbbbfb2f3579fb4addd62f3424783eebb8f2e5bcc417ebace67d390398",
+    "risk_scenarios.csv": "1d91f19415d92d022934edc99988abccddc29ff10065ab4f332adc3a1bf96319",
+    "scores.csv": "823a153c4165acaf8d78bb3a615d7ae97e181d3701f9c03b6f7a2d76dd70e706",
+    "start_sensitivity.csv": "4678d464c80de63bd720c622b51e56296dcd663c2708c76280a2779b4fb0fa94",
+    "summary.csv": "a399be0f887a7515be5aa2a3ec4a3273dd0f633e3cea5267ebcd607cf12d113f"
+  },
+  "limitations": [
+    "Validation applies to explicitly bounded stationary diagonal Gaussian model only.",
+    "Active-bound outward likelihood improvements rule out an unrestricted-MLE claim.",
+    "No publication-time real-time or live trading claim."
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "seed": 23456,
+  "maturities_years": [0.25, 0.5, 1, 2, 5, 7, 10, 30],
+  "training_start": "2000-01-01",
+  "training_end": "2015-12-31",
+  "oos_start": "2016-01-01",
+  "oos_end": "2025-12-31",
+  "origin_stride_observations": 4,
+  "horizons_weeks": [1, 4],
+  "lambda_grid_per_year": [0.05, 2.0, 160],
+  "variance_floor_percent_squared": 1e-6,
+  "posterior_predictive_draws": 256,
+  "energy_score_draws": 256,
+  "mcmc_warmup": 300,
+  "mcmc_draws": 500,
+  "mcmc_diagnostic_chains": 2,
+  "mcmc_diagnostic_warmup": 500,
+  "mcmc_diagnostic_draws": 1000,
+  "mcs_bootstrap_replicates": 999,
+  "mcs_expected_block_length_origins": 4,
+  "state_space_maxiter": 100
+}

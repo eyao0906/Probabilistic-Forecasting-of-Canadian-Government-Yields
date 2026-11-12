@@ -1,0 +1,141 @@
+{
+  "status": "accepted_restricted_partial_smoke",
+  "phase": "smoke",
+  "started_utc": "2026-10-27T18:17:56.418145+00:00",
+  "elapsed_s": 0.8737727999687195,
+  "python": "C:\\Users\\ethan\\Downloads\\MRP\\.venv\\Scripts\\python.exe",
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "numba": "0.68.0"
+  },
+  "n_origins": 1,
+  "forecast_records": 2,
+  "common_design_origins": 130,
+  "first_origin": "2016-01-08",
+  "last_origin": "2016-01-08",
+  "initial_training_n": 835,
+  "lambda_per_year": 0.5160377358490565,
+  "initial_sse": 48.85982136681427,
+  "horizons_observations": [
+    1,
+    4
+  ],
+  "scenarios_per_record": 1024,
+  "seed_rule": "20261027+origin_panel_index*17+horizon",
+  "n_starts": 2,
+  "maxiter": 1000,
+  "parameter_bounds": [
+    [
+      -20.0,
+      30.0
+    ],
+    [
+      -20.0,
+      30.0
+    ],
+    [
+      -20.0,
+      30.0
+    ],
+    [
+      -3.0,
+      3.0
+    ],
+    [
+      -3.0,
+      3.0
+    ],
+    [
+      -3.0,
+      3.0
+    ],
+    [
+      -15.0,
+      5.0
+    ],
+    [
+      -15.0,
+      5.0
+    ],
+    [
+      -15.0,
+      5.0
+    ],
+    [
+      -15.0,
+      5.0
+    ],
+    [
+      -15.0,
+      5.0
+    ],
+    [
+      -15.0,
+      5.0
+    ],
+    [
+      -15.0,
+      5.0
+    ],
+    [
+      -15.0,
+      5.0
+    ],
+    [
+      -15.0,
+      5.0
+    ],
+    [
+      -15.0,
+      5.0
+    ],
+    [
+      -15.0,
+      5.0
+    ]
+  ],
+  "acceptance": {
+    "all_starts_projected_gradient_per_observation_below": 1e-05,
+    "start_nll_spread_below": 0.02
+  },
+  "fit_accept_count": 1,
+  "optimizer_success_count": 2,
+  "optimizer_attempts": 2,
+  "baseline_hashes_before": {
+    "forecasts.npz": "cbc990365f3161058597dc9c18ffceb996bfefa78bb984a4625b432f035d447a",
+    "maturity_by_origin.csv": "6f11bf9507de08c9f7ce93085bc436af5347e3ff7f6a3afdbcdd7be290b208f9",
+    "metadata.json": "95e43b5399b06c004c9b836a5590eaeb54b2d01908de45a8f80d7077667b7489",
+    "origin_audit.csv": "bab9abe176a5259a3950ef247cf395171130ccfd4e6fca161d857301ca446796",
+    "risk_scenarios.csv": "ce205a9affa41f5046138cf06243181162c33a9b82a14f53d7d352c770a0bda8",
+    "scores.csv": "8b85e341bb87b4751398a5f335e27921c02b8980838f3354ff5eaaa2aab51b3e",
+    "summary.csv": "3c621eb20d0ac8fba415eddc50c6c99a96566ef5b3e2e280192bbff5ecb82f0c",
+    "verification.json": "6bdf9b37ea9c27bc724f6b610a2dca738c293369326344702c329d95a5be930a"
+  },
+  "baseline_hashes_after": {
+    "forecasts.npz": "cbc990365f3161058597dc9c18ffceb996bfefa78bb984a4625b432f035d447a",
+    "maturity_by_origin.csv": "6f11bf9507de08c9f7ce93085bc436af5347e3ff7f6a3afdbcdd7be290b208f9",
+    "metadata.json": "95e43b5399b06c004c9b836a5590eaeb54b2d01908de45a8f80d7077667b7489",
+    "origin_audit.csv": "bab9abe176a5259a3950ef247cf395171130ccfd4e6fca161d857301ca446796",
+    "risk_scenarios.csv": "ce205a9affa41f5046138cf06243181162c33a9b82a14f53d7d352c770a0bda8",
+    "scores.csv": "8b85e341bb87b4751398a5f335e27921c02b8980838f3354ff5eaaa2aab51b3e",
+    "summary.csv": "3c621eb20d0ac8fba415eddc50c6c99a96566ef5b3e2e280192bbff5ecb82f0c",
+    "verification.json": "6bdf9b37ea9c27bc724f6b610a2dca738c293369326344702c329d95a5be930a"
+  },
+  "source_and_input_sha256": {
+    "src\\state_space_revised.py": "a41bc024cea95418df9b8bf4cad38518e68265092a33f20d648eb20436a4a9d7",
+    "tests\\test_state_space_revised.py": "9eaf5a93a785f5271d5de2148ef9a94b43768cd12e103010e5cff9a9f750a282",
+    "data\\processed\\canada_weekly.csv": "0b2af5c3c7bb261973ea4ec04c151eedbf7cf1428f22d0e08eaae87a212bfd77",
+    "config\\experiment.json": "ece2e990313d5674e03bec0a818b32291895a280edfa7db89acc3283f389657f"
+  },
+  "limitations": [
+    "restricted stationary diagonal transition, Q and R; not unrestricted DNS VAR",
+    "finite mu/u/logvariance bounds retained from legacy benchmark; active bounds explicitly diagnosed",
+    "conditional on estimated parameters and fixed initial lambda; no parameter uncertainty",
+    "historical revised-vintage observation-time, NOT publication-time real-time",
+    "Bank of Canada two-week publication lag not applied as an availability filter",
+    "horizons count observations; calendar durations may vary",
+    "1024-scenario Energy Score U-statistic excludes diagonal self-distances",
+    "first-order equal-market-value duration shock, not actual bond returns; no backtest claim"
+  ]
+}

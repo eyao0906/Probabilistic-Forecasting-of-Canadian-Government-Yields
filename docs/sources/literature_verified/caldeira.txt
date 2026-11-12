@@ -1,0 +1,1781 @@
+Bayesian Inference Applied to Dynamic
+Nelson-Siegel Model with Stochastic
+Volatility*
+
+Jo~ao F. Caldeira**
+Ma´rcio P. Laurini***
+Marcelo S. Portugal****
+
+Abstract
+In this paper, we propose to estimate a dynamic model for the term structure of interest
+rates considering two alternative specifications of the Nelson and Siegel (1987) model,
+generalizing several models found in the literature. At first, we consider that the weights
+of factors vary over time with conditional heteroskedasticity using a stochastic volatility
+model with common factors. In the second case, we consider a model in which the latent
+factors individually follow autoregressive processes with stochastic volatility, including
+the possibility of leverage effects. The so-called volatility factors seek to capture the
+uncertainty over time associated with the level, slope and curvature of the yield curve.
+The estimation is performed through Bayesian inference using the Monte Carlo Markov
+Chain method. The results for the term structure of DI futures and U.S. Treasury bonds
+used in this study show that the volatility factors are highly persistent, and also indicate
+that the use of stochastic volatility leads to better in-sample fits to the observed yield
+curve.
+Keywords: Term structure of interest rates, stochastic volatility, MCMC, factor models.
+JEL Codes: C53, E43, G17.
+
+     *Submitted in May 2010. Revised in March 2011. The authors thank the Editor and an
+anonymous referee for their comments, and also appreciate all the comments received during the
+X Brazilian Finance Meeting and the XXX Brazilian Meeting of Econometrics.
+
+   **Department of Economics ­ UFRGS. Corresponding author. Address: Av. Jo~ao Pessoa 52
+(room 33 b). Porto Alegre, RS., CEP 90040-000. Tel.: +55-(51)3308-3440; Fax: +55-(51)3308-
+4050. E-mail: joao@ppge.ufrgs.br
+
+  ***IBMEC-RJ.
+ ****Graduate Program in Economics ­ UFRGS, Graduate Program in Business Administration ­
+UFRGS and CNPq.
+
+                                               Brazilian Review of Econometrics
+                                            v. 30, no 1, pp. 123­161 May 2010
+     Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+1. Introduction
+
+    Fitting and forecasting the term structure of interest rates is of utmost im-
+portance for policymakers. In finances, the information provided by interest rate
+curves is important for the pricing of bonds, interest rate derivatives, portfolio
+management and asset allocation. In macroeconomics, the interest rate gives im-
+portant information on the state of the economy and of business. Therefore,
+several researchers have worked on this topic, giving rise to a comprehensive lit-
+erature on the fitting and forecast of the term structure. Notwithstanding the
+sizeable amount of studies dealing with this issue, only very recently has attention
+been turned to the fitting and forecast of interest rates along with the conditional
+heteroskedasticity of the term structure of interest rates.1
+
+    This issue is particularly important because the assumption of constant inter-
+est rate volatility in these models often has remarkable practical implications for
+risk management policies, which can be too simple, neglecting the risk of a time-
+varying volatility structure. Interest rate hedging and arbitrage operations could
+be influenced by the presence of time-varying volatility as, in these operations,
+it is necessary to compensate for the market price of interest rate risk. Another
+important implication is that in the presence of conditional volatilities the confi-
+dence intervals of fits and forecasts derived from these models will be calculated
+incorrectly in finite samples.
+
+    To assess the effects of time-varying volatility structures, it is important to
+retrieve characteristics from the major models used for the modeling of the term
+structure of interest rates. These models can be categorized into three main classes:
+no-arbitrage models; equilibrium models; and statistical models.
+
+    No-arbitrage models for the term structure of interest rates are obtained by the
+imposition of consistency conditions between the interest rates of several maturities
+so as to prevent the systematic existence of arbitrage opportunities, and are based
+on the existence of an equivalent martingale. Examples of these models include
+those of Hull and White (1990), and the general framework that defines these
+models is described in the seminal work of Heath et al. (1992). With respect to
+time-varying volatilities, note that the structure defined in Heath et al. (1992)
+(henceforth HJM) allows for stochastic volatility structures.
+
+    However, the presence of stochastic volatility structures in the class of HJM
+models leads to two important problems. The first problem arises because these
+models are often used in the pricing of derivative tools. In this case, the parameters
+of the HJM model are obtained by the perfect calibration of the interest rate curve
+observed on a given day through the prices of market instruments. Although this
+method enables the arbitrage-free pricing of derivative tools, it does not allow
+for interest rate forecasts, given that this is a cross-sectional fit and does not
+allow directly obtaining the dynamics observed in the term structure of interest
+
+1See, for instance, Filipovic (2009) for a review on interest rate modeling.
+
+124  Brazilian Review of Econometrics 30(1) May 2010
+Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+rates. The second problem is that the imposition of general stochastic volatility
+structures on no-arbitrage models for the term structure of interest rates often
+leads to non-Markov dynamics for these interest rates, which hinders the use of
+econometric methods, such as the Kalman filter, for parameter estimation.
+
+    The second class of models, equilibrium models, is obtained by the imposition
+of equilibrium conditions between the yields of several maturities for the inter-
+est rate. These models are usually based on the modeling of the instantaneous
+forward rate, typically using the structure of affine models, in which the rates of
+other maturities can be derived by assuming that the risk premium is given by an
+affine function. These models were developed in Vasicek (1977), Cox et al. (1985),
+Duffie and Kan (1996) or in Dai and Singleton (2002). Although they are analyt-
+ically tractable and allow obtaining closed formulas for the pricing of bonds and
+derivatives, these models have a major problem with the fit and forecasts of the
+interest rate curve. The literature indicates that these models are usually deficient
+in these aspects, and the forecasts produced by equilibrium models do not compare
+to those generated by the random walk model as shown, for example, in Duffie
+and Kan (1996). In regard to the presence of time-varying volatilities, the impo-
+sition of stochastic volatility structures on this class of models leads to problems
+such as the lack of affine formulations or the necessity for time non-homogeneous
+models, resulting in the need of calibration methods which, as with no-arbitrage
+models, prevents the dynamic fit of the interest rate curve and the construction
+of forecasts. A general discussion about these problems is available in Brigo and
+Mercurio (2006).
+
+    The third class of models includes statistical ones. These models are obtained
+as purely statistical representations of the evolution of the term structure of inter-
+est rates, and are therefore obtained without the direct imposition of no-arbitrage
+or equilibrium conditions. This class comprises principal components models, fac-
+tor models or latent variable models, as well as interpolation models. According
+to Matzner-Lober and Villa (2004), most of the intuition about the dynamics of
+the prices of bonds and yields comes from these models, as in Litterman and
+Scheinkman (1991) and in Pearson and Sun (1994). Even though these models
+are obtained as purely statistical representations, note that for some classes of
+models, as occurs with the vector autoregressive representation for yields and the
+generalization of Nelson-Siegel model proposed in Christensen et al. (2010) and
+Christensen et al. (2009), the imposition of no-arbitrage conditions does not rep-
+resent gains in the fit or forecasting of these models, as discussed in Joslin et al.
+(2011) and, consequently, if the objective consists of the fit and forecast of the
+interest rate curve, the imposition of no-arbitrage conditions is redundant.
+
+    Among statistical models, Nelson-Siegel model (Nelson and Siegel, 1987) and
+its variants are the most popular amidst fixed income managers and central banks.
+The attractiveness of factor models in Nelson-Siegel class is due to their parsimony
+and good empirical performance. Such models can capture most of the evolution of
+
+Brazilian Review of Econometrics 30(1) May 2010  125
+     Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+the term structure of interest rates with the use of three factors. Many extensions
+of Nelson-Siegel models have been proposed (see Almeida et al. (2009), Laurini and
+Hotta (2010), Bjork and Christensen (1999), Rudebusch and Wu (2008), among
+others).
+
+    The works of Diebold and Li (2006) and Diebold et al. (2006) turned their
+attention to Nelson-Siegel model and reinterpreted it as a three-factor statistical
+model to describe the interest rate curve over time. The three factors are in-
+terpreted as level, slope, and curvature, being consistent with the interpretation
+made in Litterman and Scheinkman (1991), providing some economic sense. The
+major contribution in Diebold and Li (2006) and Diebold et al. (2006) is that the
+forecasts generated by this class of models are superior to those of several other
+models available in the term structure of interest rates literature, including time
+series models, such as vector autoregressive (VAR) models and dynamic error cor-
+rection models. Diebold et al. (2006) extend the structure by adding non-latent
+macroeconomic factors, such as inflation and output gap.
+
+    Parameter estimation in Diebold and Li (2006) and Diebold et al. (2006) is
+based on two simplifying assumptions. The factor loadings in Nelson-Siegel model
+rely on a single weighting parameter (decay). To allow for the estimation of time-
+varying latent factors in a linear framework, factor loadings are kept constant over
+time for each maturity. In Diebold and Li (2006), the decay parameter is deter-
+mined ad hoc, being fixed in the whole sample, and consequently, factor loadings
+do not vary over time. The second hypothesis, also assumed in Diebold et al.
+(2006), Yu and Zivot (2011), Almeida et al. (2009), Caldeira et al. (2010), is con-
+cerned with volatility, which is maintained constant for all maturities throughout
+the sampling period.
+
+    These assumptions are related to the greater estimation difficulty in the pres-
+ence of time-varying volatilities and decay (weight) factors. By setting these as-
+sumptions aside, estimation by usual methods such as ordinary least squares can
+no longer be used, as well as simultaneous estimation techniques such as maximum
+likelihood obtained by the decomposition of the forecast error through the Kalman
+filter used in Caldeira et al. (2010) since, with time-varying volatilities and decay
+parameters, it is not possible to obtain a linear and Gaussian state-space model.
+
+    Another problem is the high dimensionality of the term structure, which be-
+comes even more problematic with the use of multivariate stochastic volatilities. In
+this problem, if the volatility structure is utilized for all latent factors, the volatility
+process is turned into a multivariate process, making estimation problems much
+more complex, as multivariate stochastic volatility models are plagued by prob-
+lems with non-trivial inference, as shown, for instance, in Chib et al. (2009). Some
+ways to overcome this issue were proposed by Bianchi et al. (2009), Koopman
+et al. (2010), Laurini and Hotta (2010) and Haustsch and Ou (2010). In Koopman
+et al. (2010), a factor volatility structure is adopted for the latent variables, using
+a specification based on GARCH models. However, this representation assumes
+
+126  Brazilian Review of Econometrics 30(1) May 2010
+Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+some simplifications to avoid identification and estimation problems in multivari-
+ate GARCH models. The volatility structure is based on an essentially univariate
+framework, as in this specification the volatility of other latent factors is obtained
+by the linear drift of only one volatility factor. It should also be remarked that
+the estimation method used is based on an approximation to the likelihood of the
+process, which might not have statistical optimality. Another drawback to this
+model is the incompatibility of GARCH models with continuous time represen-
+tations, which hinders the interpretation of these models in terms of pricing of
+financial assets.
+
+    In Laurini and Hotta (2010) and Haustsch and Ou (2010), the stochastic
+volatility process is based on models known as log-normal stochastic volatility
+models, introduced by Taylor (1986). In Laurini and Hotta (2010) model, the
+log-normal stochastic volatility specification is assumed only for the measurement
+errors of the interest rate curve, whereas the latent factor structure is deemed to
+be homoskedastic. In the specification proposed by Haustsch and Ou (2010), a
+log-normal stochastic volatility structure is assumed for each latent factor, thus
+resulting in a more general stochastic volatility process. Note that, in these two
+approaches, the estimation is based on Bayesian methods using a Markov Chain
+Monte Carlo method, owing to the difficulty in estimating stochastic volatility
+models, in which it is not possible to obtain analytical formulas for the evaluation
+of the likelihood function.
+
+    In this paper, we present a generalization for the volatility structures described
+in Koopman et al. (2010), Laurini and Hotta (2010) and Haustsch and Ou (2010).
+By using data on interbank deposit (ID) futures contracts traded at the Brazil-
+ian Mercantile and Futures Exchange (BM&F) and the U.S. Treasury data from
+Diebold and Li (2006) and Diebold et al. (2006), we estimate the dynamic Nelson-
+Siegel model with time-varying factor loadings and stochastic volatility. We take
+into account two specifications in order to model the conditional volatility. In the
+first one, analogous to the one utilized by Koopman et al. (2010), the term struc-
+ture risk is captured via a common stochastic volatility component. In the second
+alternative, our goal is to model the stochastic volatility of each latent factor in
+Nelson-Siegel model in a straightforward manner. Modeling volatility directly in
+terms of factors is a more flexible approach and allows capturing the uncertainty
+over the level, slope, and curvature of the interest rate. Thus, the so-called level
+volatility represents the volatility of the general interest rate level, while slope
+volatility captures the uncertainty over the spread between long- and short-term
+rates. In turn, curvature volatility is associated with the risk of changes in the
+curvature of the term structure. In this specification, it is also possible to model
+the interest rate curve measurement error as a process with stochastic volatility, as
+in Laurini and Hotta (2010). In this specification, we also discuss the possibility of
+leverage effects, i.e., the possible correlation between measurement equation errors
+and the errors of each latent factor, as outlined in Jacquier et al. (1994).
+
+Brazilian Review of Econometrics 30(1) May 2010  127
+     Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+    Unlike the specifications used in the formulation of Nelson-Siegel model with
+stochastic volatility defined in Haustsch and Ou (2010), in both specifications
+proposed here, the parameter that determines factor loadings, t, is also regarded
+as a latent process that varies stochastically over time, being addressed as a fourth
+latent factor. This addition is important for the modeling of interest rate curves
+of emerging countries, characterized by frequent changes in formats and maximum
+maturities in interest rate curves, as discussed in Laurini and Hotta (2010). The
+dynamics of level, slope, and curvature latent factors, along with the parameter
+that determines the factor loadings is modeled jointly as an autoregressive process.
+
+    Modeling of conditional heteroskedasticity is targeted at improving the quality
+of fit and forecasting, including the periods of change in volatility, and at captur-
+ing the stylized fact about the presence of different volatility structures for each
+maturity of the term structure, and also at adding stylized facts about the interest
+rate curves of emerging markets, which usually have higher volatility than interest
+rate curves of developed countries, characterized by a larger stability over time
+and lower volatilities.
+
+    The paper is organized as follows. Section 2 reviews the basic structure of
+Nelson-Siegel models. Section 3 presents the two formulations of stochastic volatil-
+ity models. Section 4 describes the Bayesian estimation method using the Markov
+Chain Monte Carlo approach. Section 5 provides the term structures of the inter-
+est rates used in this study, the ID futures contract and the U.S. term structure
+of Treasury bonds, the estimation results, and the comparison between models.
+Finally, Section 6 concludes.
+
+2. Nelson-Siegel Factor Model for the Term Structure of Interest
+      Rates
+
+    At a given time, t, the interest rate curve, denoted here by yt( ), represents the
+interest rate as a function of maturities  . The exponential model of the interest
+rate curve proposed by Nelson and Siegel (1987) and reinterpreted by Diebold and
+Li (2006) considers a parametric structure for the evolution of the term structure of
+interest rates over time, in which the coefficients can be interpreted as level, slope,
+and curvature factors. The corresponding interest rate curve (in the representation
+for the spot curve) is:
+
+     yt( ) = 1,t + 2,t  1 - et  + 3,t  1 - et - et                  (1)
+                           t              t
+
+    The shape of the interest rate curve is determined by three parameters (1,t,
+2,t and 3,t) and by the weights assigned to them. Parameter t, regarded as fixed
+in Diebold and Li (2006), governs the exponential decay rate, and small (large)
+
+values of t are associated with a smooth (fast) decay, and provide longer (shorter)
+maturities with a better fit. The weight of the first component is 1 (constant) for
+
+all maturities, thus 1,t stands for the long-term factor and is interpreted as the
+
+128                     Brazilian Review of Econometrics 30(1) May 2010
+        Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+interest rate curve level, which equally influences the short- and long-term rates.
+
+The weight of the second component,  1-et        , begins at 1 and converges to
+                                       t 
+
+zero monotonically and rapidly, and 2,t is interpreted as the interest rate curve
+
+slope, or the short-term factor, given that this factor has a strong influence on
+
+short-term interest rates. The weight of the third component,  1-et   - et                    , is
+                                                                 t 
+
+a concave function, which takes value zero for maturity zero, increases, and then
+
+converges monotonically to zero in longer maturities. Therefore, 3,t is interpreted
+
+as curvature, or medium-term factor, as it is associated with medium-term interest
+
+rates.
+
+At each time period, there are interest rates yt( ) for several maturities  .
+
+Therefore, the equation can be estimated at each time period, obtaining time se-
+
+ries for parameters t. Hence, if it is possible to model and predict the behavior of
+
+latent factors t, interest rate curve forecasts can be obtained from these factors.
+
+Diebold and Li (2006), Almeida et al. (2009), among others, use a two-step pro-
+
+cedure to estimate the model. In the first step, time series are obtained by least
+
+squares regressions at each t, and the three time series of 1,t, 2,t and 3,t are
+
+often modeled by a first-order autoregressive process.
+
+An alternative is to represent the model in state-space form and to estimate all
+
+parameters simultaneously. The system, containing the transition and measure-
+
+ment equations, is given by:
+
+                              yt( ) = (t)t + t                                                (2)
+
+where (t) is an (N x 3) matrix for factor loadings, which will vary over time
+only if the decay parameter  is variable.
+
+        t = (I - )µ + t-1 + t                                                                 (3)
+
+    Measurement equation (2) defines the vector of interest rates (T × N) for N
+maturities, as the sum of factors multiplied by their weights, with a vector of
+Gaussian-distributed errors that is independent across maturities. The vector t
+of (3 × 1) size represents the factors, and  is the coefficient matrix of VAR that
+models the dynamics of states (latent factors) over time. To estimate the model in
+linear form through the Kalman filter, for example, the factor loadings need to be
+kept constant over time for each maturity, yielding t = . For further references
+on this estimation technique, see, for instance, Caldeira et al. (2010).
+
+3. Generalized Nelson-Siegel Models
+
+3.1 Factor SV model
+
+    The first generalization of dynamic Nelson-Siegel models shown in this paper
+generalizes the original model by adding a time-varying decay parameter  and a
+generalized stochastic volatility structure, made up of two blocks. The first block
+
+Brazilian Review of Econometrics 30(1) May 2010                       129
+     Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+of the SV structure is an equation that makes the measurement error volatility
+of the yield observation equation vary over time, whereas the second block de-
+scribes the evolution of the volatility of latent factors 1,t, 2,t and 3,t as a factor
+stochastic volatility model. This model can be represented by the following system
+of equations in nonlinear state-space form:
+
+     y( ) = 1,t + 2,t  1 - et  + 3,t  1 - et - et  + t ,t                 (4)
+                                         
+
+         ln 2,t = µ +  ln 2,t-1 +  t                                      (5)
+
+                       ln t = µ +  ln t-1 + t                             (6)
+
+ 1,t   µ1   11 12 13   1,t-1   11,t 
+
+ 2,t  =  µ2  +  21 22 23   2,t-1  +  22,t  (7)
+
+3,t  µ3                31 32 33       3,t-1                         33,t
+
+         ln 12,t = µ,1 + ,11 ln 12,t-1 + 1,t                              (8)
+
+         ln 22,t = 2 + 2 ln 12,t + 2,t                                    (9)
+
+         ln 32,t = 3 + 3 ln 12,t + 3,t                                    (10)
+
+    In this system, Equation 4 is the Nelson-Siegel observation equation for the
+observed yields; equation 5 describes the evolution of volatility  ,t of measurement
+error t as a log-normal stochastic volatility model. Equation 6 shows the evolution
+of the log of parameter t as a first-order autoregressive process. The log in this
+equation is used to guarantee the positive sign of this parameter in the observation
+equation. We assume that error processes  t, t, t, 1, 2 , 3, 1,t, 2,t and
+ 3,t are independent processes (in time and among themselves) with zero mean
+and constant variance. The system of equations described in 7 shows the evolution
+of latent factors 1,t, 2,t and 3,t as a vector autoregressive process, with error
+components given by ii,t, where i stands for each latent factor and i,t is the
+time-varying volatility of each latent factor. In this first specification, similarly to
+the factor GARCH specification used in Koopman et al. (2010), the evolution of the
+volatility of latent factors is described by a factor model, in which we identify the
+only latent volatility factor with the volatility of latent factor 1,t for 1,t. Other
+normalizations are possible and do not affect the results. In this normalization,
+factors 2,t and 3,t are obtained as linear functions of latent factor 1,t, with
+intercept parameters given by 2 and 3 and slope parameters 2 and 3.
+
+130                            Brazilian Review of Econometrics 30(1) May 2010
+Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+    Factor parameterization reduces the dimension of the problem by excluding two
+additional latent factors for volatilities from the estimation, replacing them with
+the linear functions of the first factor. Although this parameterization is similar
+to the one used by Koopman et al. (2010), some important differences are noted.
+In the parameterization conducted by Koopman et al. (2010), volatility structure
+is given by a GARCH volatility structure, and thus volatility is a deterministic
+function of the squared error and of volatility at t - 1 plus one intercept. Note
+that in the model of Koopman et al. (2010), this volatility intercept is defined a
+priori by identification issues. The estimation of the model proposed by Koopman
+et al. (2010) is based on quasi-maximum likelihood through the decomposition
+of the forecast error by the extended Kalman filter, which is based on a local
+log-linearization of the nonlinear state-space model.
+
+    Nevertheless, these series approximations used in the extended Kalman filter
+could be poor representations of true nonlinear equations and of probability distri-
+butions involved in the process, causing problems of filter divergence which usually
+result in high mean squared errors in the fit of these models, as discussed in Wan
+and van der Merwe (2000) and Doucet et al. (2001). Owing to these approxima-
+tions, the quasi-maximum likelihood properties derived from these approximations
+imply nonoptimal properties in finite samples for parameter estimators and latent
+factors.
+
+    In this paper, we replaced the GARCH model with log-normal stochastic
+volatility models. The choice of this model is justified by several factors. There
+is empirical evidence indicating that these models are better at capturing stylized
+facts about financial series and at forecasting than are other volatility models (e.g.,
+Koopman et al. (2005)). These models also have natural continuous time formu-
+lations, which does not occur with conventional GARCH models, and thus their
+interpretation is straightforward in continuous time asset pricing models. Finally,
+these additional stochastic volatility components can be formulated as additional
+latent factors in state-space form and dealt with by the same Bayesian method
+using Markov Chain Monte Carlo, which is used for the estimation of other latent
+volatility factors, through a hierarchical formulation.
+
+3.2 SV model with individual factors
+
+    While the factor model specified above and the factor model proposed by Koop-
+man et al. (2010) are relatively parsimonious by eliminating two additional factors
+from the model, these formulations also introduce important restrictions on the
+dynamics of the volatility of latent factors. By assuming that the dynamics of
+each latent factor are linear transformations of a single latent volatility factor, the
+factor model disregards an important aspect concerning the dynamics of Nelson-
+Siegel models. A remarkable feature in the specification of Nelson-Siegel model
+is that latent factors can be considered empirical decompositions of level, slope,
+and curvature. This empirical decomposition implies that the behavior expected
+
+Brazilian Review of Econometrics 30(1) May 2010  131
+         Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+from latent factors is poorly correlated with movements in the level, slope, and
+curvature. This behavior can be explained by the high correlation among level,
+slope, and curvature factors obtained by Nelson-Siegel model and the level, slope,
+and curvature factors obtained by the orthogonal decomposition of principal com-
+ponents in Litterman and Scheinkman (1991). Therefore, even though the decom-
+position of level, slope, and curvature implies orthogonality for the mean of latent
+factors, it also affects the movement of the second moment of latent factors ; so,
+assuming the dynamics of a single latent factor for the evolution of volatility can
+be an invalid restriction.
+
+    To avert the imposition of this restriction, the second parameterization used
+in this paper utilizes a complete evolution structure for the volatility of latent
+factors, based on the log-normal SV model structure for each of the latent factors,
+maintaining the other structures used in the previous model (log-normal SV for
+measurement errors and time-varying decay parameter ). The full structure of
+this model is given by:
+
+         y( ) = 1,t + 2,t  1 - et  + 3,t     1 - et - et  + t ,t          (11)
+                                                
+
+              ln 2,t = µ +  ln 2,t-1 +  t                                 (12)
+
+                           ln t = µ +  ln t-1 + t                         (13)
+
+ 1,t   µ1   11 12 13   1,t-1   11,t 
+
+ 2,t  =  µ2  +  21 22 23   2,t-1  +  22,t  (14)
+
+3,t      µ3                31 32 33               3,t-1             33,t
+
+ ln 12,t   µ,1   ,11               ,12    ,13   ln 12,t-1                      
+ ln 22,t  =  µ,2  +  ,21           ,22    ,23   ln 22,t-1  + 
+ln 32,t                            ,32                   ln 32,t-1        1,t
+         µ,3               ,31            ,33
+                                                                          2,t 
+
+                                                                          3,t
+
+                                                                             (15)
+
+                                
+
+                                          t
+
+                           var     1,t       =                            (16)
+                                        
+
+                                 2,t 
+
+                                   3,t
+
+    In this parameterization, equations 8, 9 and 10 are substituted into the system
+of equations described in Eq. 15, and now instead of a single latent factor for the
+volatility process, each component 1,t, 2,t, 3,t has a specific stochastic volatil-
+ity component. In this parameterization, we also allow for leverage of volatility
+
+132                                Brazilian Review of Econometrics 30(1) May 2010
+Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+processes, enabling a contemporaneous correlation between the error components
+of stochastic volatility equations of the observation and sign equation, similarly
+to the stochastic volatility model with leverage defined in Jacquier et al. (1994).
+The covariance matrix between these factors is defined by equation 16 through
+the symbol , and by the addition of another six correlation parameters to the
+model. Equations 4-9 and 11-16 represent the general models of both classes. We
+can obtain several submodels by adding restrictions on these general models by
+assuming that parameter , for instance, is constant over time, that the matrix of
+vector autoregressive parameters for latent factors 1,t, 2,t, 3,t is diagonal and
+by eliminating the leverage effect, rendering matrix  diagonal. A specification
+analysis with the several estimated submodels is shown in Section 6.
+
+4. Bayesian Estimation Based on MCMC
+
+    The systems of equations described in equations 4-9, representing the factor
+SV model, and in equations 11-16, representing the model with individual SVs, are
+systems represented in nonlinear state-space form. This nonlinearity hinders the
+use of the conventional estimation method using state-space models, the maximum
+likelihood obtained by the decomposition of forecast errors through the Kalman
+filter. The presence of time-varying component t turns the observation equation
+into a nonlinear function of this latent factor. Note that the specification of this
+Nelson-Siegel observation equation also hinders the use of this method for the
+estimation of stochastic volatility components, as the conventional estimation by
+quasi-maximum likelihood through the Kalman filter is based on a linearization
+of the observation equation, e.g. Jungbacker and Koopman (2009), which cannot
+be directly applied to this class of models. A possible alternative is the use of the
+extended Kalman filter proposed in Anderson and Moore (1979), but it is plagued
+by divergence problems and poor fits in finite samples, as mentioned earlier.
+
+    Given that it is of particular interest to maintain the specification and to avoid
+approximations, the simultaneous estimation of the proposed models should be
+performed by Bayesian inference using the Markov Chain Monte Carlo approach.
+This method allows obtaining estimates for the a posteriori distributions of pa-
+rameters and latent factors using Markov chain Monte Carlo simulations. Other
+reasons for the use of Bayesian methods in term structure models are presented in
+Chib and Ergashev (2009), who point out the advantages of these methods over
+dimensionality, identification and inference problems in multifactor term structure
+models. In Bayesian inference procedures, the aim is to estimate the posterior dis-
+tribution of parameters of interest conditional on the observed sample, denoted by
+p(|y). The following expression is used to find the distribution of parameters 
+conditional on the sample:
+
+                          p(|y) = p(, y)/p() = p(y|)p()/p(y)      (17)
+                                                              133
+Brazilian Review of Econometrics 30(1) May 2010
+     Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+where p(y|) is the model's likelihood, p() is the prior distribution assumed for
+the parameter and p(y) is the marginal distribution of the sample. As the sample
+is observed and fixed, this marginal distribution only has to be known up to a
+constant of integration, which makes inference procedures easier. Using the Bayes
+lemma, we can write:
+
+     p(|y) = p(, y)/p() = p(y|)p()/c                                (18)
+
+    Then the posterior distribution is proportional to the product of the likelihood
+and to the prior distribution:
+
+     p(|y)  p(y|)p()                                                (19)
+
+    Bayesian estimation methods enable natural interpretation of information up-
+dates, as the information in the prior distribution is updated by the information in
+the sample represented by likelihood, allowing the estimation of the posterior dis-
+tribution. Bayesian estimation methods also have some important computational
+advantages over classic methods, especially with regard to complex dimensionality
+problems. In these contexts, the use of prior information allows circumventing
+usual identification problems in higher-dimensional models, mainly through the
+use of hierarchical formulations. Identification, both in classic and Bayesian con-
+texts, is defined as the existence of only one vector of parameters that defines the
+same likelihood function, e.g. Rothenberg (1971), Kadane (1974), Poirier (1998)
+and Aldrich (2002). The use of prior information allows estimating unidentified
+models by reducing the sample space in the posterior distribution of data. As
+discussed in Florens et al. (1990), the selection of appropriate priors allows esti-
+mating posterior distributions econometrically identified by the reduction in the
+sigma-algebra that generates the posterior distribution. This concept is especially
+useful in hierarchical models, in which the posterior distribution of each hierarchy
+serves as the prior of the subsequent level of the model. As state-space models are
+a type of hierarchical structure, the information on each level allows identifying
+the other levels, with an adequate choice of priors. This method allows solving
+usual non-identification problems in classic models by using the Kalman filter for
+higher dimensional models, as is the case of interest rate latent factor models
+(e.g. Duffee (2002)). Kim and Orphanides (2005) demonstrate that affine term
+structure models can be characterized by observationally equivalent (unidentified)
+estimations, but with different economic interpretations.
+
+    Both classes of models discussed in this paper correspond to latent hierarchical
+models with three levels and six latent processes. Let  be the collection of param-
+eters of the model, and let Ft := (1t, 2t, 3t) and Vt := (ln 12,t, ln 22,t, ln 32,t).
+Then, the likelihood function of the model is given by:
+
+134  Brazilian Review of Econometrics 30(1) May 2010
+Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+p(|y) =         . . . p(Y |, F1, F2, . . . , FT )p(F1, F2, . . . , FT |)dF1dF2 . . . dFT
+
+         F1 F2  FT
+
+                                                                                      (20)
+
+where p(Y |, F1, F2, . . . , FT ) denotes the (conditional) density of observations Y
+given the parameters  and latent factors, and p(F1, F2, . . . , FT |) denotes the
+conditional density of latent factors given the parameters of the model . Because
+
+factors are unobservable, they need to be integrated, resulting in an integral of
+
+dimension (3T ). Evidently, p(F1, F2, . . . , FT |) depends on a new set of unknown
+components represented by volatility factors V1, . . . , VT . It is written as:
+
+p(F1, F2, . . . , FT |) =         . . . p(F1, F2, . . . , FT |, V1, V2, . . . , VT )
+
+                           V1 V2  FV
+
+                    × p(V1, . . . , VT |)dV1dV2 . . . dVT ,                           (21)
+
+where (V1, . . . , VT |) denotes the density of stochastic volatility components.
+    The structure of priors is given by a univariate normal distribution with the
+
+precision matrix given by an inverse gamma distribution for the vector autoregres-
+sive parameters of latent factors; the decay parameters follow log-normal distribu-
+tions in the hierarchical formulation with precision parameters given by an inverse
+gamma distribution, latent factors of level, slope, and curvature, hierarchical Gaus-
+sian priors, also using inverse gamma distributions as precision parameters. The
+intercept parameters and the persistence of volatility equations are specified by
+the normal-inverse gamma distribution and in the case of the factor model, in the
+volatility given by equation (5), the loading matrix is also given by a normal-inverse
+gamma distribution. The general structure for latent volatility factors is given by
+hierarchical log-normal priors with inverse gamma precisions. The model's struc-
+ture then assumes a multivariate normal distribution for the interest rate curve
+yields.
+
+    The model basically follows the same structure of priors and hyperparameters
+adopted in Haustsch and Ou (2010), except for decay parameters and time-varying
+volatilities. Note that the fit of the model basically does not change with the
+choices of these hyperparameters, which can be understood by the large number
+of observations in the term structure of interest rates over time. The values of the
+hyperparameters used in the estimations can be obtained from the authors, and
+were omitted here for space restrictions.
+
+    By defining the structure of prior distributions and of the likelihood, it is
+possible to retrieve the posterior distribution of parameters and latent factors.
+Due to the use of nonlinear structures and to the use of nonconjugate priors, it
+is not possible to obtain posterior distributions in an analytical fashion, and thus
+it is necessary to use numerical methods. In general, analytical formulas for the
+posterior distributions are only known in conjugate families, in which prior and
+
+Brazilian Review of Econometrics 30(1) May 2010              135
+     Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+posterior distributions belong to the same family. In other cases, it is necessary
+to use numerical methods to calculate the posterior distribution of data and, in
+high dimensionality problems, it is necessary to use Monte Carlo simulations. A
+successful Monte Carlo method used in high dimensionality problems is the Markov
+Chain Monte Carlo (MCMC) (e.g. Robert and Casella (2005), Gamerman and
+Lopes (2006)). MCMC methods are based on the simulation of Markov chains
+whose stationary (invariant) distribution converges to the posterior distribution of
+data.
+
+    An especially important property to reduce the computational cost of these
+simulations is that the estimation of p(|y) can be factored by the simulation
+of conditional distributions of parameters, a procedure known as Componentwise
+Metropolis-Hastings (e.g.Ntzoufras (2009)). These conditional simulations allow
+separating the total parameter space into smaller blocks. The procedure is shown
+in the following iterations:
+
+     p(1|2, 3, ..., n, y)
+
+     p(2|1, 3, ...., n, y)                                          (22)
+
+     ...
+
+     p(n|2, 3., ..., n-1, y)
+
+This property is based on the Clifford-Hammersley theorem (Robert and Casella,
+
+2005), which states that under certain conditions for regularity of Markov chains
+
+these conditional distributions converge only to the distribution of p(|y). Note
+
+that this simulation procedure avoids the use of numerical maximization, which is
+
+essentially problematic in latent factor models for the term structure of interest
+
+rates, as described in Kim and Orphanides (2005).
+
+The factorization used in this paper is defined as follows: Let
+
+ := {, F1, . . . , FT , V1, . . . , VT } be a random vector whose posterior distribution
+p(|Y ) can be written as:
+
+                    p(|Y ) = p(F1, F2, . . . , FT , V1, V2, . . . , VT , |Y )
+                                 p(Y |F1, F2, . . . , FT , V1, V2, . . . , VT , )
+                                × p(F1, F2, . . . , FT |V1, V2, . . . , VT , )
+                                × p(V1, V2, . . . , VT , )
+                                × p()
+
+    When all conditional distributions are known, the MCMC algorithm is reduced
+to the so-called Gibbs sampler, in which the estimation is carried out by the simu-
+lation of all analytically known conditional distributions. When some conditional
+distribution is not known, it is possible to use the Metropolis-Hastings algorithm
+(e.g. Robert and Casella (2005), Gamerman and Lopes (2006)), which is a gen-
+eralization of the acceptance-rejection method used with random variables for the
+
+136  Brazilian Review of Econometrics 30(1) May 2010
+Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+simulation of analytically unknown conditional distributions. Therefore, a usual
+MCMC estimation method uses the Gibbs algorithm to simulate known condi-
+tional distributions and the Metropolis-Hastings algorithm to simulate other con-
+ditional distributions. Algorithms that use Gibbs and Metropolis-Hastings steps
+are known as hybrid algorithms, and were initially proposed in Tierney (1994). A
+hybrid MCMC algorithm (Robert and Casella, 2005) can be seen as iterations as
+follows:
+
+For i=1,...,p and given  (1(t+1), ..., i(-t+11), i(t), ...p(t)),
+1 - Sample               i  qi(|1(t+1), ..., i(-t+11), i(t), ...p(t))
+
+2 - Accept
+
+i(t+1), =  i(t) with probability 1 - 
+              i with probability 
+
+           where
+
+           gi (i |1(t+1) ,...,i(- t+11) ,,i(t) ,...p(t) )
+    
+
+           qi (i |1(t+1) ,...,i(- t+11) ,i(t) ,i(t) ,...p(t) )
+    
+
+=1         gi (i(t) |1(t+1) ,...,i(- t+11) ,,i(t) ,...p(t) )
+
+    
+
+           qi (i(t) |1(t+1) ,...,i(- t+11) ,i(t) ,i(t) ,...p(t) )
+    
+
+where q is the so-called tentative or auxiliary distribution, which is used to ap-
+proximate the unknown distribution to be simulated.
+
+    In the structure of priors assumed here, the Metropolis-Hastings algorithm
+is necessary to assess the posterior distributions of parameters and latent factors
+associated with the decay parameter and with stochastic volatility, which represent
+the nonlinear components of the model. In other cases, conditional distributions
+are known and the Gibbs algorithm can be used. For further details, see Haustsch
+and Ou (2010). In the Markov Chain Monte Carlo procedure, we started the
+estimation with 20,000 burn-in iterations, and used another 20,000 iterations in
+the construction of posterior distributions. To avoid non-convergence problems in
+the chains, we used each tenth iteration only, discarding any other iterations on
+this interval. Convergence is ascertained by the Gelman-Rubin diagnostics. To
+summarize the results, we used the posterior mean, and to construct the confidence
+intervals and the 2.5% and 97.5% percentiles of the posterior distribution obtained
+by the MCMC procedure.
+
+5. Data
+
+    In this section, we describe the databases used in the estimation of the mod-
+els. For the empirical assessment of interest rate curves, we used two different
+databases, one with daily data and closing prices of the interest rates in ID fu-
+tures contracts traded at BM&F. The other database consisted of monthly data
+
+Brazilian Review of Econometrics 30(1) May 2010                        137
+     Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+obtained from the prices of U.S. treasury bonds, and also closing prices (at the
+end of the month).2 The database is available from website: www.ssc.upenn.edu/
+~fdiebold.
+
+    The ID futures contract with maturity  is a futures contract of which the basic
+asset is the interest rate accumulated on a daily basis, capitalized between trading
+time t and  . The value of the contract is given by its value at maturity, R$
+100,000.00 discounted according to the accumulated interest rate, traded between
+the seller and the buyer of the contract. When buying an ID futures contract for
+the price at time t and keeping it up to maturity  , the gain or loss is given by:
+
+              (t,    )(1  +  yi)    1
+              i=1                 252
+
+     100.000                 (t, )     -1
+                               252
+              (1  +  DI)
+
+where yi denotes the ID rate (i - 1) days after the trading day. The function 
+represents the number of days between t and  .
+
+    The ID futures contract is very similar to a zero-coupon bond, except for the
+fact that marginal calls are paid on a daily basis. Every day the cash flow is the
+difference between the adjustment price (liquidation) of the current day and the
+adjustment price of the previous day, corrected by the ID rate of the previous day.
+
+    The ID futures contracts are traded at BM&F, which determines the number of
+maturities with authorized contracts. In general, there are around 20 maturities
+with authorized contracts every day, but not all of them have liquidity. Often,
+approximately 10 maturities have contracts with higher liquidity. There are con-
+tracts with monthly maturities for the months that begin each quarter (January,
+April, July, and October). In addition, there are contracts with maturities for the
+four months that follow the current month. The maturity date is the first business
+day of the month on which the contract is due.
+
+    The data used in this paper consist of daily observations of the interest rates
+of ID futures contracts, closing prices. In practice, contracts with all maturities
+are not observed every day. Therefore, from the observed rates, the data were
+converted to fixed maturities of 1, 2, 3, 4, 6, 9, 12, 15, 18, 24, 27, 29, 31 and
+33 months, using cubic spline interpolations.3 The database contains the maturi-
+ties with highest liquidity for January 2006 through February 2009, totaling 756
+observations.
+
+    Table 1 displays the descriptive statistics for the Brazilian interest rate curve.
+Mean, standard deviation, minimum, maximum, and some autocorrelation coef-
+
+     2For further details on this database, see Diebold and Li (2006).
+     3Note that the use of interpolations is only necessary to obtain a database with the same
+vertices for each day in the sample, which is especially important to verify the predictive power
+of the models tested for each vertex. The same estimation method can be used for data with-
+out interpolations, and the general results do not change significantly. Estimations of dynamic
+Nelson-Siegel models using Bayesian methods without interpolations can be found, for instance,
+in Laurini and Westin (2010).
+
+138                  Brazilian Review of Econometrics 30(1) May 2010
+Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+                                                      Table 1
+Descriptive statistics of the Brazilian interest rate curve. Sampling period from 2006:01
+
+                                                    to 2009:02
+
+Maturity    Mean    Std. Dev.  Minimum           Maximum   (5)    (21)   (63)
+            13.125     1.731      11.05             17.71  0.995  0.894  0.672
+        1   13.082     1.677      11.04             17.60  0.996  0.890  0.662
+            13.050     1.620      11.02             17.40  0.997  0.885  0.650
+        2   13.027     1.566      11.02             17.21  0.997  0.879  0.635
+            13.028     1.523      10.90             16.72  0.996  0.866  0.597
+        3   13.058     1.534      10.78             16.54  0.993  0.858  0.575
+            13.121     1.567      10.68             16.47  0.991  0.851  0.560
+        4   13.193     1.600      10.60             16.91  0.987  0.849  0.553
+            13.248     1.614      10.46             17.15  0.985  0.845  0.550
+        6   13.287     1.615      10.37             17.36  0.982  0.840  0.543
+            13.311     1.625      10.28             17.57  0.978  0.836  0.536
+        9   13.321     1.630      10.21             17.72  0.975  0.831  0.527
+            13.325     1.632      10.15             17.83  0.972  0.828  0.521
+Months  12  13.326     1.633      10.13             17.87  0.966  0.827  0.517
+        15
+
+        18
+
+        24
+
+        27
+
+        29
+
+        31
+
+        33
+
+Note: The last three columns show the autocorrelations for the lags of 1 week, 1 month and 3 months.
+
+ficients are reported for each maturity. Note that the interest rates for shorter
+maturities are more volatile and have higher persistence, differing a little bit from
+what is usually observed in interest rate curves for economies with more mature
+markets. Also note that the interest rate curve has a positive but smooth slope in
+the mean values.
+
+    For the empirical assessment of the proposed generalizations, we also used
+the same database analyzed by Diebold and Li (2006), Diebold et al. (2006) and
+Koopman et al. (2010). The database consists of the unsmoothed forward rates
+described in Fama and Bliss (1987), obtained from U.S. Treasury bonds, with fixed
+maturities of 3, 6, 9, 12, 15, 18, 21, 24, 30, 36, 48, 60, 72, 84, 96, 108 and 120
+months.
+
+    Table 2 shows the descriptive statistics for the U.S. Treasury database. Mean,
+standard deviation, minimum, maximum, and some autocorrelation coefficients are
+reported for each maturity. Some common characteristics shared by the interest
+rate curves can be observed, such as positive slope, longer maturities with smaller
+volatility and lower persistence than shorter maturities, and level as the most
+persistent component.
+
+    Figures 1 and 2 show the evolution of the Brazilian and U.S. interest rate over
+time. In both cases, there is a wide time range in the interest rate curve level,
+with less intense variations in slope and curvature. In the case of the U.S. interest
+rate curve, the decline in level over time is quite evident, which is not that evident
+in the Brazilian case because of the database used, which covers a shorter time
+period. In both cases, databases with fixed maturities are used.
+
+Brazilian Review of Econometrics 30(1) May 2010                          139
+             Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+                                                   Table 2
+Descriptive statistics for the U.S. Treasury curve. Sampling period from 1985:01 to
+
+                                                   2000:12
+
+Maturity     Mean   Std. Dev.  Minimum   Maximum   (1)    (12)                                (30)
+             5.630     1.488      2.732     9.131  0.978  0.569                               -0.079
+        3    5.785     1.482      2.891     9.324  0.976  0.555                               -0.042
+             5.907     1.492      2.984     9.343  0.973  0.545                               -0.005
+        6    6.067     1.501      3.107     9.683  0.969  0.539                               0.021
+             6.225     1.504      3.288     9.988  0.968  0.527                               0.060
+        9    6.308     1.496      3.482    10.188  0.965  0.513                               0.089
+             6.375     1.484      3.638    10.274  0.963  0.502                               0.115
+        12   6.401     1.464      3.777    10.413  0.960  0.481                               0.133
+             6.550     1.462      4.043    10.748  0.957  0.479                               0.190
+        15   6.644     1.439      4.204    10.787  0.956  0.471                               0.226
+             6.838     1.439      4.308    11.269  0.951  0.457                               0.294
+        18   6.928     1.430      4.347    11.313  0.951  0.464                               0.336
+             7.082     1.457      4.384    11.653  0.953  0.454                               0.372
+        21   7.142     1.425      4.352    11.841  0.948  0.448                               0.391
+             7.226     1.413      4.433    11.512  0.954  0.468                               0.417
+        24    7.27     1.428      4.429    11.664  0.953  0.475                               0.426
+             7.254     1.432      4.443    11.663  0.953  0.467                               0.428
+Months  30
+
+        36
+
+        48
+
+        60
+
+        72
+
+        84
+
+        96
+
+        108
+
+        120
+
+Note: The last three columns show the autocorrelations for the lags of 1, 12, and 30 months.
+
+                                                    Figure 1
+Dynamics of the term structure over time This graph illustrates the evolution of
+the term structure of interest rates (ID futures contract database) for the period from
+
+                                              2006:01 to 2009:02
+
+Note: The sample consists of daily data for maturities of 1, 2, 3, 4, 6, 9, 12, 15, 18,
+24, 27, 29, 31 and 33 months.
+
+140                            Brazilian Review of Econometrics 30(1) May 2010
+          Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+                                                    Figure 2
+Dynamics of the term structure over time This graph illustrates the evolution of
+
+   the term structure of interest rates (U.S. Treasury database) for the period from
+                                               1985:01-2000:12
+
+Note: The sample consists of monthly data for maturities of 3, 6, 9, 12, 15, 18, 21,
+24, 30, 36, 48, 60, 72, 84, 96, 108 and 120 months.
+
+6. Analysis of Results
+
+    In this section, we examine the adjustment of the generalizations proposed
+for the volatility structure. For the sake of comparison, we also estimate some
+alternative parameterizations: structure proposed by Diebold and Li (2006), two-
+step estimation with fixed  (P1) defined a priori ; same parameterization as before,
+but including the decay factor  as time-varying, without taking into account the
+conditional heteroskedasticity (P2).
+
+    We also estimate the model with the same Diebold-Li parameterization, with
+fixed  defined a priori, modeling the conditional heteroskedasticity with specific
+stochastic volatility factors (P3); same specification as before but with fixed ,
+estimated together with the other parameters (P4); model with varying  and
+common stochastic volatility factor (P5); model with varying  and stochastic
+volatility for each latent factor, considering two alternative specifications for the
+dynamics of factors, AR(1) and VAR(1) (P6 and P7); parameterization with total
+leverage, i.e., full correlation matrix across all stochastic volatilities (P8). Table 6
+shows the number of parameters estimated in each parameterization.
+
+6.1 ID futures contract database
+
+    At first, we estimated the model using the two-step procedure, with a fixed 
+parameter and disregarding the conditional heteroskedasticity (parameterization
+
+Brazilian Review of Econometrics 30(1) May 2010  141
+            Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+                                       Table 3
+            Number of parameters estimated in each model
+
+     Model                     P1 P2 P3 P4 P5 P6 P7 P8
+
+              Total            10 11 18 19 19 21 27 27
+Parameter                      --1--1 3 3 3 6
+                     SV        44333333
+                     VAR ( s)  ---- 9 9 7 9 9 9
+                     Correl    6 6 6 6 6 6 12 6
+                               -------------- 6
+
+Note:  refers to the variances of 's and of the measurement error for the models
+estimated by the two-step method. The correlations refer to the specification with
+leverage (full correlation matrix across all SVs).
+
+P1).4 Parameter , which determines the shape of the interest rate curve, was
+chosen such that it minimizes the root mean squared error (RMSE) for in-sample
+fit (  = 0.1046).
+
+    Table 4 shows the RMSE for the fit of the ID futures interest rate curve, taking
+into account all the analyzed parameterizations. The RMSE is expressed as ba-
+sis points (bps). Note that even the model estimated by the two-step procedure,
+using OLS, captures a substantial part of the dynamics of the interest rate curve,
+especially for medium-term maturities. The average RMSE for this parameteri-
+zation is 0.45 bps. However, the presence of high autocorrelation in the residuals
+indicates that important information on mean and variance is being neglected.
+
+    In the second parameterization, the decay parameter, , is deemed to be time-
+varying and is estimated jointly with the other factors (Parameterization P2).
+Thus, the model has four latent factors, 1t, 2t, 3t and 4t (t); so, it is non-
+linear and is estimated by Bayesian inference (MCMC) in a single step. This
+specification does not include conditional heteroskedasticity. Considering that 
+varies over time significantly improves the quality of fit, and the RMSE mean
+drops to 0.07. In the third parameterization (P3), the parameter  is defined a
+priori, but conditional heteroskedasticity is modeled by a structure with specific
+stochastic volatility component for each latent factor. Taking into account the
+conditional variance of factors separately substantially improves the quality of fit,
+and the RMSE mean drops from 0.45 to 0.15 bps (Table 4).
+
+    In another alternative, we estimate the model in a single step and deal with
+conditional variance using specific stochastic volatility components, as in the pre-
+vious case (P4). Nonetheless, in this case, the decay factor, , is estimated jointly
+with the other parameters and kept constant for all time periods. As highlighted
+earlier, in this case, the model is nonlinear and the parameters are estimated simul-
+
+4This parameterization is often used as a benchmark for alternative specifications.
+
+142                            Brazilian Review of Econometrics 30(1) May 2010
+Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+                                                 Table 4
+RMSE of the Estimated Models (ID futures contract database). Period between
+
+                                        2006:01 and 2009:02
+
+Maturity  Months        P1       P2     P3          P4       P5      P6      P7      P8
+Short     1          0.5000  0.0958  0.2067      0.0835  0.0744  0.0803  0.0814  0.0814
+Medium    2          0.5100  0.0473  0.1453      0.0420  0.0348  0.0337  0.0342  0.0346
+          3          0.6800  0.0447  0.0890      0.0503  0.0481  0.0473  0.0462  0.0454
+Long      4          0.6900  0.0664  0.0693      0.0673  0.0648  0.0665  0.0653  0.0652
+          6          0.5400  0.0866  0.1617      0.0765  0.0645  0.0714  0.0698  0.0713
+          9          0.4100  0.0778  0.1998      0.0648  0.0457  0.0518  0.0508  0.0524
+          12         0.2600  0.0649  0.2166      0.0621  0.0495  0.0434  0.0436  0.0425
+          15         0.1800  0.0736  0.2017      0.0839  0.0794  0.0725  0.0723  0.0712
+          18         0.2100  0.0763  0.1525      0.0894  0.0861  0.0830  0.0813  0.0820
+          24         0.3200  0.0619  0.0781      0.0656  0.0622  0.0633  0.0618  0.0638
+          27         0.4100  0.0505  0.0715      0.0398  0.0339  0.0354  0.0344  0.0354
+          29         0.4900  0.0589  0.1241      0.0459  0.0386  0.0324  0.0328  0.0302
+          31         0.5400  0.0800  0.1682      0.0726  0.0658  0.0574  0.0591  0.0571
+          33         0.5700  0.0976  0.1965      0.0945  0.0872  0.0786  0.0805  0.0794
+
+          M´edia     0.4507  0.0702  0.1486      0.0670  0.0596  0.0584  0.0581  0.0580
+          Mediana    0.4950  0.0700  0.1571      0.0665  0.0634  0.0604  0.0605  0.0605
+          # Smaller
+                                  2                           5       2       1       4
+
+The last line contains the number of times the parameterization outperformed the other ones. Boldface
+indicates better performance at maturity. RMSE expressed as basis points. P1 = Two-step estimation
+(2S) with a fixed ; P2 = One-step estimation (1S) with time-varying ; P3 = Estimation (2S), with 
+defined a priori and SV for each factor; P4 = Estimation (1S), with estimated  and SV for each factor;
+P5 = Estimation (1S), time-varying  and factor SV; P6 and P7 = Estimation (1S), time-varying , SV
+for each factor and dynamics of factors modeled by AR(1) and VAR(1), respectively; P8 = Estimation
+(1S), parameterization with full leverage.
+
+taneously by Bayesian inference using MCMC. With this specification, the quality
+of fit improves compared to the ones considered previously, and the RMSE mean
+is 0.067, outperforming the other ones, mainly at longer maturities (Table 4).
+
+    The first alternative specification proposed for Diebold and Li (2006) model
+consists in including a common stochastic volatility factor in measurement, as
+defined in equations (8, 9 and 10), discussed in Section 3. In this case, we also
+regard the decay factor t as a fourth latent factor, 4t (Parameterization P5).
+The vector t is then modeled by a VAR process (equation 14), as in Koopman
+et al. (2010). Figure 3 shows the time series for the latent factors, including the
+decay parameter, t.
+
+    In addition to being useful for the pricing and management of fixed income
+assets, modeling the conditional volatility of the interest rate curve, in this case
+using a common stochastic volatility component, improves the fit of the model, and
+the RMSE mean drops to 0.06 bps. Note that in the case of the Brazilian interest
+rate curve, the parameterization has a better performance for 5 out of the 14
+maturities analyzed, especially for the intermediate portion of the curve. Besides
+taking into account the conditional variance of the interest rate curve, regarding
+the decay factor t as time-varying allows observing changes in the term structure
+over time as, for instance, the maturity at which the curvature factor loading is
+maximized.
+
+    Figure 4 shows the estimated factor and measurement error volatilities. Ob-
+serve that the measurement error volatility is especially high in the second half
+
+Brazilian Review of Econometrics 30(1) May 2010                                  143
+                Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+                                         Figure 3
+     Estimates of Latent and Decay Factors. Parameterization P5
+
+Note: Specification with common stochastic volatility component and time-varying t.
+
+144  Brazilian Review of Econometrics 30(1) May 2010
+Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+                                            Figure 4
+                   Time-varying volatility. Parameterization P5
+
+Note: Specification with common stochastic volatility component and time-
+varying t.
+
+Brazilian Review of Econometrics 30(1) May 2010  145
+                                  Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+of 2008, period which coincides with the most critical phase of the international
+financial crisis. The estimated stochastic volatility component demonstrates the
+capacity of the model to capture the conditional heteroskedasticity observed in in-
+terest rates, identifying the moments of change, such as inverted shape, at the end
+of 2006 and in the last quarter of 2008, periods marked by changes in monetary
+policy conduct.
+
+    The second generalization consists in estimating the model by using conditional
+heteroskedasticity separately in latent factors and in measurement errors. In this
+specification, both factor volatility and the decay factor t are deemed to be
+time-varying. Figure 5 shows the estimates of latent factors, including the decay
+factor. In this case, full (Parameterization P6) and diagonal (Parameterization P7)
+specifications were considered for the transition equation that models the factor
+dynamics, but it should be noted that in the latter case the dynamics of t is
+modeled by an AR(1). A parameterization with total leverage, with full correlation
+matrix across all stochastic volatilities, was also used (Parameterization P8). Once
+again, note that the estimated factors describe well the changes in the interest rate
+curve level observed in Figure 1.
+
+                                                      Figure 5
+                  Estimates of Latent and Decay Factors. Parameterization P7
+
+Note: Diagonal specification for the equation of the transition matrix and AR(1) for
+t.
+
+The last three columns of Table 4 show the RMSE for the second change in the
+
+146  Brazilian Review of Econometrics 30(1) May 2010
+            Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+model, with the full and diagonal VAR matrix for the factor dynamics (P6 and
+P7), in addition to leverage for volatility components (P8). Estimation details are
+discussed in Section 4. Note that with this parameterization the model has the
+lowest RMSE means (0.0584, 0.0581 and 0.0580, respectively). Compared to the
+specification that imposes a common volatility factor, it has a better fit for 9 out of
+14 maturities, especially the longest ones, outperforming other parameterizations
+in all vertices.
+
+    The evolution of volatility factors, ln(ht 1 ), ln(ht 2 ) and ln(ht3 ), and the volatil-
+ity of measurement errors,  ,t, are shown in Figure 6.
+
+                                                      Figure 6
+         Specific Time-Varying Stochastic Volatility Factors. Parameterization P7
+
+                Note: Specification with factor stochastic volatility and time-varying t.
+
+    Confidence intervals for the estimation of parameters related to the dynamics
+of latent factors and stochastic volatility factors, model specified by equations (5-
+10) and model specified by equations (12-16), are shown in Table 5. In both cases,
+the latent factors are highly persistent. In addition, we found strong evidence of
+high autocorrelation in volatility factors, with autoregressive coefficients of 0.998,
+0.997 and 0.998 for level, slope, and curvature, respectively.
+
+Brazilian Review of Econometrics 30(1) May 2010  147
+                  Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+                  Table 5: 95% Confidence Intervals (Parameterization P5)
+
+     Brazil Par                µ             1t-1           2t-1             3t-1
+                   1t       0.021            0.859            --               --
+
+     s       2t         (0.021;0.021)    (0.858;0.860)      1.003              --
+
+             3t             0.001              --       (0.997;1.009)        0.996
+
+             1t        (-0.001;0.003)          --             --         (0.991;1.001)
+
+     SV      2t             -0.001             1t           1t-1               --
+                                               --           0.988
+             3t        (-0.003;0.001)                                          --
+                                             0.985      (0.977;0.998)
+                               µ                                               --
+                            0.062        (0.927;1.011)        --
+
+                       (-0.227;0.425)        0.870            --
+
+                            0.710        (0.815;0.906)
+
+                        (0.232;1.332)
+
+                             0.87
+
+                        (0.269;1.402)
+
+Note: 95% confidence intervals in brackets. Parameterization using VAR for latent factors and specific SV
+
+                  Table 6: 95% Confidence Intervals (Parameterization P7)
+
+Brazil Par                      µ            1t-1            2t-1              3t-1
+              1t              0.094          0.392            0.106            -0.011
+
+s        2t               (0.093;0.094)  (0.388;0.395)    (0.098;0.113)  (-0.014;-0.008)
+
+         3t                  -0.043          0.278            0.944             0.006
+
+                       (-0.055;-0.033)   (0.218;0.395)    (0.930;0.954)     (0.003;0.007)
+
+                             -0.058          0.372           -0.089             1.001
+
+                       (-0.075;-0.042)   (0.267;0.481)  (-0.122;-0.06)      (0.990;1.013)
+
+         1t                   0.039          0.998            --               --
+
+SV       2t               (0.032;0.051)  (0.995;1.002)      0.997              --
+
+         3t                  -0.215            --       (0.992;1.003)        0.998
+
+                       (-0.110;-1.616)         --             --         (0.993;1.003)
+
+                             -1.657
+
+                        (-5.205;4.091)
+
+           Note: 95% confidence intervals in brackets. Parameterization using VAR for latent factors and specific SV.
+
+    Confidence intervals for the stochastic volatility parameters of measurement
+errors,  ,t, and for the dynamics of the decay factor, t, are shown in Table 7.
+
+    95% confidence intervals fort and  ,t (BRA).
+
+148                                      Brazilian Review of Econometrics 30(1) May 2010
+Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+          Table 7: 95% confidence intervals fort and  ,t (BRA)
+
+Model       µ     Specific SV   µ                  µ     Factor SV   µ      
+          -0.622               0.041  0.998      -1.189             0.190  0.999
+CI        -0.204               0.038  0.999      -0.705             0.196  1.000
+C I0.025  0.233       0.944    0.036  1.000      -0.265     0.943   0.203  1.005
+C I0.50               0.964                                 0.963
+C I0.975              0.982                                 0.982
+
+           Note: 95% confidence intervals for the decay factor and for the measurement error variance.
+
+    Therefore, it seems clear that regarding the parameter t as fixed and ignoring
+the presence of conditional heteroskedasticity, although it facilitates the estimation
+procedures, implies loss of the quality of fit. Results also indicate that the maturity
+for which curvature has maximum weight is not constant over time. Thus, keeping
+ constant throughout the sampling period could be very restrictive, as the data
+cover a long time period. In particular, the maturity at which the curvature
+factor 3t is maximized and the speed of decay of the slope factor 2t depend
+only on parameter , and are maintained constant as a consequence. However,
+these features of the interest rate curve can change over time, especially for the
+Brazilian interest rate curve, which went through several changes in the past few
+years owing to changes in macroeconomic fundamentals.
+
+    In the analysis in which we used ID futures contract data, we concluded that
+regarding the decay parameter as time-varying and including conditional volatil-
+ity improve the quality of fit. The extension with specific stochastic volatility
+components had the best performance.
+
+6.2 U.S. Treasury database
+
+    In this section, we estimate the same parameterizations for the U.S. Treasury
+database described in Section 5. Table 8 shows the RMSE for each maturity,
+taking into account all the estimated versions of the model.
+
+    The first parameterization of the model (P1) follows Diebold and Li (2006),
+with a decay parameter  equal to 0.0609. The model also was estimated using
+the time-varying decay parameter , regarded as a fourth latent factor, without
+considering conditional heteroskedasticity (P2). Unlike the ID futures contract
+database, this parameterization does not improve the fit of the model compared
+to the previous case, and the RMSE mean is then slightly higher (equal to 0.0881
+bps).
+
+    The model also was estimated using the parameter  defined a priori and a
+stochastic volatility structure with specific component for each factor (P3). This
+parameterization outperforms the previous ones in terms of RMSE at all maturi-
+ties, as shown in Table 8, highlighting the importance of conditional heteroskedas-
+ticity. In the subsequent specification, the model is estimated in a single step
+using the fixed  parameter, jointly estimated with the other factors (P4). The
+same structure is used for the volatility of the previous case. In this case, the fit
+
+Brazilian Review of Econometrics 30(1) May 2010                            149
+                     Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+                                                    Table 8
+RMSE of Estimated Models (U.S. Treasury Database). Period between 1985:01 and
+
+                                                    2000:12
+
+Maturity  Months        P1      P2      P3       P4      P5      P6      P7             P8
+Short     3          0.1240  0.1459  0.0870  0.0908  0.0681  0.0687  0.0716         0.0658
+Medium    6          0.0596  0.0684  0.0447  0.0513  0.0434  0.0462  0.0456         0.0451
+          9          0.0706  0.0702  0.0668  0.0755  0.0659  0.0667  0.0666         0.0674
+Long      12         0.0841  0.0851  0.0811  0.0829  0.0746  0.0741  0.0743         0.0731
+
+          15         0.0887  0.0905  0.0806  0.0667  0.0724  0.0704  0.0719         0.0695
+          18         0.0728  0.0758  0.0596  0.0465  0.0543  0.0528  0.0539         0.0522
+          21         0.0586  0.0624  0.0386  0.0339  0.0378  0.0381  0.0389         0.0372
+          24         0.0702  0.0777  0.0519  0.0717  0.0518  0.0560  0.0537         0.0540
+          30         0.0556  0.0633  0.0411  0.0610  0.0388  0.0392  0.0382         0.0416
+          36         0.0679  0.0728  0.0592  0.0830  0.0561  0.0552  0.0520         0.0558
+
+          48         0.0667  0.0682  0.0681  0.0770  0.0625  0.0607  0.0606         0.0638
+          60         0.0857  0.0836  0.0779  0.1018  0.0708  0.0696  0.0690         0.0699
+          72         0.0986  0.0940  0.0821  0.0817  0.0761  0.0779  0.0784         0.0787
+          84         0.0892  0.0850  0.0611  0.0716  0.0623  0.0602  0.0614         0.0606
+          96         0.0999  0.1026  0.0578  0.0580  0.0549  0.0552  0.0544         0.0553
+          108         0.117  0.1181  0.0613  0.0644  0.0558  0.0579  0.0555         0.0582
+          120        0.1237  0.1340  0.0807  0.0888  0.0804  0.0797  0.0762         0.0811
+
+          Mean       0.0843  0.0881  0.0647  0.0710  0.0604  0.0605  0.0601          0.0605
+          Median     0.0841  0.0836  0.0613  0.0717  0.0623  0.0602  0.0606         0.06060
+          # Smaller
+                                                 3       4       1        7              2
+
+Note: The last line shows the number of times the parameterization outperformed the other ones. Boldface
+indicates better performance at maturity. RMSE expressed as basis points. P1 = Two-step procedure (2S)
+with constant ; P2 = One-step procedure (1S) with time-varying ; P3 = 2S estimation with defined
+a priori and SV for each factor; P4 = 1S estimation with estimated  and SV for each factor; P5 =
+1S estimation with time-varying  and factor SV; P6 and P7 = 1S estimation with time-varying , SV
+for each factor, and factor dynamics modeled by AR(1) and VAR(1), respectively; P8 = 1S estimation,
+parameterization with total leverage. l.
+
+150                                  Brazilian Review of Econometrics 30(1) May 2010
+            Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+improves marginally for some medium-term maturities, but the RMSE mean is
+higher than in the previous case.
+
+    The two generalizations proposed for the model were also estimated. The
+first one utilizes a common stochastic volatility component and the second one
+includes specific stochastic volatility components for each factor (P5). Thus, as
+with ID futures contract data, the results show that the extension of the model
+with specific volatility components improves the quality of fit, mainly for longer
+maturities, outperforming the most basic specifications. The parameterization
+with a common stochastic volatility component has a lower RMSE than other
+parameterizations in 4 out of 17 maturities, with a mean RMSE of 0.0604 bps,
+outperforming the parameterizations assessed previously.
+
+                                                      Figure 7
+                 Estimates for Latent and Decay Factors. Parameterization P5
+
+Note: Parameterization with a common volatility factor.
+
+    Figure 7 shows the time series for latent factors estimated using a specific
+volatility component and a time-varying decay factor. Note that the downtrend of
+the interest rate curve level observed in Figure 2 is well captured by the estimated
+level component, 1, which has a clear downtrend over time. On the other hand,
+parameter  assumes values between 0.05 and 0.10 most of the time, and thus the
+weight of component 3 is maximized to maturities between 20 and 30 months.
+
+    Figure 8 shows the estimates for the measurement error and factor volatilities.
+The volatility components are especially high in the second half of the 1980s,
+
+Brazilian Review of Econometrics 30(1) May 2010          151
+                                  Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+taking on moderate values in the subsequent period.
+                                                      Figure 8
+
+                            Time-Varying Volatility. Parameterization P5
+
+     Note: Factor and Measurement Error Volatilities.
+
+    The last three columns in Table 8 display the RMSE for all the maturities
+of the parameterization that includes specific stochastic volatility components for
+each latent factor. As with the case of ID futures contract data, complete (P7)
+and diagonal (P7) specifications were considered for the transition equation that
+models the factor dynamics, but in the latter case the dynamics of t is modeled
+by an AR(1). A parameterization with total leverage (P8), full correlation matrix
+across all stochastic volatilities, was also estimated. Specifications with specific
+volatility components outperform other specifications in 10 out of 17 maturities,
+especially in terms of the longest portion of the interest rate curve. Note that,
+in the case of the U.S. Treasury interest rate curve, the best fit was obtained by
+modeling the factor dynamics with a VAR(1), with mean RMSE of 0.0601 basis
+points.
+
+    Figure 9 shows the time series for the latent and decay factors for the model
+estimated with specific volatility components and complete VAR for the factor
+dynamics. Once again, note that the downward trend in the general interest rate
+curve level is well captured by the component 1. Also in this case, parameter t
+ranges between 0.05 and 0.10 most of the time. Figure 10 depicts the behavior of
+
+152  Brazilian Review of Econometrics 30(1) May 2010
+            Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+specific volatility factors and measurement error variance at each t.
+                                                      Figure 9
+
+          Estimates of Latent Factors and Decay Parameter. Parameterization P7
+
+Note: Diagonal specification for the transition equation matrix and AR(1) for the decay factor.
+
+    Again, the results provide evidence of how important it is to take into account
+conditional variance in interest rate curve models. Moreover, the results found
+here, using both the ID futures contract and the U.S. Treasury databases, indicate
+that imposing a specific volatility component structure for each latent factor of
+Diebold and Li (2006) model and regarding the decay factor as time-varying has
+significant gains in quality of fit. However, unlike Brazilian data, regarding the
+parameter  as time-varying does not have significant gains in quality of fit in
+the U.S. Treasury database. With respect to conditional heteroskedasticity, the
+quality of fit improved significantly in both cases.
+
+    Tables 9 and 10 show the confidence intervals for the factor dynamics parame-
+ters for the model with factor stochastic volatility and for the model with specific
+stochastic volatility factors, respectively. Observe that the imposition of a volatil-
+ity component structure slightly changes the persistence of factors, increasing the
+autoregressive components of latent factors in both cases. Parameters for the
+dynamics of volatility factors, (ht1 , ht2 and ht 3 ), are also shown, all with high
+persistence.
+
+Brazilian Review of Econometrics 30(1) May 2010  153
+      Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+                                Figure 10
+     Specific Time-Varying Stochastic Volatility Factor
+
+Note: Stochastic volatility latent factors and measurement error volatility.
+
+154  Brazilian Review of Econometrics 30(1) May 2010
+Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+           Table 9: 95% confidence intervals (Parameterization P5)
+
+EUA Par             µ             1t-1               2t-1            3t-1
+                                                                       --
+        1t       0.001            0.983                --
+                                                                       --
+s       2t   (0.000;0.003)    (0.961;0.997)          0.992
+                                                                       917
+        3t       0.000              --           (0.967;1.018)
+                                                                 (0.861;0.968)
+            (-0.001;0.001)          --                 --
+
+                  -0.01
+
+            (-0.002;0.000)
+
+            µ                 1t                 1t-1
+
+        1t  0.047             --                 1.000               --
+
+            (0.043;0.056)                        (0.997;1.004)
+
+SV      2t  2.015             0.787              --                  --
+
+            (0.661;3.095)     (0.562;0.936)
+
+        3t  3.843             0.219              --                  --
+
+            (3.173;4.322)     (0.054;0.410)
+
+Note: 95% confidence intervals in brackets. Parameterization using VAR for latent factors and specific SV.
+
+           Table 10: 95% confidence intervals (Parameterization P7)
+
+Esp. Par.             µ            1t-1               2t-1           3t-1
+
+    1t             0.001           0.981              -0.005         0.000
+
+s   2t         (0.000;0.002)   (0.964;0.997)     (-0.005;0.021)  (0.000;0.026)
+
+    3t             0.000           -0.174             0.934          0.072
+
+    1t         (0.000;0.003)  (-0.057;0.018)      (0.901;0.969)  (0.037;0.107)
+
+SV  1t            -0.001           0.049              0.015          0.813
+
+    1t        (-0.005;0.003)  (-0.019;0.117)     (0.0150;0.197)  (0.700;0.916)
+
+                   0.052         1.001078                --            --
+
+               (0.045;0.063)   (0.997;1.005)          0.999            --
+
+                  -0.142              --          (0.986;1.012)      0.998
+
+            (-0.357;-0.089;)          --                 --      (0.986;1.010)
+
+                  -0.177
+
+            (-0.870;-0.095)
+
+Note: 95% confidence intervals in brackets. Parameterization using VAR for latent factors and specific SV.
+
+Brazilian Review of Econometrics 30(1) May 2010                                 155
+                  Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+    Table 11 shows the confidence intervals for the stochastic volatility parameters
+of measurement errors,  ,t, and for the decay factor dynamics, t.
+
+                  Table 11: 95% confidence intervals for t and  ,t
+
+Model       µ     Specific SV   µ              µ     Factor SVl                       µ      
+          -0.807               4.094  0.997  -0.447                                  0.205  0.997
+CI        -1.186               4.475  1.001  -0.284                                  0.221  1.000
+C I0.025  -0.501      0.585    4.082  1.004  -0.089      0.834                       0.243  1.070
+C I0.50               0.716                              0.894
+C I0.975              0.823                              0.965
+
+Note: 95% confidence intervals for the decay factor and measurement error variance.
+
+7. Conclusion
+
+    In this paper, we proposed two extensions for Nelson and Siegel (1987) term
+structure model developed by Diebold and Li (2006). Using two different databases
+­ the first one containing data on ID futures contracts traded at BM&F and the
+same database used by Diebold and Li (2006), Diebold et al. (2006) and Koopman
+et al. (2010), containing U.S. Treasury data ­ we estimated Nelson-Siegel model
+with factor loadings and time-varying volatility. In the first specification, we fol-
+lowed the structure proposed by Koopman et al. (2010), using a common stochas-
+tic volatility component for measurement errors, modeled by a stochastic volatility
+process. In the second generalization, we extended the formulation introduced by
+Haustsch and Ou (2010) and proposed modeling the stochastic volatility of latent
+factors in Nelson and Siegel (1987) model in a straightforward fashion, regarding
+factor loadings as time-varying. This structure allows capturing the interest rate
+curve volatility in a flexible and also parsimonious way. The model is represented
+in state-space form, in which the factors in the transition equation have stochastic
+volatility and the stochastic volatility components follow a dynamic latent process.
+As the model is nonlinear, we proposed the use of Bayesian inference, based on
+the MCMC method, to estimate Nelson-Siegel model with stochastic volatility.
+
+    In the specification with a common volatility factor, as proposed by Koopman
+et al. (2010), this factor can be interpreted as the volatility of a benchmark bond
+portfolio, structured as a GARCH model as in Engle et al. (1990) and Engle and
+Ng (1993). This specification does not allow different volatilities in individual
+interest rates. In the specification proposed herein, the volatility factor associated
+with the interest rate curve level ht 1 is a common variance component as in the
+joint volatility factor in Koopman et al. (2010) and can be seen as an implicit proxy
+for the volatility of a market bond as that used by Engle et al. (1990). Volatility
+factor ht 2 captures the changes in spread over time between the rates obtained for
+long and short maturities and is interpreted as slope volatility. Similarly, ht3 is
+the volatility of a portfolio of bonds with medium-term maturities, which captures
+the uncertainty associated with the interest rate curve.
+
+156                                   Brazilian Review of Econometrics 30(1) May 2010
+Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+    Koopman et al. (2010) estimated Nelson-Siegel model with two changes, com-
+pared to what Diebold and Li (2006) proposed; the first one is that the model
+is estimated with a time-varying decay factor, and the second one is that they
+consider the interest rate volatility to be time-varying using a common (GARCH)
+volatility component. They demonstrated that regarding parameter  as time-
+varying improves the fit, but that modeling volatility has more significant gains
+in terms of fit. Our results followed the same pattern when we regarded the de-
+cay parameter as time-varying, as the fit improved, mainly in the case of the ID
+futures contract database. Just as in Koopman et al. (2010), the most significant
+gains were obtained when we considered the conditional heteroskedasticity of the
+interest rate curve, either by using a common stochastic volatility component or
+mainly by imposing a structure with specific volatility components for each factor,
+which is not allowed in the specification proposed by Koopman et al. (2010).
+
+    The specification proposed herein also has some advantages over the inference
+methods used in Koopman et al. (2010). The Bayesian method allows for accurate
+inferences in finite samples for parameters and latent factors, whereas the method
+of Koopman et al. (2010) is based on a series of approximations and linearizations,
+which could lead to losses when fitting the data and to problems with convergence
+and local maxima in the likelihood function. Also note that the stochastic volatility
+model allows for continuous time representation, which does not occur in GARCH
+models.
+
+    Our estimation results provide evidence of different time-varying stochastic
+volatilities for interest rate curve factors, with highly persistent volatility factors.
+In particular, the level factor is the one that most contributes to interest rate
+volatility. With respect to the ID futures contract database, regarding the decay
+parameter as time-varying improves the quality of fit. However, specifications that
+include a common volatility component or which deal with latent factor volatility
+separately are superior to others, with lower RMSE for all maturities. For shorter
+maturities, the model with common volatility components has a better quality
+of fit. On the other hand, for longer maturities, the specification with specific
+volatility components outperforms the other ones, especially with respect to the
+results obtained for the U.S. Treasury interest rate curve.
+
+    In addition, modeling the specific stochastic volatility of each factor can give
+important information about risk assessment in the portfolio of public and deriva-
+tive securities. Alternatives that could be addressed in forthcoming studies include
+additional factors for curvature and slope, as proposed by Laurini and Westin
+(2010), rendering the model more flexible, as well as other specifications for the
+volatility structure, such as multivariate or regime switch models. It should be
+noted that the findings obtained here are valid for in-sample fit, as an analysis
+of out-of-sample forecasts could yield different results, thus favoring more parsi-
+monious specifications, but we highlight that the focus of the present paper was
+on checking which volatility structure is more suitable to the interest rate curve
+
+Brazilian Review of Econometrics 30(1) May 2010  157
+     Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+behavior observed and not on carrying out straightforward out-of-sample forecasts.
+
+References
+
+Aldrich, J. (2002). How likelihood and identification went Bayesian. International
+   Statistical Review, 70:79­89.
+
+Almeida, C., Gomes, R., Leite, A., & Vicente, J. (2009). Does curvature enhance
+   forecasting? International J. of Theoretical and Applied Finance, 12(8):1171­
+   1196.
+
+Anderson, B. D. O. & Moore, J. B. (1979). Optimal Filtering. Englewood Cliffs:
+   Prentice Hall.
+
+Bianchi, F., Mumtaz, H., & Surico, P. (2009). The great moderation of the term
+   structure of UK interest rates. Journal of Monetary Economics, 56(6):856­871.
+
+Bjork, T. & Christensen, B. J. (1999). Interest rate dynamics and consistent
+   forward rate curves. Mathematical Finance, pages 323­348.
+
+Brigo, D. & Mercurio, F. (2006). Interest Rate Models ­ Theory and Practice:
+   With Smile, Inflation and Credit. Springer.
+
+Caldeira, J. F., Moura, G. V., & Portugal, M. S. (2010). Efficient yield curve
+   estimation and forecasting in Brazil. EconomiA, 11(1):27­51.
+
+Chib, S. & Ergashev, B. (2009). Analysis of multi-factor affine yield curve models.
+   Journal of the American Statistical Association, 104:1324­1337.
+
+Chib, S., Omori, Y., & Asai, M. (2009). Multivariate stochastic volatility. In
+   Andersen, T., Davis, R., Kreiß, J.-P., & Mikosch, T., editors, Handbook of
+   Financial Time Series, pages 365­400. Springer.
+
+Christensen, J. H., Diebold, F., & Rudebusch, G. (2010). The affine arbitrage-
+   free class of Nelson-Siegel term structure models. Journal of Econometrics.
+   forthcoming.
+
+Christensen, J. H., Diebold, F. X., & Rudebusch, G. D. (2009). An arbitrage-free
+   generalized Nelson-Siegel term structure model. Econometrics Journal, 12:33­
+   64.
+
+Cox, J. C., Ingersoll, Jonathan E, J., & Ross, S. A. (1985). A theory of the term
+   structure of interest rates. Econometrica, 53(2):385­407.
+
+Dai, Q. & Singleton, K. J. (2002). Expectation puzzles, time-varying risk pre-
+   mia and affine models of the term structure. Journal of Financial Economics,
+   63(3):415­441.
+
+158  Brazilian Review of Econometrics 30(1) May 2010
+Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+Diebold, F. X. & Li, C. (2006). Forecasting the term structure of government bond
+   yields. Journal of Econometrics, 130(2):337­364.
+
+Diebold, F. X., Rudebusch, G. D., & Aruoba, S. (2006). The macroeconomy and
+   the yield curve: A dynamic latent factor approach. Journal of Econometrics,
+   131(1-2):309­338.
+
+Doucet, A., de Freitas, J. F. G., & Gordon, N. (2001). Sequential Monte Carlo
+   Methods In Practice. Springer-Verlag.
+
+Duffee, G. (2002). Term premia and interest rate forecasts in affine models. Journal
+   of Finance, 57:405­443.
+
+Duffie, D. & Kan, R. (1996). A yield-factor model of interest rates. Mathematical
+   Finance, 6(4):379­406.
+
+Engle, R. F. & Ng, V. K. (1993). Time-varying volatility and the dynamic behavior
+   of the term structure. Journal of Money, Credit and Banking, 3(25):336­349.
+
+Engle, R. F., Ng, V. K., & Rothschild, M. (1990). Asset pricing with a factor-
+   arch covariance structure: Empirical estimates for treasury bills. Journal of
+   Econometrics, 1-2(45):213­237.
+
+Fama, E. F. & Bliss, R. R. (1987). The information in long-maturity forward rates.
+   American Economic Review, 77(4):680­92.
+
+Filipovic, D. (2009). Term Structure Models. Springer Finance.
+
+Gamerman, D. & Lopes, H. (2006). Markov Chain Monte Carlo: Stochastic Sim-
+   ulation for Bayesian Inference, Second Edition. Chapman & Hall/CRC.
+
+Haustsch, N. & Ou, Y. (2010). Bayesian inference in a stochastic volatility Nelson-
+   Siegel model. Computational Statistics and Data Analysis, In Press, Corrected
+   Proof.
+
+Heath, D., Jarrow, R., & Morton, A. (1992). Bond pricing and the term structure
+   of interest rates: A new methodology for contingent claims valuation. Econo-
+   metrica, 60(1):77­105.
+
+Hull, J. & White, A. (1990). Pricing interest-rate-derivative securities. Review of
+   Financial Studies, 3(4):573­92.
+
+Jacquier, E., Polson, N., & Rossi, P. E. (1994). Bayesian analysis of stochastic
+   volatilty models (with discussions). Journal of Business and Economic Statis-
+   tics, 12:371­314.
+
+Joslin, S., Singleton, K., & Zhu, H. (2011). A new perspective on Gaussian dynamic
+   term structure models. Review of Financial Studies, Forthcoming.
+
+Brazilian Review of Econometrics 30(1) May 2010  159
+     Joa~o F. Caldeira, M´arcio P. Laurini and Marcelo S. Portugal
+
+Jungbacker, B. & Koopman, S. J. (2009). Parameter estimation and practical
+   aspects of modeling stochastic volatility. In Andersen, T. G., Davis, R. A.,
+   Kreib, J.-P., & Mikosch, T., editors, Handbook of Financial Time Series, pages
+   313­344. Springer.
+
+Kadane, J. B. (1974). The role of identification in Bayesian theory. In Zellner,
+   A., editor, Bayesian Analysis in Econometrics and Statistics, pages 175­191.
+   North-Holland.
+
+Kim, D. H. & Orphanides, A. (2005). Term structure estimation with survey data
+   on interest rate forecasts. Finance and Economics Discussion Series, 2005-08,
+   Board of Directors of Federal Reserve System.
+
+Koopman, S. J., Jungbacker, B., & Hol, E. (2005). Forecasting daily variabil-
+   ity of the S&P 100 stock index using historical, realised and implied volatility
+   measurements. Journal of Empirical Finance, 12:445­475.
+
+Koopman, S. J., Mallee, M. I., & van der Wel, M. (2010). Analyzing the term
+   structure of interest rates using the dynamic Nelson-Siegel model with time-
+   varying parameters. Journal of Business and Economic Statistics, pages 329­
+   343.
+
+Laurini, M. P. & Hotta, L. K. (2010). Bayesian extensions to diebold-li term
+   structure model. International Review of Financial Analysis, 19:342­350.
+
+Laurini, M. P. & Westin, A. P. K. (2010). Arbitragem na estrutura a termo das
+   taxas de juros: Uma abordagem bayesiana. Insper Working Papers wpe 120,
+   Insper Ibmec S~ao Paulo.
+
+Litterman, R. & Scheinkman, J. (1991). Common factors affecting bond returns.
+   Journal of Fixed Income, 1(1):54­61.
+
+Matzner-Lober, E. & Villa, C. (2004). Functional principal component analysis of
+   the yield curve. In 21th International Conference AFFI. Association Francaise
+   de Finance.
+
+Nelson, C. R. & Siegel, A. F. (1987). Parsimonious modeling of yield curves. The
+   Journal of Business, 60(4):473­489.
+
+Ntzoufras, I. (2009). Bayesian Modeling Using WinBUGS. Wiley.
+
+Pearson, N. D. & Sun, T.-S. (1994). Exploiting the conditional density in estimat-
+   ing the term structure: An application to the Cox, Ingersoll and Ross model.
+   Journal of Finance, 49(4):1279­1304.
+
+Poirier, D. J. (1998). Revising beliefs in nonidentified models. Econometric Theory,
+   14:483­509.
+
+160  Brazilian Review of Econometrics 30(1) May 2010
+            Bayesian Inference Applied to Dynamic Nelson-Siegel Model with Stochastic Volatility
+
+Robert, C. P. & Casella, G. (2005). Monte Carlo Statistical Methods. Springer.
+
+Rothenberg, T. (1971). Identification in parametric models. Econometrica, 39:577­
+   591.
+
+Rudebusch, G. D. & Wu, T. (2008). A macro-finance model of the term structure,
+   monetary policy and the economy. The Economic Journal, 118(530):906­926.
+
+Taylor, S. J. (1986). Modelling Financial Time Series. John Wiley& Sons.
+
+Tierney, L. (1994). Markov chains for exploring posterior distributions (with dis-
+   cussion). Annals of Statistics, 22:1701­1786.
+
+Vasicek, O. (1977). An equilibrium characterization of the term structure. Journal
+   of Financial Economics, 5(2):177­188.
+
+Wan, E. & van der Merwe, R. (2000). The unscented Kalman filter for nonlinear
+   estimation. In Proceedings of Symposium 2000 on Adaptive Systems for Sig-
+   nal Processing, Communication and Control (AS-SPCC), Lake Louise, Alberta,
+   Canada. IEEE.
+
+Yu, W.-C. & Zivot, E. (2011). Forecasting the term structures of Treasury and
+   corporate yields using dynamic Nelson-Siegel models. International Journal of
+   Forecasting, 27(2):579­591.
+
+Brazilian Review of Econometrics 30(1) May 2010  161
+

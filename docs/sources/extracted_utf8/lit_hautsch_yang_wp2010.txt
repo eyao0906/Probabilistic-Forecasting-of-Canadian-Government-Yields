@@ -1,0 +1,1859 @@
+===== PDF PAGE 1 =====
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+SFB 649 Discussion Paper 2010-004 
+Bayesian Inference in a 
+Stochastic Volatility 
+Nelson-Siegel Model 
+ 
+ 
+Nikolaus Hautsch* 
+Fuyu Yang* 
+ 
+ 
+ 
+* Humboldt-Universität zu Berlin, Germany 
+ 
+ 
+This research was supported by the Deutsche 
+Forschungsgemeinschaft through the SFB 649 "Economic Risk". 
+ 
+http://sfb649.wiwi.hu-berlin.de 
+ISSN 1860-5664 
+ 
+SFB 649, Humboldt-Universität zu Berlin 
+Spandauer Straße 1, D-10178 Berlin 
+SFB      6 4 9              E C O N O M I C     R I S K                 B E R L I N 
+
+===== PDF PAGE 2 =====
+Bayesian Inference in a Stochastic Volatility Nelson-Siegel
+Model
+Nikolaus Hautsch∗
+Humboldt-Universit¨ at zu Berlin, CASE, CFS
+Quantitative Products Laboratory
+Fuyu Yang†
+Institute for Statistics and Econometrics
+Humboldt-Universit¨ at zu Berlin
+January, 2010
+Abstract
+In this paper, we develop and apply Bayesian inference for an extended Nelson-
+Siegel (1987) term structure model capturing interest rate risk. The so-called
+Stochastic Volatility Nelson-Siegel (SVNS) model allows for stochastic volatility in
+the underlying yield factors. We propose a Markov chain Monte Carlo (MCMC)
+algorithm to eﬃciently estimate the SVNS model using simulation-based inference.
+Applying the SVNS model to monthly U.S. zero-coupon yields, we ﬁnd signiﬁcant
+evidence for time-varying volatility in the yield factors. This is mostly true for
+the level and slope volatility revealing also the highest persistence. It turns out
+that the inclusion of stochastic volatility improves the model’s goodness-of-ﬁt and
+clearly reduces the forecasting uncertainty particularly in low-volatility periods.
+The proposed approach is shown to work eﬃciently and is easily adapted to alter-
+native speciﬁcations of dynamic factor models revealing (multivariate) stochastic
+volatility.
+Keywords: term structure of interest rates, stochastic volatility, dynamic factor
+∗Institute for Statistics and Econometrics and Center for Applied Statistics and Economics (CASE),
+Humboldt-Universit¨ at zu Berlin as well as Quantitative Products Laboratory (QPL), Berlin, and Cen-
+ter for Financial Studies (CFS), Frankfurt. Email: nikolaus.hautsch@wiwi.hu-berlin.de. Address:
+Spandauer Str. 1, D-10099 Berlin, Germany.
+†Institute for Statistics and Econometrics, Humboldt-Universit¨ at zu Berlin. Email:
+fuyu.yang@wiwi.hu-berlin.de. Address: Spandauer Str. 1, D-10099 Berlin, Germany.
+1
+
+===== PDF PAGE 3 =====
+model, Markov chain Monte Carlo
+JEL classiﬁcation: C5, C11, C32
+Acknowledgements
+This paper has been presented on the 3rd International Conference on Computational
+and Financial Econometrics (CFE), 2009, Cyprus. The authors gratefully acknowledge
+ﬁnancial support from the EU Commission through MRTN-CT-2006-034270 COMISEF
+as well as the Deutsche Forschungsgemeinschaft through the SFB 649 “Economic Risk”.
+1 Introduction
+Modelling the term structure of interest rates is of importance in many areas in ﬁ-
+nancial economics and macroeconomics. In ﬁnance, information revealed by the yield
+curve is important for the pricing of bonds and interest rate derivatives, for portfolio
+management and asset allocation. In macroeconomics, the yield curve carries impor-
+tant information for the state of the economy and business cycles. While traditional
+approaches as, e.g., Vasicek (1977), Cox et al., (1985) or Hull and White (1990) focus
+on equilibrium or no-arbitrage relationships, interest rate dynamics are typically cap-
+tured in terms of factor models as, for instance, proposed by Nelson and Siegel (1987).
+Diebold and Li (2006) re-formulate the Nelson-Siegel model in terms of a state-space
+representation which allows for a two-step estimation of the factors and dynamics in
+the factor loadings. Koopman et al. (2010) and Hautsch and Ou (2008) extend the
+Nelson-Siegel model to allow for time-varying volatility. While Koopman et al. (2010)
+allow for a common volatility component in all yield processes, Hautsch and Ou (2008)
+propose capturing stochastic volatility in the underlying yield factors associated with
+level volatility, slope volatility and curvature volatility. While it is shown that the
+so-called Stochastic Volatility Nelson Siegel model – henceforth SVNS model – is a
+powerful approach to parsimoniously capture dynamics in yields and corresponding
+volatilities, statistical inference for such a model is not straightforward since both yield
+factors and volatility factors are unobservable.
+In this paper, we show how to eﬃciently estimate the SVNS model using Bayesian
+techniques and propose a speciﬁc Markov chain Monte Carlo (MCMC) approach. We
+illustrate the importance of accounting for stochastic volatility in the Nelson-Siegel
+model and show how to extract the unobservable volatility components from the data.
+Though the estimation procedure is speciﬁcally designed for the SVNS model, it is
+2
+
+===== PDF PAGE 4 =====
+easily adapted to alternative factor speciﬁcations. In this sense, the proposed algorithm
+provides a general framework for the estimation of dynamic factor models revealing
+(multivariate) stochastic volatility. In an empirical application to U.S. bond yields,
+we illustrate that the proposed procedure works well and allows to eﬃciently extract
+unobservable time-varying volatility components.
+The exponential components factor model proposed by Nelson and Siegel (1987) is
+a workhorse for the estimation and prediction of yield curves and is extensively used in
+ﬁnancial practice and central banks. Its main power stems from the fact that it is easy
+to implement and is suﬃciently ﬂexible to capture a wide range of possible shapes of
+the yield curve. Though it is neither an equilibrium nor a no-arbitrage model, many
+banks use this framework to construct zero-coupon yield curves. Various extensions of
+the Nelson-Siegel model have been proposed, see, e.g., Bj¨ ork and Christensen (1999),
+Rudebusch and Wu (2008), Diebold et al. (2005) and Diebold et al. (2006). Diebold
+and Li (2006) propose a dynamic version of the Nelson-Siegel model by allowing the
+underlying factor loadings to vary over time following a vector autoregressive (VAR)
+structure. As shown by Diebold and Li (2006) and Diebold et al. (2006), the model is
+able to capture interest rate dynamics and to successfully predict future yield curves.
+These contributions opened up a new way to model interest rate dynamics using factor
+models and complement the class of non-arbitrage aﬃne models (Vasicek, 1977, Cox
+et al. 1985, Duﬃe and Kan, 1996 or Dai and Singleton, 2000, among others). 1
+Figure 1 gives an illustration of time series plots of yields with diﬀerent maturities
+stemming from the data underlying this study. We observe that yields with diﬀerent
+maturities are closely related and tend to move together. Also, we ﬁnd evidence for
+time-varying volatility in the interest rate series. Particularly in the 1980s, yields for all
+maturities are very volatile. However, capturing time-varying volatility in yield curves
+is challenging due to their high dimensionality. Koopman et al. (2010) extend the
+dynamic Nelson-Siegel model by allowing for a common volatility component jointly
+aﬀecting the yield processes for all maturities. A common volatility component can
+be associated with the volatility of an underlying bond market portfolio in the spirit
+of Engle et al. (1990). However, such a speciﬁcation is not ﬂexible enough to capture
+speciﬁc maturity-dependent volatilities. As a more ﬂexible but still parsimonious alter-
+native, Hautsch and Ou (2008) propose modelling stochastic volatility in the yield curve
+factors directly. Then, the time-varying volatilities in individual yields are captured by
+yield factor volatilities. These volatilities are naturally interpreted as the volatilities
+of underlying bond portfolios associated with short-term, medium-term and long-term
+1See Piazzesi (2003) for a survey on aﬃne models in continuous time.
+3
+
+===== PDF PAGE 5 =====
+E:\work\workingpaper\TS\Pics\dataplot.gwg  12/13/09 22:36:17
+Page: 1 of 1
+12m 
+24m 
+36m 
+48m 
+60m 
+196419691974197919841989199419992004
+2.5
+5.0
+7.5
+10.0
+12.5
+15.012m 
+24m 
+36m 
+48m 
+60m 
+Figure 1: Time series plots of U.S. zero coupon yields, Jan 1964 to Dec 2003. Maturities: 12,
+24, 36, 48, 60 months, respectively.
+maturities.
+However, extracting the latent factors as well as their time-varying volatility compo-
+nents is challenging. By proposing an eﬃcient MCMC algorithm to conduct Bayesian
+inference in the SVNS model, we contribute to the literature on the estimation of (ex-
+tended) multivariate dynamic factor models. To extract the factors, we use the Kalman
+ﬁlter algorithm imbedded in an MCMC procedure. The unobservable time-varying
+volatilities are extracted using an approximating re-weighting approach proposed by
+Kim et al. (1998) and Chib et al. (2002). Using the suggested MCMC algorithm, all
+latent yield factors, stochastic volatilities and parameters can be sampled at once in a
+few blocks. Using MCMC diagnostics, we show that the proposed procedure is compu-
+tationally quite eﬃcient and is clearly superior to an element-by-element sampling of
+the underlying parameters and latent factors as, e.g., used in Hautsch and Ou (2008).
+The latter procedure requires an enormous amount of Monte Carlo drawings making
+the model intractable if the sample size is high. In this sense, the procedure proposed
+in the present paper is a contribution to make inference in this class of models feasible
+and tractable.
+Applying the model to monthly zero-coupon yields covering a period from 1964 to
+2003, we show that the SVNS model is able to successfully capture the dynamics in
+time-varying yields and volatilities thereof. We ﬁnd strong evidence for time-varying
+volatility in interest rates. All yield volatilities reveal a quite high persistence. To
+4
+
+===== PDF PAGE 6 =====
+explain the volatilities in the underlying yield curve, the level and slope volatility are
+particularly important. To evaluate the model’s goodness-of-ﬁt, we compute posterior
+predictive p-values. Results show that the explicit inclusion of stochastic volatilities in
+level, slope and curvature factors improves the ﬁt compared to the basic speciﬁcation.
+More importantly, it turns out that the incorporation of stochastic volatilities clearly
+reduces parameter uncertainty. Analyzing model forecasts for three selected periods
+we show that the SVNS speciﬁcation yields a signiﬁcantly smaller variance of the fore-
+cast density. In this sense, the proposed approach produces more exact interest rate
+forecasts.
+The remainder of the paper is organized as follows. Section 2 presents the Stochastic
+Volatility Nelson-Siegel model. Section 3 illustrates the underlying MCMC procedure to
+estimate the model. Section 4 presents the empirical results while Section 5 concludes.
+2 The Stochastic Volatility Nelson-Siegel (SVNS) Model
+Let t denote calendar time and pt(τi) denote the price of a τi-period discount bond at
+montht withτi,i = 1,...,N , representing the maturity. Moreover,yt(τi) is the contin-
+uously compounded zero-coupon nominal yield to maturity withpt(τi) = exp[−τiyt(τi)].
+Then, the instantaneous nominal forward rate curve is given by ft(τi) =−p′t(τi)/pt(τi)
+or correspondingly yt(τi) = τ−1i ∫τi0 ft(u)du. Nelson and Siegel (1987) propose mod-
+elling the forward rate curve as
+ft(τi) =f1,t +f2,te−λτi +f3,tλe−λτi,
+where e−λτi and λe−λτi denote Laguerre polynomials whose shapes are determined by
+λ. Small (large) values of λ produce slow (fast) decays and a better ﬁt of the curve at
+long (short) maturities. Correspondingly, f1,t,f2,t andf3,t denote time-varying factors
+capturing the dynamic behaviour of the forward curve.
+The corresponding yield curve is given by
+yt (τi) =f1,t +f2,t
+[1−e−λτi
+λτi
+]
++f3,t
+[1−e−λτi
+λτi
+−e−λτi
+]
+. (1)
+Diebold and Li (2006) suggest interpreting the parametersf1,t,f2,t andf3,t as three
+latent dynamic factors with loadings 1, (1−e−λtn)/λtn, and{(1−e−λtn)/λtn}−e−λtn,
+respectively. Accordingly, f1,t is associated with a long-term factor whose loading is
+constant for all maturities. Since shocks in f1,t aﬀect all yields simultaneously, f1,t is
+commonly referred to as a level factor. Conversely, the loading of f2,t starts at one for
+5
+
+===== PDF PAGE 7 =====
+τi = 0 and decays monotonically to zero. Consequently, shocks in f2,t predominantly
+aﬀect only short-term yields and thus induce variations in yield spreads. Therefore,f2,t
+is referred to as a slope factor. In Rudebusch and Wu (2008), the level factor is related
+to inﬂation expectations, whereas movements in the slope factor are linked to cyclical
+variations in inﬂation and output gaps. Finally, f3,t is interpreted as a medium-term
+factor since its loading is zero for τi = 0, increases for mid-term maturities but decays
+to zero in the limit. Correspondingly, shocks in f3,t dominantly aﬀect the yield curve’s
+curvature. Diebold et al. (2006) report negligible responses of macroeconomic variables
+to shocks in the curvature factor. Conversely, M¨ onch (2006) argues that a ﬂattening
+of the yield curve associated with changes in the curvature factor can be linked to a
+slow-down of the economy.
+The Nelson-Siegel model can be seen as a parsimonious parametric factor model,
+which is ﬂexible enough to capture a wide range of diﬀerent shapes. Moreover, the
+model implies desirable limiting behaviours of forward and yield curves. For τi→ 0,
+the short rate is lim
+τi→0
+yt (τi) =f1,t +f2,t. Correspondingly, we have limτi→∞yt (τi) =f1,t.
+Diebold and Li (2006) propose re-formulating the Nelson-Siegel model – henceforth
+Diebold-Li Nelson-Siegel (DLNS) model – in terms of a state-space system
+
+ yt (τ1)yt (τ2)...
+yt (τN)
+
+ =
+
+ 1 1−e−λτ1λτ1 1−e−λτ1λτ1 −e−λτ11 1−e−λτ2λτ2 1−e−λτ2λτ2 −e−λτ2... ... ...
+1 1−e−λτNλτN 1−e−λτNλτN −e−λτN
+
+
+
+ f1,tf2,t
+f3,t
+
+ +
+
+ εt (τ1)εt (τ2)...
+εt (τN)
+
+, (2)
+where the time-varying coeﬃcients f1,t, f2,t, and f3,t are interpreted as latent factors
+following a vector autoregressive process (VAR) given by
+
+ f1,t−µ1,ff2,t−µ2,f
+f3,t−µ3,f
+
+ =
+
+ φ11,f φ12,f φ13,fφ21,f φ22,f φ23,f
+φ31,f φ32,f φ33,f
+
+
+
+ f1,t−1−µ1,ff2,t−1−µ2,f
+f3,t−1−µ3,f
+
+ +
+
+ η1,tη2,t
+η3,t
+
+. (3)
+By deﬁning yt ={yt (τ1),yt (τ2),...,y t (τN)}′, φf = [φij,f] as a (3 × 3) parameter
+matrix, and Λ as the matrix of factor loadings and denoting
+ft ={f1,t,f 2,t,f 3,t}′,
+µf ={µ1,f,µ 2,f,µ 3,f}′,
+6
+
+===== PDF PAGE 8 =====
+εt ={εt (τ1),εt (τ2),...,ε t (τN)}′,
+ηt ={η1,t,η 2,t,η 3,t}′,
+(2) and (3) can be written as
+ft−µf =φf (ft−1−µf) +ηt, (4)
+yt = Λft +εt. (5)
+To limit the computational burden and to keep the model parsimonious, we assume
+φf =diag{φ11,f,φ 22,f,φ 33,f} to be a diagonal matrix.
+For the joint distribution of εt and ηt, we assume
+(
+ηt
+εt
+)
+∼N
+([
+0
+0
+]
+,
+[
+ΣηΣ′η 0
+0 Σ εΣ′ε
+])
+, (6)
+with Ση and Σε denoting the corresponding Cholesky factors of the covariance matrices
+of ηt and εt, respectively. The covariance matrix Σ εΣ′ε is assumed to be diagonal
+indicating that the measurement errors are contemporaneously uncorrelated.
+To allow for conditional heteroscedasticity in the yield processes, Koopman et al.
+(2010) propose capturing yield curve volatility by allowing for a common variance
+component jointly aﬀecting all individual yields. This factor can be interpreted as the
+volatility of an underlying bond market portfolio in the spirit of Engle et al. (1990)
+and Engle and Ng (1993). However, such a speciﬁcation does not allow for diﬀerent
+volatilities in individual yield processes. As a more ﬂexible alternative, Hautsch and
+Ou (2008) propose allowing for stochastic volatility in the yield factors ft directly.
+Consequently, ΣηΣ′η is assumed to vary over time, with Σ η,tΣ′η,t to be speciﬁed as
+diag
+(
+ln Ση,tΣ′η,t) =
+
+ h1,th2,t
+h3,t
+
+
+
+h1,t+1−µ1,hh2,t+1−µ2,h
+h3,t+1−µ3,h
+
+ =
+
+φ11,h 0 00 φ22,h 0
+0 0 φ33,h
+
+
+
+h1,t−µ1,hh2,t−µ2,h
+h3,t−µ3,h
+
+ +
+
+σ1ϵ1,tσ2ϵ2,t
+σ3ϵ3,t
+
+, (7)
+where ϵj,t i.i.d.∼ N (0, 1). Correspondingly, with ηt ={η1,t,η 2,t,η 3,t}′, the model can be
+re-written as
+7
+
+===== PDF PAGE 9 =====
+
+ η1,tη2,t
+η3,t
+
+ =
+
+ eh1,t/2 0 00 eh2,t/2 0
+0 0 eh3,t/2
+
+
+
+ ζ1,tζ2,t
+ζ3,t
+
+, (8)
+where ζj,t i.i.d.∼ N (0, 1) with j = 1, 2, 3.
+Hence, hj,t with j = 1, 2, 3, are (unobservable) stochastic volatility processes and
+can be summarized in the 3 × 1 vector ht ={h1,t,h 2,t,h 3,t}′. Correspondingly, by
+deﬁning
+eht/2 =diag{eh1,t/2,eh2,t/2,eh3,t/2},
+σ =diag{σ1,σ 2,σ 3},
+µh ={µ1,h,µ 2,h,µ 3,h}′,
+φh =diag{φ11,h,φ 22,h,φ 33,h},
+ζt ={ζ1,t,ζ 2,t,ζ 3,t}′,
+ϵt ={ϵ1,t,ϵ 2,t,ϵ 3,t}′,
+eq. (8) can be re-written as
+ηt = eht/2ζt, (9)
+ht+1−µh = φh (ht−µh) +σϵt. (10)
+The components h1,t, h2,t and h3,t can be interpreted as factor volatilities associated
+with time-varying uncertainty in the yield curves’ level, slope and curvature. Since
+h1,t is a common variance component it is in the spirit of the joint volatility factor
+in Koopman et al. (2010) and can be seen as a model implied proxy of bond market
+volatility as used in Engle et al. (1990). The factor h2,t captures time-variations in
+yield spreads and thus can be interpreted as yield curve slope volatility. Similarly, h3,t
+is related to the volatility of a bond portfolio dominated by mid-term maturities and
+thus captures uncertainties associated with the curvature of the yield curve.
+To reduce the computational burden we rule out cross-dependencies between the
+individual volatility components. This is in the spirit of a low-dimensional factor struc-
+ture capturing high-dimensional dynamics in volatility. Unconditional moments of this
+speciﬁcation are derived in Hautsch and Ou (2008).
+8
+
+===== PDF PAGE 10 =====
+3 Bayesian Inference
+3.1 Estimation Algorithm
+The key idea is to estimate the highly correlated latent variables in terms of sev-
+eral blocks using the Kalman ﬁlter together with a simulation smoother (de Jong and
+Shephard, 1995) within an MCMC algorithm. With models in a state-space form, the
+simulation smoother allows to simulate the underlying states while avoiding degenerate
+sampling problems. For more details, see de Jong and Shephard (1995). Deﬁne
+Hj,t = (hj,1,...,h j,t)′,
+hj = (hj,1,...,h j,T )′,
+hj,−t = (hj,1,...,h j,t−1,hj,t+1,...,h j,T )′,
+F∗j,t =(f∗j,1,...,f ∗j,t),
+f∗j =(f∗j,1,...,f ∗j,T).
+Then, following Kim et al. (1998), using eq. (9), we can rewrite eq. (3) as
+f∗j,t =hj,t +zj,t, j = 1, 2, 3, (11)
+where f∗j,t = ln{[fj,t−µj,f−φj,f (fj,t−1−µj,f)]2 +c}, and zj,t = ln(ζ 2j,t). The oﬀset
+parameter c is typically set to a small value, e.g., 0 .001, see also Fuller (1996). Then,
+the state-space system can be re-written as
+f∗j,t = hj,t +zj,t
+hj,t+1−µj,h = φj,h (hj,t−µj,h) +σjϵj,t
+allowing the use of the Kalman ﬁlter and a simulation smoother. As shown below, this
+allows to sample the entire block hj at once.
+To make eq. (11) linear, Kim et al. (1998) propose approximating the distribution
+of zj,t by a mixture of normal densities,
+zj,t|st∼fN
+(
+mst,ν 2st), (12)
+where st∈{ 1, 2,..., 7} is an index indicator with
+Pr (st =i) =qi, i ≤ 7, t ≤T,
+9
+
+===== PDF PAGE 11 =====
+T able 1: Parameters of a seven-component Gaussian mixture to approximate the distribution
+of zt, Kim et al. (1998).
+st qi mst ν2st
+1 0 .00730 −11.40039 5 .79596
+2 0 .10556 −5.24321 2 .61369
+3 0 .00002 −9.83726 5 .17950
+4 0 .04395 1 .50746 0 .16735
+5 0 .34001 −0.65098 0 .64009
+6 0 .24566 0 .52478 0 .34023
+7 0 .25750 −2.35859 1 .26261
+and the parameters
+{
+qi,mst,ν 2st
+}
+given in Table 1.
+Due to this approximation,f∗j |s,µj,h,φj,h,σj withs = (s1,...,s T )′ becomes Gaus-
+sian, which induces substantial computational eﬃciency gains in the MCMC algorithm
+shown below. The minor approximation error can be removed by re-weighting the
+posterior samples afterwards.
+In the following, we develop an MCMC algorithm based on eight parameter blocks.
+By denoting the error precision matrix as Hε = (ΣεΣ′ε)−1 and using squared brackets
+[·] to indicate blocks of parameters, we collect all parameters of interest in θ, where
+θ ={λ,Hε, [µj,f,φj,f], [µj,h,φj,h,σj]} with j = 1, 2, 3.
+The priors are chosen as following: (i)λ is assumed to follow a Uniform distribution
+with λ ∼ U (λ|aλ,bλ). (ii) Σ εΣ′ε follows an Inverted Wishart distribution Σ εΣ′ε ∼
+IW
+(
+ΣεΣ′ε|A−1ε ,νε). Then, by construction, the precision matrixHε follows a Wishart
+distributionHε∼W (Hε|Aε,νε). (iii) By restricting the yield factors to be stationary,
+we elicit truncated normal priors with support (−1, 1) forφj,f∼TN
+(
+φj,f|µj,fφ,V j,fφ
+)
+·
+1 (|φj,f|< 1), where 1 (·) is the indicator function. The speciﬁc choices of the resulting
+set of hyper-parameters
+{
+aλ,bλ,Aε,νε,µj,f,V j,f
+}
+are given in the Appendix.
+Denote y ={y1,...,y T}′. According to the model speciﬁcation given by eq. (4),
+(5) and (7), the likelihood function can be written as
+p (y,f,h |θ) =
+T∏
+t=1
+3∏
+j=1
+p (yt|θ,fj,t,hj,t)p (fj,t|Fj,t−1,Hj,t−1,θ )p (hj,t|Hj,t−1,θ ).
+(13)
+With the priors elicited above and employing Bayes’ theorem, the joint posterior is
+proportional to the product of the likelihood and priors,
+p (θ,f,h |y)∝p (y,f,h |θ)p (θ).
+10
+
+===== PDF PAGE 12 =====
+The underlying MCMC algorithm is summarized as follows:
+1. Initialize θ ={λ,Hε, [µj,f,φj,f], [µj,h,φj,h,σj]} and the latent variablesfj andhj
+with fj,0 =µj,f and hj,0 =µj,h for j = 1, 2, 3.
+2. Run a Gibbs sampler for steps ( a) - (d) using S replications, where the initial S0
+draws are discarded:
+(a) Sample Hε from Hε|y,λ, [µj,f,φj,f], [µj,h,φj,h,σj],fj,hj, j = 1, 2, 3.
+(b) Sample λ fromλ|y,Hε, [µj,f,φj,f], [µj,h,φj,h,σj],fj,hj using a Griddy-Gibbs
+sampling method as illustrated in Appendix A.
+(c) Sample [µj,f,φj,f],fj from [µj,f,φj,f],fj|y,λ,H ε,hj using a simulation smoother
+as illustrated in Appendix A.
+(d) Run (i)-(iv) 3 times to estimate hj|fj, with j = 1, 2, 3, respectively:
+(i) Compute f∗j and run the loop (ii)-(iv) 2000 times. Discard the results
+from the initial 500 loops.
+(ii) Sample s|f∗j,hj.
+(iii) Sample hj|f∗j,s, [µj,h,φj,h,σj] using a simulation smoother.
+(iv) Sample [ µj,h,φj,h,σj]|f∗j,hj using the Metropolis-Hastings algorithm
+proposed by Chib et al. (2002) choosing a multivariate t-density as the
+proposal density. See Appendix A for more details.
+To estimate the DLNS model, step (d) is straightforwardly simpliﬁed to allow for a
+constant covariance matrix ΣηΣ′η. In step 2 (d) (iv), as an alternative to a multivariate
+t- density, an adaptive mixture of Student-t can be used as a candidate distribution,
+see Ardia et al. (2009).
+This MCMC algorithm is obviously more eﬃcient than an element-by-element draw-
+ing algorithm. Due to the blocking of highly correlated variables, the Gibbs sampler
+can quickly move to regions of high posterior probability. Conversely, if we draw latent
+variables one by one, an enormous number of draws is needed as the latent variables
+and thus the Gibbs draws are highly correlated. These high correlations induce a slow
+convergence of the chain (Chib and Greenberg, 1996). Consequently, the number of
+iterations required in an element-by-element algorithm is signiﬁcantly higher. For in-
+stance, in Hautsch and Ou (2008), 2,500,000 iterations are required with a burn-in
+period of 500,000 iterations. Using the MCMC algorithm introduced above, we can
+reduce the number of iterations to 20,000. This makes the model signiﬁcantly more
+ﬂexible and applicable, particularly, if the sample size becomes large.
+11
+
+===== PDF PAGE 13 =====
+3.2 Evaluating the Model Fit using Posterior Predictive p-values
+Comparing two models Mi and Mj in a Bayesian framework can be performed by
+calculating the posterior model probabilities p (Mi|y) and p (Mj|y) and computing
+the posterior odds ratio POij = p (Mi|y)/p (Mj|y). Alternatively, one could com-
+pute the Bayes FactorsBFij =p (y|Mi)/p (y|Mj) based on the marginal likelihoods
+p (y|Mi) and p (y|Mj). Computing the latter is not straightforward in the given
+context. However, in this paper, we are particularly interested in an evaluation of the
+model’s goodness-of-ﬁt yielding information to which extent the speciﬁcation is able to
+reproduce the characteristics of the data.
+In an MCMC setting, this is conveniently evaluated using so-called posterior pre-
+dictive p-values (ppp-values). Suppose we have S hypothetical sample series ypret ,
+t = 1,...,T , which are generated by a speciﬁc model. Then, the ppp-value gives the
+(tail) probability to observe more extreme values than in the actually observed data.
+Hence, if the model ﬁts the data well, the observed data, yobst , and the simulated data,
+ypret , should not be too diﬀerent and thus the ppp-value should be high. See also
+Meng (1994) and Gelman and Meng (1996) for more details. Denote θ as the vector of
+parameters, then p
+(
+g (ypret )|yobst ) can be calculated as (see Koop, 2003)
+p
+(
+g (ypret )|yobst
+)
+=
+∫
+p
+(
+g (ypret )|yobst ,θ)p(θ|yobst )dθ
+=
+∫
+p (g (ypret )|θ)p(θ|yobst )dθ. (14)
+The second equality holds since conditional on θ, ypret is independent of yobst and thus
+p
+(
+g (ypret )|yobst ,θ) =p (g (ypret )|θ). Suppose we have S draws of θ from the posterior
+density p
+(
+θ|yobst ), where each draw of θ is denoted as θ(i), the ppp-value can be
+calculated as the proportion of cases in which the simulatedg (ypret ) exceeds the realized
+valueg
+(
+yobst )
+ppp = Pr
+[
+g (ypret )≥g(yobst )]
+= 1S S∑i=1 1[g (ypret )≥g(yobst )], (15)
+where 1 (·) denotes the indicator function. The function g (·) is typically chosen as a
+sample statistic. Given the normality assumption for εt, we chooseg(·) asE (Kurt|y)
+and E (Skew|y) with Kurt and Skew denoting the sample kurtosis and skewness,
+respectively. Using the MCMC algorithm proposed in Section 3.1, we simulate S draws
+12
+
+===== PDF PAGE 14 =====
+of ypre(i)t and thus g(ypre(i)t )|θ(i). In particular, ypre(i)t |θ is simulated by
+hj,t|hj,t−1,µj,h,φj,h,σ 2j∼fN{µj,h +φj,h (hj,t−µj,h),σ 2j}, j= 1, 2, 3, (16)
+ft|ft−1,ht,θ∼fN
+{
+ft +φf (ft−1−µf), Ση,tΣ′η,t}, (17)
+yt|ft,hj,t,θ∼fN
+{
+Λft, ΣεΣ′ε}, (18)
+yielding simulated data ypre(i)t ,f (i)j ,h (i)j . Then, the sample skewness and kurtosis in
+draw (i) is computed from εobs(i)t = yobs(i)t − Λ(i)f (i)t and εpre(i)t = ypre(i)t − Λ(i)f (i)t .
+Taking the average of theS draws,
+{
+Skewobs(1),...,Skew obs(S)}, produces an estimate
+of E
+(
+Skew|yobst ). Then, the ppp-value is computed according to (15).
+As noted in Koop (2003), the ppp-value can be used as a measurement of model
+ﬁt as well as for model comparisons. A small ppp-value indicates that the model is
+unlikely to generate data sets with more extreme properties than the data observed.
+4 Empirical Results
+4.1 Estimation and MCMC diagnostics
+We use monthly unsmoothed Fama-Bliss zero coupon yields from January 1964 to De-
+cember 2003 with maturities from one up to ﬁve years, i.e. τi ={12, 24, 36, 48, 60} in
+months. The data is available from the Centre for Research in Security Prices (CRSP)
+and is constructed using the method of Fama and Bliss (1987) based on end-of-month
+data of U.S. taxable, non-callable bonds for annual maturities up to 5 years. This data
+is used in Cochrane and Piazzesi (2005) and also in Hautsch and Ou (2008) and thus
+makes our results comparable to previous studies. In particular, since Hautsch and Ou
+(2008) use a Gibbs sampling algorithm based on an element-by-element drawing, a com-
+parison of results provides insights to which extent the use of a computationally more
+eﬃcient MCMC algorithm is also reﬂected in parameter estimates and uncertainties.
+To be able to directly compare estimates of the DLNS and SVNS model, we also
+estimate the DLNS model using the suggested MCMC procedure. The proposed Gibbs
+sampler is run using 20,000 iterations with the ﬁrst 5,000 iterations discarded. The
+algorithm is programmed in Ox building on the stochastic volatility package SvPack
+2.0 (Koopman et al., 2002). 2 The estimation results including the estimated posterior
+means, posterior standard deviations, and 95% posterior density intervals (HPIV) are
+2The algorithm is run on a machine with Intel(R) Core(TM)2Duo E8500 processor, 3.16GHz, 3.25GB
+RAM, and WinXP 32bit OS. For the basic model 25 , 000 iterations take 12 minutes, 11.01 seconds.
+13
+
+===== PDF PAGE 15 =====
+E:\work\workingpaper\TS\Pics\fplotnoSV.eps  12/14/09 14:11:04
+Page: 1 of 1
+1970198019902000
+2.5
+5.0
+7.5
+10.0
+12.5Level
+1970198019902000
+-5.0
+-2.5
+0.0
+2.5
+5.0
+Slope
+1970198019902000
+-5
+0
+5
+10Curvature
+1970198019902000
+5
+10
+15
+Figure 2: Latent Yield Factors Implied by the DLNS Model. Top left: level factor fL; Top
+right: slope factor fS; Bottom left: curvature factor fC; Bottom right: underlying yields Jan,
+1964 - Dec, 2003.
+given by Table 4 in Appendix B. We also report Numerical Standard Errors (NSE) as a
+measure of approximation errors in MCMC estimates, the Relative Numerical Eﬃciency
+(RNE) to evaluate the eﬃciency of the algorithm, and Convergence Diagnostics (CD)
+as proposed by Geweke (1992). Taking the non-i.i.d. nature of MCMC draws into
+account, we calculate modiﬁed NSEs and RNEs ( NSEq and RNEq ) accounting for
+correlations up to lags of q% of the size of the retained MCMC sample. According to
+the reported diagnostics, we do not ﬁnd any indications for a lack of convergence in
+the Markov chain. Moreover, the RNE values indicate that the MCMC algorithm is
+quite eﬀective.
+Figure 2 plots the estimated latent yield factors. It turns out that all factor dynam-
+ics are highly persistent conﬁrming also the results by Koopman et al. (2010). This is
+particularly true for the level factor which is virtually estimated as an integrated com-
+ponent. As shown below, this result is obviously induced by the fact that time-varying
+volatilities in levels are ignored driving the autoregressive parameter of the level factor
+toward one. Nevertheless, it is shown that the long-term factor f1,t nicely captures
+the overall interest rate level, while f2,t picks up variations in yield spreads. Also from
+the plots it is evident that time-varying variances are obviously only captured by the
+slope and curvature factor but not by the level factor. Using the posterior draws of the
+covariance ΣηΣ′η, we compute the error correlations ρik =Corr (ηi,t,ηk,t),i⁄=k,i≤ 3,
+k≤ 3. Figure 3 shows the posterior distributions of ( ρ12,ρ 13,ρ 23) with averages of
+14
+
+===== PDF PAGE 16 =====
+0.006, 0.005 and 0.276, respectively. Hence, apart from a distinct correlation between
+f2,t and f3,t, the mutual dependencies between the factors are comparably low widely
+conﬁrming the appropriateness of modelling Σ ηΣ′η as a diagonal matrix.
+E:\work\workingpaper\TS\Pics\corrdens.gwg  12/13/09 23:08:44
+Page: 1 of 1
+-0.2 0.0 0.2
+1
+2
+3
+4
+5
+6
+7
+8
+9
+1,2 1,2 =0.006
+-0.2 0.0 0.2
+1
+2
+3
+4
+5
+6
+7
+8
+9
+1,3 1,3 =0.005
+-0.5 0.0 0.5
+0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+2,3 2,3 =0.276
+Figure 3: Posterior Distributions of Error Term Correlations based on the DLNS model.
+The SVNS model is estimated using 18,000 runs of the Gibbs sampler with 8 , 000
+draws used for the burn-in period. Table 2 gives the estimates of the parameters as well
+as the corresponding diagnostics. It turns out that – in comparison to the DLNS model
+– the persistence in yield factors is slightly reduced and obviously partly captured by
+the (high) autocorrelations in factor volatilities. Nevertheless, the persistence in the
+yield factor is still very high supporting the ﬁndings by Koopman et al. (2010) and
+Hautsch and Ou (2008). Conversely, the persistence in the curvature factor is clearly
+reduced. As for the DLNS model, the reported MCMC diagnostics indicate a proper
+convergence of the underlying Markov chain.
+We ﬁnd signiﬁcant evidence for strong autocorrelations in factor volatilities with
+highest persistence in the level and slope volatility as represented by (mean) estimates
+of φh,L = 0.89 and φh,S = 0.96. Hautsch and Ou (2008) report a higher persistence
+which might be due to a slower convergence of the Markov chain in an element-by-
+element drawing approach. The plots of the estimated yield factors shown in Figure
+4 reveal quite similar patterns as those shown in Figure 2. However, it is evident
+that the SVNS model reveals also substantial volatility in the level factor which is
+not true in the DLNS model. These results illustrate that the inclusion of underlying
+stochastic volatility captures also a non-trivial part of parameter uncertainty. This will
+15
+
+===== PDF PAGE 17 =====
+E:\work\workingpaper\TS\Pics\fplotsvbak.eps  12/14/09 14:52:08
+Page: 1 of 1
+1970198019902000
+5.0
+7.5
+10.0
+12.5
+15.0
+Level
+1970198019902000
+-5.0
+-2.5
+0.0
+2.5
+5.0
+Slope
+1970198019902000
+0.73
+0.74
+0.75
+0.76
+0.77
+0.78Curvature
+1970198019902000
+5
+10
+15
+Data 
+Figure 4: Latent Yield Factors Implied by the SVNS Model. Top left: level factor fL; Top
+right: slope factor fS; Bottom left: curvature factor fC; Bottom right: underlying yields Jan,
+1964 - Dec, 2003.
+be conﬁrmed by the analysis of forecasting uncertainties induced by both models shown
+in Section 4.2.
+Figure 5 depicts the corresponding volatilities ehj associated with the level, slope
+and curvature, respectively. The highest variations in volatility are shown for the level
+and slope factor. The level volatility seems to be positively related to the underlying
+(interest rate) level. Hence, in periods of high (low) interest rates we also observe higher
+(lower) volatility. Two main spikes are observable in 1980 and 1984 where overall inter-
+est volatility has been obviously high. In the same period, also the slope volatility has
+been extremely high. In contrast, during the remaining period, slope volatilities have
+been virtually zero reﬂecting comparably low ﬂuctuations in yield spreads. Similarly,
+curvature volatility is widely constant through the sample period. While the time series
+patterns of level and slope volatilities are similar to those reported by Hautsch and Ou
+(2008) using the same data, the pattern of the curvature volatility is diﬀerent. While
+in Hautsch and Ou slope and curvature volatility seem to be positively related, the
+present estimates seem to disentangle the individual components more clearly. Since
+both the underlying data and model are the same, these diﬀerences in results must be
+induced by the underlying MCMC sampling algorithm which is clearly more eﬃcient
+in the present study. This ﬁnding indicates that the sampling of latent volatilities
+in a latent factor model is a challenging task and deﬁnitely requires computationally
+eﬃcient algorithms as proposed in this paper.
+16
+
+===== PDF PAGE 18 =====
+T able 2: Estimation results for the SVNS model and MCMC diagnostics including means, standard deviations and 95% posterior density intervals.
+cd: Geweke convergence diagnostic values, nse: numerical standard errors, rne: relative numerical eﬃciency calculated based on lags covering q%
+of the retained sample, with q = [4, 8, 15].
+V ariable µ f,L µf,S µf,C φf,L φf,S φf,C µh,L µh,S µh,C φh,L φh,S φh,C
+mean 1.0129 0 .9596 0 .7895 0 .9913 0 .9803 0 .4900 0 .2925 0 .1026 0 .0295 0 .8983 0 .9678 0 .7236
+std 1.0595 1 .0515 0 .8204 0 .0120 0 .0194 0 .4498 0 .0136 0 .0170 0 .0004 0 .0118 0 .0099 0 .0197
+HP IV lo −0.6 911 −0.7387 −0.5559 0 .9781 0 .9482 −0.4617 0 .2743 0 .0866 0 .0291 0 .8852 0 .9641 0 .7001
+HP IV up 2.8 055 2 .7606 2 .1339 0 .9994 0 .9987 0 .9689 0 .3155 0 .1368 0 .0300 0 .9097 0 .9712 0 .7545
+cd 0.6067 0 .9823 −1.2593 0 .5208 −0.0749 −0.0156 1 .6743 −0.2232 0 .0502 0 .7655 0 .7489 0 .1170
+nse 0.0106 0 .0105 0 .0082 0 .0001 0 .0002 0 .0045 0 .0001 0 .0002 0 .0000 0 .0001 0 .0001 0 .0002
+nse.0 4 0.0 100 0 .0090 0 .0156 0 .0001 0 .0002 0 .0058 0 .0002 0 .0002 0 .0000 0 .0001 0 .0001 0 .0003
+nse.0 8 0.0 088 0 .0078 0 .0143 0 .0001 0 .0002 0 .0055 0 .0002 0 .0002 0 .0000 0 .0001 0 .0001 0 .0003
+nse.1 5 0.0 081 0 .0063 0 .0102 0 .0001 0 .0001 0 .0048 0 .0002 0 .0002 0 .0000 0 .0001 0 .0001 0 .0002
+rne.0 4 0.8 583 1 .1638 0 .2959 1 .1630 1 .0442 0 .5864 0 .6956 0 .5225 0 .7630 0 .8663 1 .1117 0 .5422
+rne.0 8 1.0 318 1 .1777 0 .3016 1 .2972 1 .0528 0 .5242 0 .7619 0 .5481 0 .7355 0 .8506 1 .1457 0 .5608
+rne.1 5 1.7 384 1 .2998 0 .3096 1 .4081 1 .1060 0 .5084 0 .6369 0 .8704 0 .7289 0 .7668 1 .1713 0 .7677
+σ21, ε σ22, ε σ23, ε σ24, ε σ25, ε σ21, h σ22, h σ23, h λ
+mean 0.0399 0 .0217 0 .0352 0 .0336 0 .1708 0 .2049 0 .3166 0 .0065 0 .0674
+std 0.0061 0 .0042 0 .0128 0 .0122 0 .0541 0 .0248 0 .0265 0 .0012 0 .0073
+HP IV lo 0.0 323 0 .0171 0 .0223 0 .0233 0 .1196 0 .1640 0 .2720 0 .0056 0 .0554
+HP IV up 0.0 512 0 .0291 0 .0611 0 .0594 0 .2886 0 .2435 0 .3554 0 .0089 0 .0788
+cd −0.4623 −0.7554 −1.3177 −1.3757 −1.3802 −1.3615 0 .3477 0 .0153 0 .3391
+nse 0.0001 0 .0000 0 .0001 0 .0001 0 .0005 0 .0002 0 .0003 0 .0000 0 .0001
+nse.0 4 0.0 001 0 .0000 0 .0001 0 .0001 0 .0006 0 .0005 0 .0005 0 .0000 0 .0001
+nse.0 8 0.0 001 0 .0000 0 .0001 0 .0001 0 .0007 0 .0005 0 .0004 0 .0000 0 .0001
+nse.1 5 0.0 001 0 .0000 0 .0001 0 .0001 0 .0008 0 .0006 0 .0004 0 .0000 0 .0000
+rne.0 4 0.3 741 1 .4531 1 .2850 1 .1980 1 .2128 0 .4290 0 .3241 0 .4286 1 .1188
+rne.0 8 0.3 779 1 .2829 1 .2675 1 .3299 1 .3379 0 .4216 0 .3469 0 .3878 1 .3171
+rne.1 5 0.3 666 1 .1391 1 .1942 1 .3615 1 .7101 0 .2863 0 .6445 0 .4111 1 .5010
+17
+
+===== PDF PAGE 19 =====
+E:\work\workingpaper\TS\Pics\volatility.gwg  12/14/09 15:00:09
+Page: 1 of 1
+1970198019902000
+0.25
+0.50
+0.75
+1.00
+1.25Level Volatility 
+1970198019902000
+2
+4
+Slope Volatility 
+1970198019902000
+0.00090
+0.00095
+0.00100 Curvature Volatility
+1970198019902000
+5
+10
+15
+Figure 5: Latent Volatilities Implied by the SVNS Model. Top left: level volatility ehL; Top
+right: slope volatility ehS; Bottom left: curvature volatility ehC; Bottom right: underlying
+yields Jan, 1964-Dec, 2003.
+Figures 6 to 8 show the posterior distributions of the individual parameters. In most
+cases, the distributions strongly deviate from corresponding normal approximations
+which would be used asymptotically. The posterior distribution of λ is simulated using
+the Griddy-Gibbs sampler. Interestingly, λ is quite uniformly distributed covering a
+relatively small range. This result conﬁrms the argument in Diebold and Li (2006)
+that factor loadings Λ are not very sensitive to diﬀerent values of λ. Therefore, it is
+reasonable to ﬁx λ to values around 0.07 as in Diebold and Li (2006), Diebold et al.
+(2006) or Yu and Zivot (2008). Indeed, the posterior mean of the Griddy-Gibbs sample
+is 0.0674, which implies the curvature loading 1−e−λτiλτi −e−λτi to be maximized for a
+maturity of τi = 26.6 months. Plots of the underlying MCMC draws as well as of
+corresponding correlograms for all parameters are given in Appendix C. It is shown
+that in all cases the correlations between the MCMC draws are small indicating a high
+eﬃciency of the MCMC algorithm.
+Table 3 reports the posterior predictive p-values for both the DLNS model and the
+SVNS model. Both models ﬁt the data well. NeitherE
+(
+Skew|yobst ) norE(Kurt|yobst )
+fall into the tails of the posterior predictive distributionE (Kurt|ypret ) andE (Skew|ypret ).
+Hence, both models are able to replicate the main characteristics of the observed data.
+Nevertheless, the SVNS model yields ultimately larger ppp-values. For instance, the
+DLNS model yields E
+(
+Skew|yobst ) = 0.085 and a ppp-value of 0.435 for maturities
+of 60 months. This indicates that 43.5% of the artiﬁcial data set generated from the
+18
+
+===== PDF PAGE 20 =====
+E:\work\workingpaper\TS\Pics\miufsvdens.gwg  12/14/09 15:31:31
+Page: 1 of 1
+-2.50.02.55.0
+0.1
+0.2
+0.3
+0.4
+L,f 
+-505
+0.1
+0.2
+0.3
+0.4
+S,f
+-2.50.02.5
+0.1
+0.2
+0.3
+0.4
+0.5
+C,f
+0.9500.9751.000
+20
+40
+6011,L
+0.820.860.90.940.981.02
+10
+20
+30
+40
+22,L
+-1.0-0.50.00.51.0
+0.5
+1.0
+1.533,L
+Figure 6: Simulated Posterior Densities based on the SVNS model: from left to right in the
+top panels: µL,f, µS,f, µC,f; from left to right in the bottom panels: φL,f, φS,f, φC,f.
+E:\work\workingpaper\TS\Pics\miuhsvdens.gwg  12/14/09 15:37:42
+Page: 1 of 1
+0.20.30.4
+10
+20
+30
+40
+L,h
+0.10.2
+10
+20
+30
+40
+50
+S,h
+0.0250.0300.035
+500
+1000
+1500
+2000
+ C,h
+0.70.80.91.0
+20
+40
+60
+ 11,h
+0.900.951.00
+50
+100
+150
+22,h
+0.60.81.0
+10
+20
+ 33,h
+Figure 7: Simulated Posterior Densities based on the SVNS model: from left to right in the
+top panels: µL,h, µS,h, µC,h; from left to right in the bottom panels: φL,h, φS,h, φC,h.
+19
+
+===== PDF PAGE 21 =====
+E:\work\workingpaper\TS\Pics\lambdasv1dens.emf  12/14/09 15:47:50
+Page: 1 of 1
+0.050 0.055 0.060 0.065 0.070 0.075 0.080 0.085
+10
+20
+30
+40
+50
+60 Posterior Density of 
+0 25 50 75 100 125
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1.0
+max at 26.6m 
+Figure 8: Left: Simulated Posterior Densities of λ based on the SVNS model. Right: cal-
+culated factor loadings using λ = 0.0674 with the curvature loading maximized at τi = 26.6
+months.
+T able 3: Posterior Predictive p-values
+DLNS SVNS
+skewness kurtosis skewness kurtosis
+m E (S|yot ) p E (K|yot ) p E (S|yot ) p E (K|yot ) p
+12 0 .015 0 .894 2 .696 0 .930 0 .082 0 .993 3 .265 0 .933
+24 0 .022 0 .839 2 .689 0 .935 0 .104 0 .993 3 .109 0 .931
+36 0 .037 0 .740 2 .690 0 .931 0 .099 0 .993 3 .019 0 .930
+48 0 .059 0 .585 2 .695 0 .924 0 .092 0 .993 2 .953 0 .926
+60 0 .085 0 .435 2 .696 0 .929 0 .090 0 .993 2 .884 0 .928
+DLNS model exhibit a greater degree of skewness than the actual data. Conversely,
+the corresponding p-values for the SVNS model are virtually one. Moreover, it turns
+out that the values of E
+(
+Kurt|yobst ) implied by the SVNS model are larger implying
+that the latter speciﬁcation tends to generate data with a greater degree of kurtosis.
+This is obviously driven by the stochastic volatility in the yield factors.
+4.2 Evaluating the Forecasting Uncertainty
+Systematic evaluations of the models’ out-of-sample forecasting power is beyond the
+scope of this paper. Nevertheless, we aim at illustrating the importance of accounting
+for time-varying volatilities when forecasting densities are considered. This is performed
+by selecting three illustrative dates for which we produce one-step-ahead out-of-sample
+20
+
+===== PDF PAGE 22 =====
+E:\work\workingpaper\TS\Pics\dataplot1.gwg  12/16/09 16:09:39
+Page: 1 of 1
+12m 
+24m 
+36m 
+48m 
+60m 
+1964 1969 1974 1979 1984 1989 1994 1999 2004
+2.5
+5.0
+7.5
+10.0
+12.5
+15.0
+1980:12 1985:12 2003:12
+12m 
+24m 
+36m 
+48m 
+60m 
+Figure 9: Forecast periods: December 1980, December 1985, December 2003.
+forecasts. The underlying forecasting procedure considering parameter uncertainty and
+error uncertainty is illustrated in the Appendix. As representative dates we select De-
+cember 1980, December 1985 and December 2003. Figure 9 illustrates that these dates
+are associated with diﬀerent volatility regimes. Particularly in December 1980, volatil-
+ity (and interest rates themselves) have been high. For all three periods, we compute
+one-step-ahead forecasts given the information set available at the previous month.
+The forecasts are produced based on parameter estimates employing the corresponding
+history of yields prevailing before each date. Sampling from the corresponding simu-
+lated posteriors (as shown in the Appendix) provides the full forecast density taking
+into account parameter uncertainty and stochastic uncertainty.
+Figures 10, 11 and 12 show the corresponding density forecasts generated by the
+DLNS model and the SVNS model for the three dates and all maturities. Not surpris-
+ingly, the mean forecasts seem to be similar in both speciﬁcations. However, the forecast
+uncertainty is quite diﬀerent. In all cases, the forecast uncertainty is lower in the SVNS
+model. This is due to the fact that in the SVNS approach, interest rate volatility – and
+thus an important component of parameter uncertainty and stochastic uncertainty –
+is explicitly taken into account. In the DLNS model, this component is missing which
+induces a higher stochastic uncertainty and consequently a higher forecasting uncer-
+tainty. This is most striking for December 1985 and December 2003. Both dates are
+associated with low volatility regimes. In these situations, the DLNS model induces
+a signiﬁcantly higher forecasting uncertainty stemming from the fact that the ignored
+21
+
+===== PDF PAGE 23 =====
+E:\work\workingpaper\TS\Pics\80dens.gwg  12/14/09 01:11:19
+Page: 1 of 1
+5101520
+0.1
+0.2
+0.312mDLNS
+5101520
+0.1
+0.2
+0.324mDLNS
+5101520
+0.1
+0.2
+0.3
+36mDLNS
+5101520
+0.1
+0.2
+0.3
+48mDLNS
+5101520
+0.1
+0.2
+0.3
+60mDLNS
+5101520
+200
+400
+600
+12mSVNS
+5101520
+200
+400
+600
+24mSVNS
+5101520
+200
+400
+600
+36mSVNS
+5101520
+200
+400
+600
+48mSVNS
+5101520
+200
+400
+600
+60mSVNS
+Figure 10: Density forecasts for maturities of 12m, 24m, 36m, 48m, 60m, respectively, for
+December 1980. Realized values indicated by vertical lines.
+E:\work\workingpaper\TS\Pics\85dens.gwg  12/14/09 01:14:45
+Page: 1 of 1
+051015
+0.05
+0.10
+0.15
+0.20
+12mDLNS
+051015
+0.1
+0.2
+0.324mDLNS
+051015
+0.1
+0.2
+0.3
+36mDLNS
+051015
+0.1
+0.2
+0.3
+48mDLNS
+051015
+0.1
+0.2
+0.3
+60mDLNS
+051015
+250
+500
+75012mSVNS
+051015
+250
+500
+75024mSVNS
+051015
+250
+500
+75036mSVNS
+051015
+250
+500
+750
+48mSVNS
+051015
+200
+400
+600
+60mSVNS
+Figure 11: Density forecasts for maturities of 12m, 24m, 36m, 48m, 60m, respectively, for
+December 1985. Realized values indicated by vertical lines.
+22
+
+===== PDF PAGE 24 =====
+E:\work\workingpaper\TS\Pics\04dens1.gwg  12/15/09 16:50:18
+Page: 1 of 1
+-10010
+0.05
+0.10
+0.15
+0.20
+0.2512mDLNS
+010
+0.05
+0.10
+0.15
+0.20
+0.2524mDLNS
+-50510
+0.1
+0.2
+0.336mDLNS
+0510
+0.1
+0.2
+0.3
+48mDLNS
+0510
+0.1
+0.2
+0.3
+60mDLNS
+-10010
+200
+400
+600
+12mSVNS
+010
+200
+400
+600
+24mSVNS
+-50510
+250
+500
+75036mSVNS
+0510
+250
+500
+75048mSVNS
+0510
+250
+500
+75060mSVNS
+Figure 12: Density forecasts for maturities of 12m, 24m, 36m, 48m, 60m, respectively, for
+December 2003. Realized values indicated by vertical lines.
+stochastic and parameter uncertainty induced by high-volatility-regimes ‘spread out’ to
+low-volatility-regimes. The density plots show that this eﬀect is quite distinct support-
+ing the importance of explicitly accounting for underlying stochastic volatility. Only
+in December 1980, the forecasting densities are quite similar. This is due to the fact
+that in such a high-volatility-period both models face higher stochastic and parameter
+uncertainties.
+5 Conclusions
+We propose MCMC-based Bayesian inference for a so-called Stochastic Volatility Nelson-
+Siegel (SVNS) model. The SVNS model has been introduced by Hautsch and Ou (2008)
+and extends a dynamic version of the original Nelson and Siegel (1987) model as pro-
+posed by Diebold and Li (2006) to allow for stochastic volatility in the underlying yield
+factors. This framework allows to capture yield curve volatility in a ﬂexible but still
+parsimonious way.
+The model can be re-presented in a state space form with the factors in the transi-
+tion equation revealing stochastic volatility and the volatility components themselves
+following latent dynamic processes. Our results show that the ﬁltering of latent volatil-
+ities of latent (dynamic) variables is not straightforward and requires a high sampling
+precision. Therefore, we propose estimating the model using a MCMC algorithm build-
+ing on the Kalman ﬁlter together with a simulation smoother. This allows to sample
+23
+
+===== PDF PAGE 25 =====
+the unknown parameters as well as factors block-wise making the algorithm computa-
+tionally quite eﬃcient.
+Our estimation results provide evidence for distinct time-varying stochastic volatil-
+ities in yield factors. In particular, the level and slope volatilities contribute most to
+the volatility of the yield curve. We show that the incorporation of stochastic volatility
+captures an important part of stochastic uncertainty and parameter uncertainty. Ana-
+lyzing the model’s goodness-of-ﬁt using posterior predictive p-values we show that the
+inclusion of stochastic volatility improves the model’s explanatory power. Moreover,
+based on several illustrative examples we ﬁnd that the SVNS model produces a sig-
+niﬁcantly smaller forecasting uncertainty compared to a speciﬁcation where variances
+are assumed to be constant. Actually, it turns out that ignored stochastic volatility
+substantially increases parameter uncertainty resulting in forecasting densities with a
+signiﬁcantly higher variance.
+Though the model is speciﬁcally designed for the modelling of yield curves it can be
+seen as a member of a more general class of multivariate dynamic latent factor models
+revealing (multivariate) stochastic volatility. Such approaches might be attractive not
+only for term structure dynamics but in all applications where high-dimensional het-
+eroscedastic systems have to be modelled and forecasted. Since the proposed MCMC
+approach is easily adapted to alternative speciﬁcations it provides a convenient frame-
+work for statistical inference for this class of models.
+24
+
+===== PDF PAGE 26 =====
+References
+[1] Ardia, D., Hoogerheide, L.F. and van Dijk, H.K. (2009). Adaptive Mixture of
+Student-t Distributions as a Flexible Candidate Distribution for Eﬃcient Simula-
+tion: The R Package AdMit. Journal of Statistical Software, 29 (1), 1-32.
+[2] Bj¨ ork, T. and Christensen, B.J. (1999). Interest Rate Dynamics and Consistent
+Forward Rate Curves. Mathematical Finance, 323-48.
+[3] Chib, S. and Greenberg, E. (1995). Understanding the Metropolis-Hastings Algo-
+rithm. American Statistician, 49, 327-35.
+[4] Chib, S. and Greenberg, E. (1996). Markov Chain Monte Carlo Simulation Meth-
+ods in Econometrics. Econometric Theory, 12, 409-31.
+[5] Chib, S., Nardari, F. and Shephard, N. (2002). Markov chain Monte Carlo methods
+for stochastic volatility models. Journal of Econometrics, 108(2), 281-316.
+[6] Cochrane, J.H. and Piazzesi, M. (2005). Bond Risk Premia. American Economic
+Review, 95(1), 138-60.
+[7] Cox, J.C., Ingersoll, J.E.,Jr. and Ross, S.A. (1985). A Theory of the Term Struc-
+ture of Interest Rates. Econometrica, 53(2), 385-407.
+[8] Dai, Q. and Singleton, K.J. (2000). Speciﬁcation Analysis of Aﬃne Term Structure
+Models. Journal of Finance, 55, 1943-78.
+[9] de Jong, P. and Shephard, N. (1995). The Simulation Smoother for Time Series
+Models. Biometrika, 82(2), 339-50.
+[10] Diebold, F.X., Piazzesi, M. and Rudebusch, G.D. (2005). Modeling Bond Yields
+in Finance and Macroeconomics. American Economic Review, 95(2), 415-20.
+[11] Diebold, F.X. and Li, C. (2006). Forecasting the term structure of government
+bond yields. Journal of Econometrics, 130(2), 337-64.
+[12] Diebold, F.X., Rudebusch, G.D. and Aruoba, B.S. (2006). The macroeconomy and
+the yield curve: a dynamic latent factor approach. Journal of Econometrics, 131,
+309-38.
+[13] Duﬀee, G. and Kan, R. (1996). A Yield-Factor Model of Interest Rates. Mathe-
+matical Finance, 6, 379-406.
+25
+
+===== PDF PAGE 27 =====
+[14] Engle, R.F. and Ng, V.K. (1993). Time-Varying Volatility and the Dynamic Be-
+havior of the Term Structure. Journal of Money, Credit and Banking, 25(3, Part
+1), 336-49.
+[15] Engle, R.F., Ng, V.K. and Rothschild, M. (1990). Asset pricing with a factor-arch
+covariance structure : Empirical estimates for treasury bills. Journal of Economet-
+rics, 45(1-2), 213-37.
+[16] Fama, E.F. and Bliss, R.R. (1987). The Information in Long-Maturity Forward
+Rates. The American Economic Review, 77(4), 680-92.
+[17] Fuller, W.A. (1996). Introduction to statistical time series. 2nd ed. New York:
+John Wiley.
+[18] Gelman, A. and Meng, X. (1996). Model Checking and Model Improvment. In
+Gilks, W.R. andSpiegelhalter, D.J. (eds.), Markov chain Monte Carlo in practice,
+Chapman & Hall/CRC.
+[19] Geweke, J. (1992). Evaluating the Accuracy of Sampling-Based Approaches to the
+Calculation of Posterior Moments Bayesian Statistics 4, 169-93.
+[20] Hautsch, N. and Ou, Y. (2008). Yield Curve Factors, Term Structure Volatility,
+and Bond Risk Premia. Discussion Paper DP2008-053, Collaborative Research
+Center 649, Humboldt-Universit¨ at zu Berlin, Germany.
+[21] Hull, J. and White, A. (1990). Pricing Interest-Rate-Derivative Securities. The
+Review of Financial Studies, 3(4), 573-92.
+[22] Kim, S., Shephard, N. and Chib, S. (1998). Stochastic Volatility: Likelihood In-
+ference and Comparison with ARCH Models. The Review of Economic Studies,
+65(3), 361-93.
+[23] Koop, G. (2003). Bayesian econometrics. Chichester: Wiley.
+[24] Koopman, S.J., Shephard, N. and Doornik, J.A. (1999). Statistical algorithms for
+models in state space form using SsfPack 2.2. Econometrics Journal, 2(1), 113-66.
+[25] Koopman, S.J., Shephard, N. and Doornik, J.A. (2002). SVPack 2.1: Ox software
+for volatility models.
+[26] Koopman, S.J., Mallee, M.I.P. and van der Wel, M. (2010). Analyzing the Term
+Structure of Interest Rates using the Dynamic Nelson-Siegel Model with Time-
+Varying Parameters. Journal of Business and Economic Statistics.
+26
+
+===== PDF PAGE 28 =====
+[27] Meng, X. (1994). Posterior Predictive p-Values. The Annals of Statistics, 22(3),
+1142-60.
+[28] M¨ onch, E. (2006). Term Structure Surprises: The Predictive Content of Curvature,
+Level, and Slope. Humboldt University Berlin Working Paper.
+[29] Nelson, C.R. and Siegel, A.F. (1987). Parsimonious Modeling of Yield Curves.
+Journal of Business, University of Chicago Press, 60(4), 473-89.
+[30] Piazzesi, M. (2003). Aﬃne term structure models. In Ait-Sahalia, Y. andHansen,
+L. (eds.), Handbook of Financial Econometrics, 2009 ed. North-Holland.
+[31] Rudebusch, G.D. and Wu, T. (2008). A Macro-Finance Model of the Term Struc-
+ture, Monetary Policy and the Economy. The Economic Journal, 118(530), 906-26.
+[32] Vasicek, O. (1977). An equilibrium characterization of the term structure. Journal
+of Financial Economics, 5(2), 177-88.
+[33] Yu, W. and Zivot, E.W. (2008). Forecasting the Term Structures of Treasury
+and Corporate Yields: Dynamic Nelson-Siegel Models Evaluation. SSRN Working
+Paper.
+27
+
+===== PDF PAGE 29 =====
+A Derivations of Conditional Posterior Distributions
+In the following, we derive the corresponding conditional posterior distributions and
+show how to sample from them.
+1. Sample Hε from a Wishart conditional posterior, Hε∼W
+(
+Hε|Aε,νε
+)
+, where
+νε =T +νε,
+A
+−1
+ε =A−1ε +
+T∑
+t=1
+(yt− Λft) (yt− Λft)′,
+and the hyper-parameters to be selected as νε = 0.001 and A−1ε = 0N×N associ-
+ated with non-informative priors. Then Σ εΣ′ε can be calculated from the inverse
+of Hε.
+2. To sample λ, we use a Griddy-Gibbs sampler posterior based on 30 grid points.
+Hence, with y collecting the data and f and h collecting the time series of all
+yield factors and factor volatilities, respectively, we have
+p (λ|y,f,h ) ∝
+T∏
+t=1
+p (yt|θ,ft,ht)p (λ)
+∝
+T∏
+t=1
+p (yt|θ,ft,ht,Hε) 1bλ−aλI(aλ,bλ) (λ)
+∝ 1bλ−aλ|Hε|
+T
+2
+(2π)
+T
+2
+exp
+{
+−12 T∑t=1 (yt− Λft)′Hε (yt− Λft)}I(aλ,bλ) (λ),
+where I(aλ,bλ) (λ) denotes an indicator function, and λ∈ (aλ,bλ). The hyper-
+parameters bλ and aλ are chosen in line with previous literature. For instance,
+in Diebold and Li (2006), λ = 0.0609 maximizes the curvature factor loading at
+a 30-month maturity. Other studies ﬁnd similar results showing that λ is most
+likely in a range between 0 .06 and 0.07. Accordingly, we choose bλ = 0.08 and
+aλ = 0.055.
+3. Sample [µf,φf] and f, using the sampled λ.
+(a) Fitting eq. (4) and (5) into a state-space form, we can sample f using the
+Kalman ﬁlter with a simulation smoother. With ft = (f1,t,f 2,t,f 3,t)′ and
+28
+
+===== PDF PAGE 30 =====
+yt ={yt (τ1),yt (τ2),...,y t (τN)}′, the time-varying state-space form is
+(
+ft+1
+yt
+)
+=δt + Φtft +ut ut i.i.d.∼ N (0, Ωt), t = 1,...,T.
+Initial conditions are
+δt =
+(
+dt
+ct
+)
+=
+(
+µf−µfφf
+0N×1
+)
+: (3 +N)× 1,
+Φt =
+(
+Tt
+Zt
+)
+=
+(
+diag (φ11,f,φ 22,f,φ 33,f)
+Λ
+)
+: (3 +N)× 3,
+Ωt =
+(
+Ση,tΣ′η,t 0
+0 Σ εΣ′ε
+)
+: (3 +N)× (3 +N).
+As shown in in Kim et al. (1998), we obtain
+νt =yt−ct−Ztft : (N× 1),
+Ft =ZtPtZ′t + ΣεΣ′ε : (N×N),
+Kt =
+(
+TtPtZ′t)F−1t : (3×N),
+ft+1 =dt +Ttft +Ktνt : (3× 1)
+Pt+1 =TtPtT′t + Ση,tΣ′η,t−KtFtK′t : (3× 3),
+where a′0 = (µf)′ using the previous draws from the Gibbs sampler and
+P = I3× 106 with Ip denoting a p-dimensional identity matrix. Then, the
+Kalman ﬁlter returns the vector
+{
+νt,Kt,F−1t } and the simulation smoother
+(de Jong and Shephard, 1995) can be used to get draws{f1,f 2,...,f T}| y,θ ,
+where θ collects all parameters in the SVNS model. Setting fT = 0 and
+NT = 03×3, and deﬁne
+Dt =F−1t +K′tNtKt : (N×N),
+nt =F−1t νt−K′tft,
+29
+
+===== PDF PAGE 31 =====
+we run for t =T,..., 1,
+Ct = ΣεΣ′ε−(ΣεΣ′ε)Dt(ΣεΣ′ε),
+kt∼N (0,Ct),
+ft−1 =Z′tF−1t νt + (Tt−KtZt)′ft−V′tC−1t kt,
+Vt =
+(
+ΣεΣ′ε)(DtZt−K′tNtTt),
+Nt−1 =Z′tF−1t Zt + (Tt−KtZt)′Nt (Tt−KtZt) +V′tC−1t Vt.
+Then,yt− (ΣεΣ′ε)nt−kt is a draw from Ztft|y,θ,Z t+1ft+1,...Z TfT . The
+smoothed factors{f1,f 2,...,f T}| y,θ can be obtained using the simulation
+smoother described above. Note that sampling{f1,f 2,...,f T},θ|y directly
+is not possible because of degeneracies (see Koopman et al., 1999).
+(b) Sampling [µf,φf]. The likelihood is given by
+p (y,f,h |θ) =
+T∏
+t=1
+3∏
+j=1
+fN
+(
+yt| Λft, ΣεΣ′ε)
+×fN (fj,t|µj,f +φj,f (fj,t−1−µj,f), exp (hj,t))
+×fN
+(
+hj,t|µj,h +φj,h (hj,t−1−µj,h),σ 2j).
+With a prior µj,f = 0 and Vj,f = 10 4, the posterior of µj,f is derived as
+µj,f∼N
+(
+µj,f|µj,f,Vj,f
+)
+, where
+Vj,f =
+[ T∑
+t=1
+(1−φj,f)2
+exp (hj,t) + 1Vj,f
+]−1
+and
+µj,f =Vj,f
+[ T∑
+t=1
+(1−φj,f) (fj,t−φj,ffj,t−1)
+exp (hj,t) +
+µj,f
+Vj,f
+]
+.
+Similarly, with a truncated normal prior for φj,f, the posterior conditional
+can be derived as φj,f∼TN
+(
+φj,f|µj,fφ,Vj,fφ
+)
+1 (|φj,f|< 1) where
+Vj,fφ =
+[ T∑
+t=1
+(fj,t−1−µj,f)2
+exp (hj,t) + 1Vj,fφ
+]−1
+30
+
+===== PDF PAGE 32 =====
+and
+µj,fφ =Vj,fφ
+[ T∑
+t=1
+(fj,t−µj,f) (fj,t−1−µj,f)
+exp (hj,t) +
+µj,fφ
+Vj,fφ
+]
+.
+4. Using the draws of f, we can calculate f∗ from
+fj,t−µj,f =φj,f (fj,t−1−µj,f) + exp
+(hj,t
+2
+)
+ζj,t, j = 1, 2, 3,
+and f∗j,t = ln{[fj,t−µj,f−φj,f (fj,t−1−µj,f)]2 +c}, where c = 0.001. Then, we
+estimate [φj,h,σj,µj,h] and hj following Kim et al. (1998):
+(a) Sample s from s|f∗j,hj, where s ={st} for t = 1,...,T , using Table 1 and
+the following probability mass function
+Pr
+(
+st =i|f∗j,t,hj,t)∝qifN(f∗j,t|µst +hj,t,ν 2st).
+(b) Sampling hj|f∗j,s, [µh,j,φh,j,σj] can be achieved in one block using the Kalman
+ﬁlter and simulation smoother. The procedures are similar to those in Step
+3(a). We treat the sampled fj,j = 1, 2, 3, as three univariate time series,
+running step 4 three times to estimate and extract the stochastic volatilities
+from the series fj. Since f∗j and hj can be ﬁtted in a state-space form, it is
+straight forward to apply Kalman ﬁlter and simulation smoother. Extract-
+ing the log-volatilities terms hj is with the same manner as we draw the
+smoothed factor {f1,f 2,...,f T}| y,θ in Step 3(a). For matrix calculus as
+stated in Step 3(a), the representations of δt, Φt and time varying Ω t are
+given as the following:
+(
+hj,t+1
+f∗j,t
+)
+=δt + Φthj,t +ut ut i.i.d.∼ N (0, Ωt), t = 1,...,T.
+Under stationary initial conditions we have
+P =
+
+σ2j/(1−φ2j,h)
+µj,h
+
+,
+δt =
+(
+dt
+ct
+)
+=
+(
+µj,h−µjhφj,h
+0
+)
+,
+31
+
+===== PDF PAGE 33 =====
+Φt =
+(
+Tt
+Zt
+)
+=
+(
+φj,h
+1
+)
+,
+ut =
+(
+σjϵj,t
+zj,t
+)
+,
+where zj,t|st∼N
+(
+mst,ν 2st
+)
+.
+Ωt =
+(
+σ2j 0
+0 ν2st
+)
+(c) Sampling [µj,h,φj,h,σj] is achieved using the Metropolis-Hasting algorithm
+(Chib and Greenberg, 1995). Following Chib et al. (2002), we use a
+multivariate-t density with υ degrees of freedom as the proposal candidate
+density. We have chosenυ = 5 to cover a fat tailed distribution. For details
+in step (b) and (c), see Chib et al. (2002) for details.
+B Forecasting
+Once all the parameters are estimated, h-step ahead point forecasts can be obtained
+using the posterior means/ modes. In the Bayesian context, density forecasts are easily
+achievable directly using the MCMC draws. Hence,
+ˆft+h =ˆµf +ˆφf
+(
+ˆft−ˆµf
+)
+, (19)
+ˆyt+h =ˆΛˆft+h, (20)
+whereˆΛ is calculated using the draws ofλ, denoted asˆλ. The density forecast incorpo-
+rating parameter uncertainty can be conducted as follows: Denote each retained sample
+from the MCMC procedure asdraw(s), fors = 1,...,S , we can produceS h-step ahead
+forecast samples for ˆft+h with each forecast sample denoted by ˆf (s)t+h. Hence,
+ˆf (s)t+h =ˆµ(s)f +ˆφ(s)f (ˆf (s)t −ˆµ(s)f ),
+and
+ˆy(s)t+h =ˆΛ(s)ˆf (s)t+h.
+ForS→∞ , we obtain an approximation of the forecast density ofyt+h. In the resulting
+forecast density parameter uncertainty is naturally taken into account.
+32
+
+===== PDF PAGE 34 =====
+To account also for stochastic uncertainty we proceed as follows: Suppose we have
+a random draw of Σ (s)η and Σ (s)ε from the posterior conditionals, we generate a ran-
+dom sample ˆη(s)t+h = Σ (s)η uη,t+h and ˆε(s)t+h = Σ (s)ε uε,t+h, where uε,t+h and uη,t+h are i.i.
+standard normally distrbuted. Then, forecasts incorporating stochastic uncertainties
+are
+ˆf (s)t+h =ˆµ(s)f +ˆφ(s)f (ˆf (s)t −ˆµ(s)f ) +ˆη(s)t+h,
+ˆy(s)t+h =ˆΛ(s)(ˆf (s)t+h +ˆη(s)t+h) +ˆε(s)t+h,
+where the stochastic uncertainty is induced by the errors in both the measurement
+equation, εt+h, and the transition equation, ηt+h. In this paper, we consider a one-
+step-ahead out-of-sample forecast, i.e. h = 1, taking both parameter and stochastic
+uncertainty into account.
+C Tables and Figures
+E:\work\workingpaper\TS\Pics\miufsv.gwg  12/14/09 16:47:43
+Page: 1 of 1
+0500010000
+-2.5
+0.0
+2.5
+5.0
+L,f
+0510
+0
+1
+-2.50.02.55.0
+0.1
+0.2
+0.3
+0.4
+0500010000
+-5
+0
+5
+0510
+0
+1
+S,f
+-505
+0.1
+0.2
+0.3
+0.4
+0500010000
+0.0
+2.5
+0510
+0.5
+1.0
+C,f
+-2.50.02.5
+0.2
+0.4
+Density
+Figure 13: MCMC draws, Correlograms, and Posterior Densities for µL,f, µS,f, µC,f based
+on the SVNS model.
+33
+
+===== PDF PAGE 35 =====
+T able 4: Estimation results for the DLNS model and MCMC diagnostics including means,
+standard deviations and 95% posterior density intervals. cd: Geweke convergence diagnostic
+values, nse: numerical standard errors, rne: relative numerical eﬃciency calculated based on
+lags covering q% of the retained sample, with q = [4, 8, 15].
+µf,L µf,S µf,C φf,L φf,S φf,C λ
+mean 0.9215 0 .5602 0 .7113 0 .9996 0 .9647 0 .9607 0 .0673
+std 1.0100 0 .9919 0 .9615 0 .0071 0 .0304 0 .0319 0 .0075
+HPIV lo −0.7360 −1.0469 −0.8615 0 .9990 0 .9080 0 .9006 0 .0554
+HPIV up 2.5784 2 .2138 2 .3040 1 .0000 0 .9975 0 .9969 0 .0788
+cd −0.0917 0 .4947 −1.6099 1 .0064 −0.1886 0 .5634 −0.6325
+nse 0.0071 0 .0070 0 .0068 0 .0001 0 .0002 0 .0002 0 .0001
+nse.04 0.0075 0 .0059 0 .0064 0 .0000 0 .0002 0 .0002 0 .0000
+nse.08 0.0077 0 .0055 0 .0065 0 .0000 0 .0001 0 .0002 0 .0000
+nse.15 0.0074 0 .0056 0 .0063 0 .0000 0 .0001 0 .0002 0 .0000
+rne.04 0.8986 1 .4322 1 .1204 1 .0157 1 .7524 1 .3548 2 .2903
+rne.08 0.8603 1 .6149 1 .1021 1 .0118 2 .1974 1 .6534 2 .4579
+rne.15 0.9281 1 .5971 1 .1683 1 .0106 2 .8375 1 .5616 1 .9414
+σ21,ε σ22,ε σ23,ε σ24,ε σ25,ε σ21,η σ22,η σ23,η
+mean 0.0806 0 .1346 0 .1886 0 .1863 0 .4372 0 .0723 2 .6367 3 .5332
+std 0.0263 0 .0110 0 .0330 0 .0172 0 .0796 0 .0047 0 .5873 0 .5013
+HPIV lo 0.0530 0 .1198 0 .1462 0 .1656 0 .3473 0 .0647 1 .9515 3 .7767
+HPIV up 0.1382 0 .1552 0 .2534 0 .2219 0 .5948 0 .0801 2 .9000 4 .4955
+cd 1.0729 1 .1482 0 .9230 1 .2209 1 .1315 −0.7834 1 .1983 −1.2735
+nse 0.0002 0 .0001 0 .0002 0 .0001 0 .0006 0 .0000 0 .0042 0 .0035
+nse.04 0.0002 0 .0001 0 .0001 0 .0001 0 .0006 0 .0000 0 .0036 0 .0032
+nse.08 0.0002 0 .0001 0 .0001 0 .0001 0 .0007 0 .0000 0 .0036 0 .0031
+nse.15 0.0002 0 .0001 0 .0001 0 .0002 0 .0007 0 .0000 0 .0034 0 .0028
+rne.04 1.2068 1 .5358 4 .6890 0 .8652 0 .9136 0 .6370 1 .3262 1 .2427
+rne.08 1.0198 1 .5421 4 .1658 0 .6803 0 .7065 0 .5778 1 .3575 1 .3390
+rne.15 0.8990 1 .5775 4 .3326 0 .6210 0 .5892 0 .5297 1 .5189 1 .6420
+34
+
+===== PDF PAGE 36 =====
+E:\work\workingpaper\TS\Pics\phifsv.emf  12/14/09 16:49:44
+Page: 1 of 1
+0500010000
+0.95
+1.00
+0510
+0
+1
+L,f
+0.9500.9751.000
+25
+50
+75
+0500010000
+0.82
+0.86
+0.90
+0.94
+0.98
+1.02
+0510
+0
+1
+S,f
+0.820.860.90.940.981.02
+10
+20
+30
+40
+0500010000
+0
+1
+0510
+0.5
+1.0
+C,f
+-1.0-0.50.00.51.0
+0.5
+1.0
+1.5
+Figure 14: MCMC draws, Correlograms, and Posterior Densities for φL,f, φS,f, φC,f based
+on the SVNS model.
+E:\work\workingpaper\TS\Pics\miuhsv.emf  12/14/09 16:53:22
+Page: 1 of 1
+0500010000
+0.2
+0.3
+0.4
+0510
+0.5
+1.0L,h
+0.20.30.4
+20
+40
+0500010000
+0.1
+0.2
+0.3
+0510
+0.5
+1.0
+S,h
+0.10.2
+20
+40
+Density
+0500010000
+0.025
+0.030
+0.035
+0510
+0.5
+1.0
+C,h
+0.0250.0300.035
+1000
+2000Density
+Figure 15: MCMC draws, Correlograms, and Posterior Densities for µL,h, µS,h, µC,h based
+on the SVNS model.
+35
+
+===== PDF PAGE 37 =====
+E:\work\workingpaper\TS\Pics\phihsv.gwg  12/14/09 16:56:08
+Page: 1 of 1
+0500010000
+0.8
+0.9
+1.0
+0510
+0
+1L,h
+0.70.80.91.0
+25
+50
+0500010000
+0.95
+0.96
+0.97
+0.98
+0.99
+1.00
+0510
+0
+1S,h
+0.900.951.00
+50
+100
+150
+0500010000
+0.6
+0.8
+1.0
+0510
+0.5
+1.0C,h
+0.60.81.0
+10
+20
+30
+Figure 16: MCMC draws, Correlograms, and Posterior Densities for φL,h, φS,h, φC,h based
+on the SVNS model.
+E:\work\workingpaper\TS\Pics\lambdasv1.emf  12/14/09 00:14:53
+Page: 1 of 1
+0510
+-0.5
+0.0
+0.5
+1.0Correlogram
+0.0500.0550.0600.0650.0700.0750.0800.085
+20
+40
+60Posterior Density of 
+0255075100125
+0.25
+0.50
+0.75
+1.00
+Figure 17: Correlograms, and Posterior Densities for λ based on the SVNS model.
+36
+
+===== PDF PAGE 38 =====
+ 
+ 
+ 
+ 
+SFB 649 Discussion Paper Series 2010 
+ 
+For a complete list of Discussion Papers published by the SFB 649, 
+please visit http://sfb649.wiwi.hu-berlin.de. 
+ 
+001 "Volatility Investing with Variance Swaps" by Wolfgang Karl Härdle and 
+Elena Silyakova, January 2010. 
+002 "Partial Linear Quantile  Regression and Bootstra p Confidence Bands" by 
+Wolfgang Karl Härdle, Ya’acov Ritov and Song Song, January 2010. 
+003  "Uniform confidence bands for pricin g kernels" by Wolfgang Karl Härdle, 
+Yarema Okhrin and Weining Wang, January 2010. 
+004 "Bayesian Inference in a Stochastic Volatility Nelson-Siegel Model" by 
+Nikolaus Hautsch and Fuyu Yang, January 2010. 
+ 
+ 
+ 
+ 
+ 

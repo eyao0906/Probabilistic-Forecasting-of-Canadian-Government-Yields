@@ -1,0 +1,66 @@
+test_yield_csv_rejects_malformed_rows_and_html_token_decoys (tests.test_acquisition.AcquisitionTests.test_yield_csv_rejects_malformed_rows_and_html_token_decoys) ... 
+  test_yield_csv_rejects_malformed_rows_and_html_token_decoys (tests.test_acquisition.AcquisitionTests.test_yield_csv_rejects_malformed_rows_and_html_token_decoys) (payload=b'Date,ZC025YR,ZC050YR,ZC100YR,ZC200YR,ZC500YR,ZC700YR,ZC1000YR,ZC3000YR\n2020-01-03,.01,.01,.01,.01,.01,.01,.01,.01\n2020-01-03,.01,.01,.01,.01,.01,.01,.01,.01\n') ... FAIL
+  test_yield_csv_rejects_malformed_rows_and_html_token_decoys (tests.test_acquisition.AcquisitionTests.test_yield_csv_rejects_malformed_rows_and_html_token_decoys) (payload=b'Date,ZC025YR,ZC050YR,ZC100YR,ZC200YR,ZC500YR,ZC700YR,ZC1000YR,ZC3000YR\ninvalid,.01,.01,.01,.01,.01,.01,.01,.01\n') ... FAIL
+  test_yield_csv_rejects_malformed_rows_and_html_token_decoys (tests.test_acquisition.AcquisitionTests.test_yield_csv_rejects_malformed_rows_and_html_token_decoys) (payload=b'Date,ZC025YR,ZC050YR,ZC100YR,ZC200YR,ZC500YR,ZC700YR,ZC1000YR,ZC3000YR\n2020-01-03,inf,.01,.01,.01,.01,.01,.01,.01\n') ... FAIL
+  test_yield_csv_rejects_malformed_rows_and_html_token_decoys (tests.test_acquisition.AcquisitionTests.test_yield_csv_rejects_malformed_rows_and_html_token_decoys) (payload=b'Date,ZC025YR,ZC050YR,ZC100YR,ZC200YR,ZC500YR,ZC700YR,ZC1000YR,ZC3000YR\n2020-01-03,challenge,.01,.01,.01,.01,.01,.01,.01\n') ... FAIL
+  test_yield_csv_rejects_malformed_rows_and_html_token_decoys (tests.test_acquisition.AcquisitionTests.test_yield_csv_rejects_malformed_rows_and_html_token_decoys) (payload=b'Date,ZC025YR,ZC050YR,ZC100YR,ZC200YR,ZC500YR,ZC700YR,ZC1000YR,ZC3000YR\n2020-01-03,.01,.01,.01,.01,.01,.01,.01,.01,extra\n') ... FAIL
+test_yield_csv_rejects_malformed_rows_and_html_token_decoys (tests.test_acquisition.AcquisitionTests.test_yield_csv_rejects_malformed_rows_and_html_token_decoys) ... FAIL
+
+======================================================================
+FAIL: test_yield_csv_rejects_malformed_rows_and_html_token_decoys (tests.test_acquisition.AcquisitionTests.test_yield_csv_rejects_malformed_rows_and_html_token_decoys) (payload=b'Date,ZC025YR,ZC050YR,ZC100YR,ZC200YR,ZC500YR,ZC700YR,ZC1000YR,ZC3000YR\n2020-01-03,.01,.01,.01,.01,.01,.01,.01,.01\n2020-01-03,.01,.01,.01,.01,.01,.01,.01,.01\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\ethan\Downloads\MRP\tests\test_acquisition.py", line 31, in test_yield_csv_rejects_malformed_rows_and_html_token_decoys
+    with self.subTest(payload=payload), self.assertRaises(ValueError):
+                                        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_yield_csv_rejects_malformed_rows_and_html_token_decoys (tests.test_acquisition.AcquisitionTests.test_yield_csv_rejects_malformed_rows_and_html_token_decoys) (payload=b'Date,ZC025YR,ZC050YR,ZC100YR,ZC200YR,ZC500YR,ZC700YR,ZC1000YR,ZC3000YR\ninvalid,.01,.01,.01,.01,.01,.01,.01,.01\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\ethan\Downloads\MRP\tests\test_acquisition.py", line 31, in test_yield_csv_rejects_malformed_rows_and_html_token_decoys
+    with self.subTest(payload=payload), self.assertRaises(ValueError):
+                                        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_yield_csv_rejects_malformed_rows_and_html_token_decoys (tests.test_acquisition.AcquisitionTests.test_yield_csv_rejects_malformed_rows_and_html_token_decoys) (payload=b'Date,ZC025YR,ZC050YR,ZC100YR,ZC200YR,ZC500YR,ZC700YR,ZC1000YR,ZC3000YR\n2020-01-03,inf,.01,.01,.01,.01,.01,.01,.01\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\ethan\Downloads\MRP\tests\test_acquisition.py", line 31, in test_yield_csv_rejects_malformed_rows_and_html_token_decoys
+    with self.subTest(payload=payload), self.assertRaises(ValueError):
+                                        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_yield_csv_rejects_malformed_rows_and_html_token_decoys (tests.test_acquisition.AcquisitionTests.test_yield_csv_rejects_malformed_rows_and_html_token_decoys) (payload=b'Date,ZC025YR,ZC050YR,ZC100YR,ZC200YR,ZC500YR,ZC700YR,ZC1000YR,ZC3000YR\n2020-01-03,challenge,.01,.01,.01,.01,.01,.01,.01\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\ethan\Downloads\MRP\tests\test_acquisition.py", line 31, in test_yield_csv_rejects_malformed_rows_and_html_token_decoys
+    with self.subTest(payload=payload), self.assertRaises(ValueError):
+                                        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_yield_csv_rejects_malformed_rows_and_html_token_decoys (tests.test_acquisition.AcquisitionTests.test_yield_csv_rejects_malformed_rows_and_html_token_decoys) (payload=b'Date,ZC025YR,ZC050YR,ZC100YR,ZC200YR,ZC500YR,ZC700YR,ZC1000YR,ZC3000YR\n2020-01-03,.01,.01,.01,.01,.01,.01,.01,.01,extra\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\ethan\Downloads\MRP\tests\test_acquisition.py", line 31, in test_yield_csv_rejects_malformed_rows_and_html_token_decoys
+    with self.subTest(payload=payload), self.assertRaises(ValueError):
+                                        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_yield_csv_rejects_malformed_rows_and_html_token_decoys (tests.test_acquisition.AcquisitionTests.test_yield_csv_rejects_malformed_rows_and_html_token_decoys)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\ethan\Downloads\MRP\tests\test_acquisition.py", line 33, in test_yield_csv_rejects_malformed_rows_and_html_token_decoys
+    with self.assertRaises(ValueError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.004s
+
+FAILED (failures=6)

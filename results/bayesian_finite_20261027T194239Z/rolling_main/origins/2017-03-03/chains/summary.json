@@ -1,0 +1,538 @@
+{
+  "configuration": {
+    "origin_index": 896,
+    "origin": "2017-03-03",
+    "input_sha256": "0b2af5c3c7bb261973ea4ec04c151eedbf7cf1428f22d0e08eaae87a212bfd77",
+    "lambda": 0.5160377358490565,
+    "first_index": 1,
+    "priors": [
+      {
+        "base": {
+          "beta_mean": [
+            0.0,
+            0.7
+          ],
+          "beta_variance": [
+            25.0,
+            0.09
+          ],
+          "omega_mean": -4.888703286518594,
+          "omega_variance": 25.0,
+          "q_shape": 2.0,
+          "q_scale": 0.2,
+          "phi_alpha": 20.0,
+          "phi_beta": 1.5,
+          "variance_shape": 2.0,
+          "variance_scale": 0.007531181931157617
+        },
+        "v_upper": 4.0,
+        "v_rate": 1.0
+      },
+      {
+        "base": {
+          "beta_mean": [
+            0.0,
+            0.7
+          ],
+          "beta_variance": [
+            25.0,
+            0.09
+          ],
+          "omega_mean": -4.122200307075525,
+          "omega_variance": 25.0,
+          "q_shape": 2.0,
+          "q_scale": 0.2,
+          "phi_alpha": 20.0,
+          "phi_beta": 1.5,
+          "variance_shape": 2.0,
+          "variance_scale": 0.016208810815759922
+        },
+        "v_upper": 4.0,
+        "v_rate": 1.0
+      },
+      {
+        "base": {
+          "beta_mean": [
+            0.0,
+            0.7
+          ],
+          "beta_variance": [
+            25.0,
+            0.09
+          ],
+          "omega_mean": -1.9698068059412788,
+          "omega_variance": 25.0,
+          "q_shape": 2.0,
+          "q_scale": 0.2,
+          "phi_alpha": 20.0,
+          "phi_beta": 1.5,
+          "variance_shape": 2.0,
+          "variance_scale": 0.13948380105382718
+        },
+        "v_upper": 4.0,
+        "v_rate": 1.0
+      }
+    ],
+    "warmup": 3000,
+    "draws": 6000,
+    "chains": 4,
+    "seed": 24102701,
+    "gate_sha256": "544e2021b6c3ede5563c9faeeb65019481e88de054b90c7f5a8522c4cb03e0cd",
+    "source_sha256": {
+      "src/bayesian_finite.py": "aad902cbff0a5ce54965f82c8e881dc8f91b5448dc3ae72c7c87f1847a5a6597",
+      "src/bayesian_revised.py": "3bf5fd44aebf3212fca550cb6752323c74ff050a872a4ab4533fbfd29ea7aa5a",
+      "src/bayesian_finite_production.py": "64e303b361f68510dd1e7cf5401a080a154fd35c77b37540770e959fd730e058"
+    }
+  },
+  "signature": "f3e127b634439e28a73cf6ca2b855ce2eaf8ccfeb1e1601ff5d529862e2d29d8",
+  "checkpoints": {
+    "M4_level_chain0.npz": "a1300bcef446321594deb999e583763056c315ec358c50c26727e09fd0259e34",
+    "M4_level_chain1.npz": "4c6c99b4ff4ee64334a569ea9a6fe481fc77d3c73ba3eeb77054ac295f02a1a6",
+    "M4_level_chain2.npz": "f05c7d8a045679b13947f3bedaac37e8ed374089c70195b6bb6301868f298d42",
+    "M4_level_chain3.npz": "326cddcb8d539418449544e5190f57d7aee5012837dfe7cb1771abf590d5e7a1",
+    "M4_slope_chain0.npz": "f1d4611a7d5573f03b318901fa2df2f3826eb0dc40be4f763fe9462f329b4a62",
+    "M4_slope_chain1.npz": "f11325b747d89e6fe8412d7db7737dc867746597677f871e35ec7fc97ef1ece5",
+    "M4_slope_chain2.npz": "954ca6bf9ee83efa92ec5602a799bce9f92baed6595de30bdc7d6ed0809a97a0",
+    "M4_slope_chain3.npz": "d3d50e2513663e3f03c437c95cd9cda0d5305def30f2e7facc01062a9ee76d43",
+    "M4_curvature_chain0.npz": "af343eede40395a1deaec7fb36051d176f77ba1d8f2971cf87d4837bc706ce73",
+    "M4_curvature_chain1.npz": "7a46d8167a7d4f812a129d364791540c54e5beb63eeb270550849e34dbdae487",
+    "M4_curvature_chain2.npz": "52935b133a2cafe283be4eee2c7c539724fd8de7c3e74924087fa846fc2ad2fb",
+    "M4_curvature_chain3.npz": "c89e2524ddee68bb404300a63310ed881084d145b7c2c43f2be055b388d0e4bf",
+    "M5_level_chain0.npz": "7cdc365c321496fef10ae20e18102432dbb29f72b74d3c5167d7ea778f233292",
+    "M5_level_chain1.npz": "f68a651aed5dbeb01e1775632f9d5120aa833ed7ab54be4147238dc93429d9d7",
+    "M5_level_chain2.npz": "a62b14c277ce178daddd9e53ec051f7119c144a4dfa42752d54bfe1b4860b749",
+    "M5_level_chain3.npz": "c1c8a61e31cdbce04a69e549b2cf533aa720ebb5247e550b6d57dcb48ef1cdc7",
+    "M5_slope_chain0.npz": "f83236243b0407e941ffc99b9b9338b591f14ef9270f2fa86c8731ccbde93120",
+    "M5_slope_chain1.npz": "055bcaeb7da1a2edfe3e07b760ad8da6b522bfb2d654c176c57e006c5d1f1775",
+    "M5_slope_chain2.npz": "c03da4e6ec7b488ff28e98b787151810d7d934ab3769bce062b5398ef3b26660",
+    "M5_slope_chain3.npz": "55664f524d5fd8f7acd5ca6d6ed96faa9976641258c05564bea7979fd846d5c8",
+    "M5_curvature_chain0.npz": "28dd69f23bc719e8ef65bfc136ab30f65fd4edbde23e737a09d3a414796b5b3a",
+    "M5_curvature_chain1.npz": "7bc179c045aba7e1fc31d29bcf3ca9689badc47fe9ed5693840c8530c18c392f",
+    "M5_curvature_chain2.npz": "a2cc599efb021156759da100fea23ea08b5e2b918d67a56d79b8a4e694e039cf",
+    "M5_curvature_chain3.npz": "b864d5607695acb5f42217a8908cd86d2a86e2637550ed35c793c8f22b79b34c"
+  },
+  "chain_seeds": [
+    24102701,
+    24102801,
+    24102901,
+    24103001,
+    24112701,
+    24112801,
+    24112901,
+    24113001,
+    24122701,
+    24122801,
+    24122901,
+    24123001,
+    24202701,
+    24202801,
+    24202901,
+    24203001,
+    24212701,
+    24212801,
+    24212901,
+    24213001,
+    24222701,
+    24222801,
+    24222901,
+    24223001
+  ],
+  "diagnostics": [
+    {
+      "parameter": "a",
+      "rhat": 0.9999325182003648,
+      "ess_bulk": 22933.109571745677,
+      "ess_tail": 23078.810945956175,
+      "passes": true,
+      "model": "M4",
+      "factor": "level"
+    },
+    {
+      "parameter": "b",
+      "rhat": 0.9999746220287028,
+      "ess_bulk": 22978.318108646836,
+      "ess_tail": 23825.509199260232,
+      "passes": true,
+      "model": "M4",
+      "factor": "level"
+    },
+    {
+      "parameter": "log_variance",
+      "rhat": 1.000038191582608,
+      "ess_bulk": 24061.250187144517,
+      "ess_tail": 18057.813785660164,
+      "passes": true,
+      "model": "M4",
+      "factor": "level"
+    },
+    {
+      "parameter": "a",
+      "rhat": 1.000067574081058,
+      "ess_bulk": 22732.248198304173,
+      "ess_tail": 22172.61556090298,
+      "passes": true,
+      "model": "M4",
+      "factor": "slope"
+    },
+    {
+      "parameter": "b",
+      "rhat": 0.9999393742822202,
+      "ess_bulk": 22175.61401156322,
+      "ess_tail": 24015.674326193126,
+      "passes": true,
+      "model": "M4",
+      "factor": "slope"
+    },
+    {
+      "parameter": "log_variance",
+      "rhat": 1.000075218730901,
+      "ess_bulk": 24183.435153825612,
+      "ess_tail": 17937.41129413855,
+      "passes": true,
+      "model": "M4",
+      "factor": "slope"
+    },
+    {
+      "parameter": "a",
+      "rhat": 1.0000508037002065,
+      "ess_bulk": 23470.772363300715,
+      "ess_tail": 23439.18506849228,
+      "passes": true,
+      "model": "M4",
+      "factor": "curvature"
+    },
+    {
+      "parameter": "b",
+      "rhat": 1.0001941123358757,
+      "ess_bulk": 23890.15794706888,
+      "ess_tail": 22774.122510793382,
+      "passes": true,
+      "model": "M4",
+      "factor": "curvature"
+    },
+    {
+      "parameter": "log_variance",
+      "rhat": 1.0001250357212963,
+      "ess_bulk": 23639.331517463314,
+      "ess_tail": 17487.46343500817,
+      "passes": true,
+      "model": "M4",
+      "factor": "curvature"
+    },
+    {
+      "parameter": "a",
+      "rhat": 1.0001276152115712,
+      "ess_bulk": 17673.892434949757,
+      "ess_tail": 21275.832112381788,
+      "passes": true,
+      "model": "M5",
+      "factor": "level"
+    },
+    {
+      "parameter": "b",
+      "rhat": 1.000207137561043,
+      "ess_bulk": 18633.44769917459,
+      "ess_tail": 22284.052049416514,
+      "passes": true,
+      "model": "M5",
+      "factor": "level"
+    },
+    {
+      "parameter": "m",
+      "rhat": 1.000068448690628,
+      "ess_bulk": 10812.297600818805,
+      "ess_tail": 12826.731019312328,
+      "passes": true,
+      "model": "M5",
+      "factor": "level"
+    },
+    {
+      "parameter": "phi",
+      "rhat": 1.0011844762662467,
+      "ess_bulk": 2274.6744046303625,
+      "ess_tail": 3894.6973627003517,
+      "passes": true,
+      "model": "M5",
+      "factor": "level"
+    },
+    {
+      "parameter": "v",
+      "rhat": 1.000521675371045,
+      "ess_bulk": 6476.334475974912,
+      "ess_tail": 9545.309282568494,
+      "passes": true,
+      "model": "M5",
+      "factor": "level"
+    },
+    {
+      "parameter": "omega",
+      "rhat": 1.0001383579512888,
+      "ess_bulk": 13662.318253285608,
+      "ess_tail": 14518.944299383593,
+      "passes": true,
+      "model": "M5",
+      "factor": "level"
+    },
+    {
+      "parameter": "q",
+      "rhat": 1.0017071165283056,
+      "ess_bulk": 2237.501445931463,
+      "ess_tail": 4466.8447277267005,
+      "passes": true,
+      "model": "M5",
+      "factor": "level"
+    },
+    {
+      "parameter": "h_first",
+      "rhat": 1.0002106544382314,
+      "ess_bulk": 14121.417849388186,
+      "ess_tail": 18225.19759343346,
+      "passes": true,
+      "model": "M5",
+      "factor": "level"
+    },
+    {
+      "parameter": "h_mid",
+      "rhat": 1.0003188468148188,
+      "ess_bulk": 8725.229504968866,
+      "ess_tail": 13850.142860606216,
+      "passes": true,
+      "model": "M5",
+      "factor": "level"
+    },
+    {
+      "parameter": "h_last",
+      "rhat": 1.0002173382497705,
+      "ess_bulk": 11598.68029771369,
+      "ess_tail": 17695.292134808376,
+      "passes": true,
+      "model": "M5",
+      "factor": "level"
+    },
+    {
+      "parameter": "a",
+      "rhat": 1.0001159829576163,
+      "ess_bulk": 12382.580221246419,
+      "ess_tail": 18740.400976658868,
+      "passes": true,
+      "model": "M5",
+      "factor": "slope"
+    },
+    {
+      "parameter": "b",
+      "rhat": 1.0001266527982067,
+      "ess_bulk": 13982.006052012533,
+      "ess_tail": 19834.99714163419,
+      "passes": true,
+      "model": "M5",
+      "factor": "slope"
+    },
+    {
+      "parameter": "m",
+      "rhat": 1.0006592672374337,
+      "ess_bulk": 8683.10189650218,
+      "ess_tail": 15320.889170758714,
+      "passes": true,
+      "model": "M5",
+      "factor": "slope"
+    },
+    {
+      "parameter": "phi",
+      "rhat": 1.0012583952528724,
+      "ess_bulk": 1725.1386865470392,
+      "ess_tail": 3884.8747620633444,
+      "passes": true,
+      "model": "M5",
+      "factor": "slope"
+    },
+    {
+      "parameter": "v",
+      "rhat": 1.0013654454730876,
+      "ess_bulk": 4671.966575816088,
+      "ess_tail": 9890.224847347197,
+      "passes": true,
+      "model": "M5",
+      "factor": "slope"
+    },
+    {
+      "parameter": "omega",
+      "rhat": 1.0001003912520066,
+      "ess_bulk": 12403.489161029416,
+      "ess_tail": 16636.190579447273,
+      "passes": true,
+      "model": "M5",
+      "factor": "slope"
+    },
+    {
+      "parameter": "q",
+      "rhat": 1.001877714045016,
+      "ess_bulk": 1720.952202085285,
+      "ess_tail": 3844.3736839084304,
+      "passes": true,
+      "model": "M5",
+      "factor": "slope"
+    },
+    {
+      "parameter": "h_first",
+      "rhat": 1.0002310049769845,
+      "ess_bulk": 11347.51462675532,
+      "ess_tail": 16266.130341612523,
+      "passes": true,
+      "model": "M5",
+      "factor": "slope"
+    },
+    {
+      "parameter": "h_mid",
+      "rhat": 1.0003634437834714,
+      "ess_bulk": 5966.064828726353,
+      "ess_tail": 12771.718398903657,
+      "passes": true,
+      "model": "M5",
+      "factor": "slope"
+    },
+    {
+      "parameter": "h_last",
+      "rhat": 0.9999760107697203,
+      "ess_bulk": 11867.656473444556,
+      "ess_tail": 17325.33985462027,
+      "passes": true,
+      "model": "M5",
+      "factor": "slope"
+    },
+    {
+      "parameter": "a",
+      "rhat": 1.0000534947343935,
+      "ess_bulk": 16761.72221308513,
+      "ess_tail": 21004.87540887513,
+      "passes": true,
+      "model": "M5",
+      "factor": "curvature"
+    },
+    {
+      "parameter": "b",
+      "rhat": 1.000150678821334,
+      "ess_bulk": 17237.212018480757,
+      "ess_tail": 20829.524055256334,
+      "passes": true,
+      "model": "M5",
+      "factor": "curvature"
+    },
+    {
+      "parameter": "m",
+      "rhat": 1.0000955337399602,
+      "ess_bulk": 17072.374926588374,
+      "ess_tail": 14170.853383863678,
+      "passes": true,
+      "model": "M5",
+      "factor": "curvature"
+    },
+    {
+      "parameter": "phi",
+      "rhat": 1.0002181974845048,
+      "ess_bulk": 4426.747290380086,
+      "ess_tail": 7255.465284698736,
+      "passes": true,
+      "model": "M5",
+      "factor": "curvature"
+    },
+    {
+      "parameter": "v",
+      "rhat": 1.0007163000798083,
+      "ess_bulk": 7185.359071270105,
+      "ess_tail": 9829.495754209409,
+      "passes": true,
+      "model": "M5",
+      "factor": "curvature"
+    },
+    {
+      "parameter": "omega",
+      "rhat": 1.00000363936704,
+      "ess_bulk": 23235.834869596456,
+      "ess_tail": 18732.46787374775,
+      "passes": true,
+      "model": "M5",
+      "factor": "curvature"
+    },
+    {
+      "parameter": "q",
+      "rhat": 1.0008511873433694,
+      "ess_bulk": 3463.7956729728057,
+      "ess_tail": 5353.267522652508,
+      "passes": true,
+      "model": "M5",
+      "factor": "curvature"
+    },
+    {
+      "parameter": "h_first",
+      "rhat": 1.0003207495528883,
+      "ess_bulk": 10048.130239979357,
+      "ess_tail": 16060.364639250469,
+      "passes": true,
+      "model": "M5",
+      "factor": "curvature"
+    },
+    {
+      "parameter": "h_mid",
+      "rhat": 1.0001829904232553,
+      "ess_bulk": 10035.194999089674,
+      "ess_tail": 16897.738068739778,
+      "passes": true,
+      "model": "M5",
+      "factor": "curvature"
+    },
+    {
+      "parameter": "h_last",
+      "rhat": 1.0004570174833642,
+      "ess_bulk": 9400.939462930324,
+      "ess_tail": 16237.646554395367,
+      "passes": true,
+      "model": "M5",
+      "factor": "curvature"
+    }
+  ],
+  "parameter_gate_passed": true,
+  "moment_gate_passed": true,
+  "moment_audits": [
+    {
+      "posterior_proper": true,
+      "finite_predictive_second_moment": true,
+      "finite_predictive_fourth_moment": true,
+      "stage_a_mathematical_gate_passed": true,
+      "proof": "Gaussian finite-path MGF, proper coefficients, bounded stationary log-vol variance; protocol.md",
+      "log_likelihood_normalizer_upper_bound": 2905975.869733499,
+      "log_prior_expected_innovation_variance": 7.611296713481406,
+      "log_prior_innovation_fourth_moment": 42.72598552357669,
+      "prior_prediction_caveat": "m SD=5 is inherited, proper but very broad; finite is not the same as tight",
+      "v_upper": 4.0,
+      "v_rate": 1.0
+    },
+    {
+      "posterior_proper": true,
+      "finite_predictive_second_moment": true,
+      "finite_predictive_fourth_moment": true,
+      "stage_a_mathematical_gate_passed": true,
+      "proof": "Gaussian finite-path MGF, proper coefficients, bounded stationary log-vol variance; protocol.md",
+      "log_likelihood_normalizer_upper_bound": 2905632.859650198,
+      "log_prior_expected_innovation_variance": 8.377799692924475,
+      "log_prior_innovation_fourth_moment": 44.25899148246283,
+      "prior_prediction_caveat": "m SD=5 is inherited, proper but very broad; finite is not the same as tight",
+      "v_upper": 4.0,
+      "v_rate": 1.0
+    },
+    {
+      "posterior_proper": true,
+      "finite_predictive_second_moment": true,
+      "finite_predictive_fourth_moment": true,
+      "stage_a_mathematical_gate_passed": true,
+      "proof": "Gaussian finite-path MGF, proper coefficients, bounded stationary log-vol variance; protocol.md",
+      "log_likelihood_normalizer_upper_bound": 2904669.6635584407,
+      "log_prior_expected_innovation_variance": 10.530193194058722,
+      "log_prior_innovation_fourth_moment": 48.56377848473132,
+      "prior_prediction_caveat": "m SD=5 is inherited, proper but very broad; finite is not the same as tight",
+      "v_upper": 4.0,
+      "v_rate": 1.0
+    }
+  ],
+  "accepted_for_rolling": false,
+  "elapsed_s": 373.7252625001129
+}

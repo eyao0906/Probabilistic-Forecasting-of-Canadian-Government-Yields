@@ -1,0 +1,417 @@
+"""Isolated, exact-target no-leverage Bayesian AR(1)-SV diagnostic pilot.
+
+Mixture: Omori et al., UCI author manuscript (September 2005), Table 1 p.4.
+Never imports or changes legacy Bayesian implementation.
+"""
+from __future__ import annotations
+import numpy as np
+from numba import njit
+from scipy.special import logsumexp
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class Prior:
+    beta_mean: tuple = (0.,.7)
+    beta_variance: tuple = (25.,.09)
+    omega_mean: float = 0.
+    omega_variance: float = 25.
+    q_shape: float = 2.
+    q_scale: float = .2
+    phi_alpha: float = 20.
+    phi_beta: float = 1.5
+    variance_shape: float = 2.
+    variance_scale: float = 1.
+
+
+def freeze_priors(initial_factors):
+    """Empirical scale choices use INITIAL window only; reuse immutable priors.
+
+    Beta prior is unscaled N((0,.7),diag(25,.09)), truncated |b|<1,
+    shared unchanged by M4 and M5. This pilot conditions on first factor value.
+    """
+    f=np.asarray(initial_factors,dtype=float)
+    priors=[]
+    for j in range(f.shape[1]):
+        design=np.column_stack([np.ones(len(f)-1),f[:-1,j]])
+        residual=f[1:,j]-design@np.linalg.lstsq(design,f[1:,j],rcond=None)[0]
+        variance=float(np.mean(residual**2))
+        if not np.isfinite(variance) or variance <= 0:
+            raise ValueError('Initial residual variance must be positive')
+        priors.append(Prior(omega_mean=float(np.log(variance)),variance_scale=variance))
+    return tuple(priors)
+
+
+def beta_conditional(y,lag,h,prior):
+    """UNSCALED prior and exact Gaussian observation likelihood, pre-truncation."""
+    design=np.column_stack([np.ones(len(y)),lag])
+    precision0=np.diag(1/np.asarray(prior.beta_variance))
+    weight=np.exp(-h)
+    precision=precision0+design.T@(weight[:,None]*design)
+    covariance=np.linalg.inv(precision)
+    mean=np.linalg.solve(precision,precision0@prior.beta_mean+design.T@(weight*y))
+    return mean,covariance
+
+
+def log_squared_residual(residual):
+    """No offset, square underflow avoided. Exact zero stops explicitly."""
+    residual=np.asarray(residual,dtype=float)
+    if np.any(residual == 0):
+        raise ValueError('Exact zero residual: log-square transform undefined; no offset applied')
+    if not np.isfinite(residual).all():
+        raise ValueError('Nonfinite residual')
+    return 2*np.log(np.abs(residual))
+
+
+def logchi2_logpdf(z):
+    with np.errstate(over='ignore'):
+        return -.5*np.log(2*np.pi)+.5*z-.5*np.exp(z)
+
+
+def mixture_logpdf(z):
+    return logsumexp(np.log(MIX_W)-.5*np.log(2*np.pi*MIX_V)
+                    -.5*(np.asarray(z)[...,None]-MIX_M)**2/MIX_V,axis=-1)
+
+
+def correction_log_ratio(obs, old_h, new_h):
+    """MH ratio for a REVERSIBLE marginal mixture Gibbs/FFBS h proposal."""
+    old=obs-old_h; new=obs-new_h
+    return float(np.sum(logchi2_logpdf(new)-mixture_logpdf(new))
+                 -np.sum(logchi2_logpdf(old)-mixture_logpdf(old)))
+
+MIX_W = np.array([.00609,.04775,.13057,.20674,.22715,.18842,.12047,.05591,.01575,.00115])
+MIX_M = np.array([1.92677,1.34744,.73504,.02266,-.85173,-1.97278,-3.46788,-5.55246,-8.68384,-14.65000])
+MIX_V = np.array([.11265,.17788,.26768,.40611,.62699,.98583,1.57469,2.54498,4.16591,7.33342])
+
+
+def omega_conditional(h, phi, q, prior_mean, prior_variance):
+    """Gaussian omega conditional INCLUDING stationary h[0] density."""
+    precision = 1/prior_variance + ((1-phi**2)+(len(h)-1)*(1-phi)**2)/q
+    rhs = prior_mean/prior_variance + ((1-phi**2)*h[0]
+          +(1-phi)*np.sum(h[1:]-phi*h[:-1]))/q
+    return rhs/precision, 1/precision
+
+
+def q_conditional(h, omega, phi, prior_shape, prior_scale):
+    """IG innovation variance conditional; stationary initial adds one datum."""
+    e = h[1:]-omega-phi*(h[:-1]-omega)
+    quad = (1-phi**2)*(h[0]-omega)**2 + e@e
+    return prior_shape+len(h)/2, prior_scale+.5*quad
+
+
+def mixture_probabilities(obs,h):
+    logp=np.log(MIX_W)-.5*np.log(MIX_V)-.5*(obs[:,None]-h[:,None]-MIX_M)**2/MIX_V
+    return np.exp(logp-logsumexp(logp,axis=1)[:,None])
+
+
+def corrected_h_step(obs,h,omega,phi,q,rng):
+    """Refresh indicators from current h, propose FFBS, discard indicators.
+
+    This two-block data-augmentation h marginal kernel is reversible with
+    respect to the marginal approximate h posterior. Never persist rejected
+    proposal indicators: the correction is marginal, not component-conditional.
+    """
+    u=rng.random(len(h)); noise=rng.normal(size=len(h))
+    probs=mixture_probabilities(obs,h)
+    cumulative=np.cumsum(probs,axis=1)
+    cumulative[:,-1]=1.  # exact endpoint of categorical CDF, not draw clipping
+    mix=(u[:,None]>cumulative).sum(axis=1)
+    candidate=ffbs(obs,mix,omega,phi,q,noise)
+    ratio=correction_log_ratio(obs,h,candidate)
+    accepted=bool(np.isfinite(candidate).all() and np.log(rng.random())<ratio)
+    return (candidate if accepted else h),accepted,ratio
+
+
+@njit(cache=False)
+def ffbs(obs, mix, omega, phi, q, noise):
+    """Exact Gaussian conditional draw given indicators, affine in iid noise.
+
+    Stable positive variance formulas; no variance flooring or state clipping.
+    The caller owns the RNG. cache=False prevents writes outside pilot outputs.
+    """
+    if abs(phi) >= 1 or q <= 0 or not np.isfinite(q):
+        raise ValueError('Invalid stationary logvol parameters')
+    n = len(obs)
+    fm=np.empty(n); fv=np.empty(n); pm=np.empty(n); pv=np.empty(n)
+    for t in range(n):
+        if t == 0:
+            pm[t]=omega; pv[t]=q/(1-phi**2)
+        else:
+            pm[t]=omega+phi*(fm[t-1]-omega)
+            pv[t]=phi**2*fv[t-1]+q
+        r=MIX_V[mix[t]]
+        k=pv[t]/(pv[t]+r)
+        fm[t]=pm[t]+k*(obs[t]-MIX_M[mix[t]]-pm[t])
+        fv[t]=pv[t]*r/(pv[t]+r)
+    h=np.empty(n)
+    h[-1]=fm[-1]+np.sqrt(fv[-1])*noise[-1]
+    for t in range(n-2,-1,-1):
+        gain=fv[t]*phi/pv[t+1]
+        mean=fm[t]+gain*(h[t+1]-pm[t+1])
+        variance=fv[t]*q/pv[t+1]
+        h[t]=mean+np.sqrt(variance)*noise[t]
+    return h
+
+
+def noncentered_scale_log_target(logq, z, omega, obs, prior):
+    """Exact scale target at fixed z=(h-omega)/sqrt(q), in log(q).
+
+    The stationary Gaussian path density cancels the q**(n/2)
+    coordinate Jacobian. The remaining IG prior has its log(q) Jacobian.
+    No mixture approximation is used in this additional invariant update.
+    """
+    if not np.isfinite(logq):
+        return -np.inf
+    with np.errstate(over='ignore', invalid='ignore'):
+        h = omega + np.exp(.5*logq)*z
+        value = (np.sum(logchi2_logpdf(obs-h))-prior.q_shape*logq
+                 -prior.q_scale*np.exp(-logq))
+    return float(value) if np.isfinite(value) else -np.inf
+
+
+def interweave_scale(obs, h, omega, q, prior, rng):
+    """Exact noncentered scale slice, interwoven with the centered updates."""
+    z = (h-omega)/np.sqrt(q)
+    current = float(np.log(q))
+    target = lambda value: noncentered_scale_log_target(value,z,omega,obs,prior)
+    height = target(current)+np.log(rng.random())
+    left = current-rng.random(); right = left+1
+    while target(left)>height: left-=1
+    while target(right)>height: right+=1
+    while True:
+        candidate = rng.uniform(left,right)
+        if target(candidate)>=height:
+            new_q = float(np.exp(candidate))
+            return omega+np.sqrt(new_q)*z, new_q
+        if candidate<current: left=candidate
+        else: right=candidate
+
+
+@njit(cache=False)
+def mixture_kalman_loglik(obs, mix, omega, phi, q):
+    """Integrate the entire stationary Gaussian path, conditional on indicators."""
+    mean=omega; variance=q/(1-phi*phi); value=0.
+    for t in range(len(obs)):
+        innovation=obs[t]-MIX_M[mix[t]]-mean
+        total=variance+MIX_V[mix[t]]
+        value-=.5*(np.log(2*np.pi*total)+innovation*innovation/total)
+        mean+=variance/total*innovation
+        variance=variance*MIX_V[mix[t]]/total
+        mean=omega+phi*(mean-omega)
+        variance=phi*phi*variance+q
+    return value
+
+
+def collapsed_log_target(theta,obs,mix,prior):
+    """Marginal mixture posterior in (omega,atanh(phi),log(q)) coordinates."""
+    omega,u,logq=theta
+    if not np.isfinite(theta).all(): return -np.inf
+    phi=float(np.tanh(u))
+    with np.errstate(over='ignore',under='ignore'):
+        q=float(np.exp(logq))
+    if abs(phi)>=1 or q<=0 or not np.isfinite(q): return -np.inf
+    z=(phi+1)/2
+    value=mixture_kalman_loglik(obs,mix,omega,phi,q)
+    value-=.5*(omega-prior.omega_mean)**2/prior.omega_variance
+    value+=(prior.phi_alpha-1)*np.log(z)+(prior.phi_beta-1)*np.log1p(-z)
+    value+=np.log1p(-phi*phi)-prior.q_shape*logq-prior.q_scale/q
+    return float(value) if np.isfinite(value) else -np.inf
+
+
+def collapsed_path_step(obs,h,omega,phi,q,prior,rng,proposal_chol,steps=3):
+    """Joint approximate-reversible parameter/path proposal, exact MH corrected.
+
+    Refresh s|h. A fixed symmetric RW Metropolis kernel (or its fixed power)
+    preserves the marginal theta|s posterior. Draw h|theta,s by FFBS. This
+    joint kernel is reversible for the marginal mixture posterior; integrating
+    out s leaves the same exact/marginal-mixture correction as the h-only step.
+    All parameters AND the path are reverted together if correction rejects.
+    Proposal adaptation is owned by the caller and must stop after warmup.
+    """
+    probs=mixture_probabilities(obs,h)
+    cdf=np.cumsum(probs,axis=1); cdf[:,-1]=1.
+    labels=(rng.random(len(h))[:,None]>cdf).sum(axis=1)
+    theta=np.array([omega,np.arctanh(phi),np.log(q)])
+    target=collapsed_log_target(theta,obs,labels,prior)
+    for _ in range(steps):
+        candidate=theta+proposal_chol@rng.normal(size=3)
+        new_target=collapsed_log_target(candidate,obs,labels,prior)
+        if np.log(rng.random())<new_target-target:
+            theta=candidate; target=new_target
+    new_omega=float(theta[0]); new_phi=float(np.tanh(theta[1])); new_q=float(np.exp(theta[2]))
+    candidate_h=ffbs(obs,labels,new_omega,new_phi,new_q,rng.normal(size=len(h)))
+    accepted=bool(np.isfinite(candidate_h).all() and
+                  np.log(rng.random())<correction_log_ratio(obs,h,candidate_h))
+    if accepted: return candidate_h,new_omega,new_phi,new_q,True
+    return h,omega,phi,q,False
+
+
+def phi_log_target(u, h, omega, q, prior):
+    phi = float(np.tanh(u))
+    if abs(phi) >= 1 or not np.isfinite(u):
+        return -np.inf
+    z = (phi + 1) / 2
+    lp = (prior.phi_alpha-1)*np.log(z)+(prior.phi_beta-1)*np.log1p(-z)
+    lp += np.log1p(-phi*phi)  # atanh-coordinate Jacobian
+    initial_variance = q/(1-phi*phi)
+    innovations = h[1:]-omega-phi*(h[:-1]-omega)
+    return float(lp-.5*np.log(initial_variance)-.5*(h[0]-omega)**2/initial_variance-.5*(innovations@innovations)/q)
+
+
+def sample_chain(x, prior, model, rng, warmup=1000, draws=1500, kernel='centered'):
+    """Exact Gaussian factor likelihood; conditional on first extracted factor.
+
+    M4 log variance has the same N(omega_mean,omega_variance) prior as the
+    M5 long-run log variance. Both use the same unscaled truncated beta prior.
+    M5 mixture proposals are corrected in-chain, rather than left approximate.
+    """
+    import time
+    from scipy.stats import truncnorm
+    if model not in ('M4', 'M5'):
+        raise ValueError('Expected M4 or M5')
+    if kernel not in ('centered', 'interweave', 'collapsed'):
+        raise ValueError('Unknown inference kernel')
+    started = time.perf_counter()
+    y = np.asarray(x[1:], float); lag = np.asarray(x[:-1], float)
+    design = np.column_stack([np.ones(len(y)), lag])
+    beta = np.linalg.lstsq(design, y, rcond=None)[0]
+    h = np.full(len(y), prior.omega_mean + rng.normal(0, .5))
+    omega = prior.omega_mean + rng.normal(0, 1)
+    phi = float(2*rng.beta(prior.phi_alpha, prior.phi_beta)-1)
+    q = float(1/rng.gamma(prior.q_shape, 1/prior.q_scale))
+    output = np.empty((draws, 8 if model == 'M5' else 3))
+    h_accept = phi_accept = 0
+    step = .15
+    block_accept = 0
+    collapsed_accept = 0
+    proposal_chol = np.diag([.15,.15,.2])
+    adaptation = np.empty((warmup,3))
+    for iteration in range(warmup+draws):
+        mean, cov = beta_conditional(y, lag, h, prior)
+        sd_b = np.sqrt(cov[1,1])
+        b = truncnorm.rvs((-1-mean[1])/sd_b, (1-mean[1])/sd_b,
+                          loc=mean[1], scale=sd_b, random_state=rng)
+        a_mean = mean[0]+cov[0,1]/cov[1,1]*(b-mean[1])
+        a_sd = np.sqrt(cov[0,0]-cov[0,1]**2/cov[1,1])
+        beta = np.array([rng.normal(a_mean, a_sd), b])
+        residual = y-design@beta
+        if model == 'M4':
+            # Stepping-out slice sampler: exact univariate log-variance update.
+            sse = float(residual@residual)
+            def target(g):
+                with np.errstate(over='ignore'):
+                    return -.5*len(y)*g-.5*sse*np.exp(-g)-.5*(g-prior.omega_mean)**2/prior.omega_variance
+            current = h[0]; height = target(current)+np.log(rng.random())
+            left = current-rng.random(); right = left+1
+            while target(left)>height: left-=1
+            while target(right)>height: right+=1
+            while True:
+                g = rng.uniform(left, right)
+                if target(g)>=height: break
+                if g<current: left=g
+                else: right=g
+            h[:] = g
+        else:
+            obs = log_squared_residual(residual)
+            if kernel == 'collapsed':
+                h,omega,phi,q,accepted_block=collapsed_path_step(
+                    obs,h,omega,phi,q,prior,rng,proposal_chol)
+                if iteration>=warmup: collapsed_accept+=int(accepted_block)
+            h, accepted, _ = corrected_h_step(obs, h, omega, phi, q, rng)
+            if iteration >= warmup: h_accept += int(accepted)
+            m, v = omega_conditional(h, phi, q, prior.omega_mean, prior.omega_variance)
+            omega = rng.normal(m, np.sqrt(v))
+            shape, scale = q_conditional(h, omega, phi, prior.q_shape, prior.q_scale)
+            q = 1/rng.gamma(shape, 1/scale)
+            u = np.arctanh(phi); candidate = rng.normal(u, step)
+            ratio = phi_log_target(candidate, h, omega, q, prior)-phi_log_target(u, h, omega, q, prior)
+            move = np.log(rng.random()) < ratio
+            if move: phi = float(np.tanh(candidate))
+            if iteration < warmup:
+                block_accept += int(move)
+                if (iteration+1)%50 == 0:
+                    step *= np.exp((block_accept/50-.35)/np.sqrt((iteration+1)/50))
+                    block_accept = 0
+            else: phi_accept += int(move)
+            if kernel in ('interweave','collapsed'):
+                h, q = interweave_scale(obs,h,omega,q,prior,rng)
+            if kernel == 'collapsed' and iteration<warmup:
+                adaptation[iteration]=[omega,np.arctanh(phi),np.log(q)]
+                if iteration>=199 and (iteration+1)%50==0:
+                    empirical=np.cov(adaptation[:iteration+1],rowvar=False)
+                    covariance=(2.38**2/3)*(.95*empirical+.05*np.diag([.15,.15,.2])**2)
+                    proposal_chol=np.linalg.cholesky(covariance+1e-8*np.eye(3))
+        if iteration >= warmup:
+            output[iteration-warmup] = np.r_[beta, omega, phi, q, h[0], h[len(h)//2], h[-1]] if model == 'M5' else np.r_[beta, h[0]]
+    return {'draws': output, 'names': ['a','b','omega','phi','q','h_first','h_mid','h_last'] if model == 'M5' else ['a','b','log_variance'],
+            'h_acceptance': h_accept/draws if model == 'M5' else None,
+            'phi_acceptance': phi_accept/draws if model == 'M5' else None,
+            'elapsed_s': time.perf_counter()-started, 'prior_beta_mean': list(prior.beta_mean),
+            'prior_beta_variance': list(prior.beta_variance), 'model': model, 'kernel': kernel,
+            'collapsed_acceptance': collapsed_accept/draws if model=='M5' and kernel=='collapsed' else None,
+            'frozen_proposal_cholesky': proposal_chol.tolist() if kernel=='collapsed' else None}
+
+
+def run_pilot(out=None, warmup=1000, draws=1500, chains=4):
+    import json, time, hashlib
+    from pathlib import Path
+    from datetime import date, datetime, timezone
+    from dataclasses import asdict
+    import arviz as az
+    from src.experiment import read_panel, write_csv
+    from src.models import fit_lambda, ns_loadings
+    started=time.perf_counter()
+    root=Path(__file__).resolve().parents[1]
+    out=Path(out) if out is not None else root/'results/bayesian_revised_pilot'
+    out.mkdir(parents=True,exist_ok=True)
+    path=root/'data/processed/canada_weekly.csv'
+    dates,y=read_panel(path)
+    initial=[i for i,d in enumerate(dates) if date(2000,1,1)<=d<=date(2015,12,31)]
+    training=y[initial]
+    tau=np.array([.25,.5,1,2,5,7,10,30])
+    lam,_,_=fit_lambda(training,tau,np.linspace(.05,2,160))
+    load=ns_loadings(tau,lam)
+    factors=np.linalg.lstsq(load,training.T,rcond=None)[0].T
+    priors=freeze_priors(factors)
+    diagnostics=[]; chain_reports=[]; arrays={}
+    for model in ['M4','M5']:
+        for j,name in enumerate(['level','slope','curvature']):
+            results=[sample_chain(factors[:,j],priors[j],model,np.random.default_rng(20261029+100*j+10000*(model=='M5')+k),warmup,draws) for k in range(chains)]
+            values=np.stack([r['draws'] for r in results]);arrays[model+'_'+name]=values
+            for parameter,pname in enumerate(results[0]['names']):
+                v=values[:,:,parameter]
+                rh=float(az.rhat(v,method='rank'))
+                bulk=float(az.ess(v,method='bulk'));tail=float(az.ess(v,method='tail',prob=(.05,.95)))
+                diagnostics.append({'model':model,'factor':name,'parameter':pname,'rhat':rh,'ess_bulk':bulk,'ess_tail':tail,
+                                    'passes':bool(np.isfinite(rh) and rh<=1.01 and bulk>=400 and tail>=400)})
+            for k,result in enumerate(results):
+                chain_reports.append({'model':model,'factor':name,'chain':k,**{key:result[key] for key in ['elapsed_s','h_acceptance','phi_acceptance']}})
+            print(model,name,'complete',flush=True)
+    np.savez_compressed(out/'chains.npz',**arrays)
+    write_csv(out/'diagnostics.csv',diagnostics)
+    write_csv(out/'chain_timings.csv',chain_reports)
+    elapsed=time.perf_counter()-started
+    from src.bayesian_stage_a_checks import moment_audit
+    parameter_gate=bool(all(r['passes'] for r in diagnostics) and chains>=4)
+    moment_check=moment_audit(priors[0],len(initial)-1)
+    report={'status':'diagnostic pilot only; no forecast-comparison claim',
+            'parameter_gate_passed':parameter_gate,'predictive_moment_audit':moment_check,
+            'accepted_for_rolling':bool(parameter_gate and moment_check['stage_a_mathematical_gate_passed']),
+            'warmup':warmup,'retained_draws_per_chain':draws,'independent_chains':chains,'training_n':len(initial),
+            'latest_fit_date':dates[initial[-1]].isoformat(),'lambda_per_year':lam,'max_rhat':max(r['rhat'] for r in diagnostics),
+            'min_ess_bulk':min(r['ess_bulk'] for r in diagnostics),'min_ess_tail':min(r['ess_tail'] for r in diagnostics),
+            'seed_rule':'20261029+100*factor_index+10000*(model_is_M5)+chain_index',
+            'elapsed_s':elapsed,'estimated_130_origin_runtime_lower_bound_hours':elapsed*130/3600,
+            'projection_note':'Simple scaling from shortest estimation window; later expanding windows and longer chains increase cost, not a measured full-run runtime.',
+            'priors':[asdict(p) for p in priors],'input_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),
+            'source_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'arviz_version':az.__version__,
+            'utc':datetime.now(timezone.utc).isoformat()}
+    (out/'metadata.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
+    return report
+
+
+if __name__=='__main__':
+    import json
+    print(json.dumps(run_pilot(),indent=2))
+
+

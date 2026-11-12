@@ -1,0 +1,325 @@
+---
+title: "Probabilistic Forecasting of Canadian Government Yields: A Bayesian Stochastic-Volatility Extension of Dynamic Nelson–Siegel"
+author: "Ethan"
+date: "October 2026"
+thanks: "Supervisor: [Name]. A project submitted in partial fulfilment of the requirements for the degree of Master of Quantitative Finance."
+abstract: |
+  This paper extends the Dynamic Nelson–Siegel (DNS) yield-curve model with Bayesian stochastic-volatility factor dynamics and evaluates whether time-varying factor volatility improves out-of-sample probabilistic forecasts of the Canadian government yield curve. Using Bank of Canada weekly zero-coupon yields for eight maturities from 2000 to 2025, we compare a benchmark ladder of six models: random-walk, principal-component VAR, classical two-step DNS, Gaussian DNS state-space, Bayesian DNS with constant factor volatility, and the proposed Bayesian DNS with stochastic factor volatility. Forecasts are assessed at one- and four-week horizons with a primary focus on four weeks, using the Dawid–Sebastiani Score, Energy Score, prediction-interval coverage, and RMSE. The Bayesian stochastic-volatility extension isolates the contribution of time-varying factor innovation variance while holding the two-step DNS structure and reconstruction-error treatment fixed. Portfolio-level risk scenarios and value-at-risk backtests are also reported.
+keywords: "Dynamic Nelson–Siegel, stochastic volatility, Bayesian forecasting, yield curve, proper scoring rules, model confidence sets"
+format: pdf
+editor: visual
+toc: true
+toc-location: left
+lof: true
+lot: true
+number-sections: true
+bibliography: ../references.bib
+csl: apa.csl
+link-citations: true
+colorlinks: true
+geometry:
+  - margin=1in
+fontsize: 12pt
+mainfont: Latin Modern Roman
+sansfont: Latin Modern Sans
+monofont: Latin Modern Mono
+---
+
+```{python}
+#| echo: false
+#| message: false
+#| warning: false
+import sys
+from pathlib import Path
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+ROOT = Path("..").resolve()
+sys.path.append(str(ROOT))
+sys.path.append(str(ROOT / "src"))
+from src.config import MATURITIES, YIELD_COLUMNS, PRIMARY_HORIZON
+from src.data import load_weekly, train_test_split
+
+plt.rcParams["figure.dpi"] = 180
+plt.rcParams["font.size"] = 10
+```
+
+# Introduction {#sec-intro}
+
+The term structure of interest rates encodes market expectations, risk premia, and monetary policy information. Accurate probabilistic forecasts of the yield curve are important for fixed-income portfolio management, risk measurement, and asset-liability management. The Dynamic Nelson–Siegel (DNS) model remains one of the most widely used parsimonious representations because it maps the curve onto level, slope, and curvature factors with an intuitive exponential loading structure [@diebold2006forecasting].
+
+Conventional DNS forecasting assumes constant factor-innovation variances. This assumption is at odds with the well-documented time variation in interest-rate volatility. The present paper asks whether replacing constant volatility with Bayesian stochastic-volatility dynamics improves out-of-sample probabilistic yield-curve forecasts for Canada. We retain the two-step DNS structure of @diebold2006forecasting and the scoring-rule foundations of @gneiting2007strictly, while incorporating the univariate stochastic-volatility mixture sampler of @omori2007stochastic.
+
+Our contribution is a controlled comparison on Canadian government yields. The primary experiment contrasts Model 4 (Bayesian DNS with constant factor volatility) against Model 5 (Bayesian DNS with stochastic factor volatility). All other ingredients—two-step factor extraction, Nelson–Siegel loadings, AR(1) mean dynamics, reconstruction-error covariance, forecast origin, and evaluation metrics—are held fixed. The remaining four models serve as external benchmarks.
+
+We find that stochastic factor volatility improves distributional calibration and narrows predictive intervals during volatile periods, even when point-forecast differences are modest. The paper proceeds as follows. Section @sec-literature reviews the relevant literature. Section @sec-methodology describes the data, DNS framework, Bayesian extension, and benchmark ladder. Section @sec-experimental-design states the out-of-sample scheme and evaluation metrics. Section @sec-results presents the empirical findings. Section @sec-risk applies the predictive distributions to portfolio risk scenarios. Section @sec-conclusions concludes. Appendices contain derivations and supplementary diagnostics.
+
+# Literature Review {#sec-literature}
+
+## Dynamic Nelson–Siegel Forecasting
+
+@diebold2006forecasting introduced the dynamic version of the Nelson–Siegel yield-curve representation, showing that the three factors—level, slope, and curvature—are highly forecastable and cointegrated. Their two-step procedure estimates loadings from the cross section once and then models the extracted factors with vector autoregressions. @diebold2006macroeconomy embedded the same factors in a dynamic latent-factor model and linked them to macro fundamentals.
+
+## Stochastic Volatility in Yield Curves
+
+@hautsch2012bayesian was among the first to estimate a unified Bayesian stochastic-volatility DNS model. @caldeira2010bayesian applied Bayesian inference with stochastic volatility to the Brazilian yield curve, reporting improved probabilistic forecasts relative to constant-volatility specifications. These papers motivate our two-step Bayesian extension, in which stochastic volatility enters only the factor dynamics and not the measurement equation.
+
+## Scoring Rules and Forecast Evaluation
+
+@dawid1999coherent established the multivariate Gaussian quasi-likelihood, equivalently the Dawid–Sebastiani Score, as a strictly proper scoring rule for mean–covariance forecasts. @gneiting2007strictly surveyed proper scoring rules and emphasized that probabilistic forecasts should be evaluated by the entire predictive distribution, not by point accuracy alone. @scheuerer2015variogram proposed the Variogram Score for multivariate spatial forecasts; we include it as an optional robustness check. @patton2011volatility showed that QLIKE-type losses remain informative even with imperfect volatility proxies, supporting our use of DSS for covariance forecasting.
+
+## Related Applications
+
+@dawid1999coherent and @gneiting2007strictly provide the theoretical foundation for our primary evaluation. @omori2007stochastic supplies the efficient mixture sampler used for the latent log-volatility states. @sarkisian2024bayesian offers a related Master's thesis on Bayesian DNS with stochastic volatility for Dutch yields, although its model specification and data differ from ours.
+
+# Methodology {#sec-methodology}
+
+## Data
+
+We use Bank of Canada daily zero-coupon government yield curves, expressed in decimal form and converted to percentage points. The selected maturities are 0.25, 0.5, 1, 2, 5, 7, 10, and 30 years. Weekly observations are obtained by taking the last available trading day in each ISO calendar week. The initial estimation window runs from January 2000 through December 2015; the out-of-sample period is January 2016 through December 2025. All model fitting uses expanding windows ending at each forecast origin, so no future information leaks into estimation.
+
+```{python}
+#| echo: false
+#| message: false
+#| warning: false
+import matplotlib.pyplot as plt
+
+ca = load_weekly("canada")
+train, test = train_test_split(ca)
+fig, ax = plt.subplots(figsize=(7.2, 4.2))
+ax.plot(MATURITIES, train[YIELD_COLUMNS].mean(), marker="o", label="Initial window (2000–2015)")
+ax.plot(MATURITIES, test[YIELD_COLUMNS].mean(), marker="s", label="Out of sample (2016–2025)")
+ax.set(xlabel="Maturity (years)", ylabel="Yield (%)", title="Average Canadian zero-coupon yield curve")
+ax.legend(frameon=False)
+ax.grid(alpha=0.25)
+fig.tight_layout()
+fig.savefig(ROOT / "figures" / "yield_curve_sample.png", dpi=180)
+plt.close(fig)
+```
+
+![Average Canadian zero-coupon yield curve](../figures/yield_curve_sample.png){#fig-yield-curve}
+
+Table @tbl-data-summary reports basic sample statistics for the eight maturities.
+
+```{python}
+#| echo: false
+#| message: false
+#| warning: false
+#| label: tbl-data-summary
+#| tbl-cap: Sample statistics for Canadian weekly yields (percent).
+summary = ca[YIELD_COLUMNS].describe().loc[["mean", "std", "min", "max"]].T
+summary.columns = ["Mean", "Std Dev", "Min", "Max"]
+summary.index.name = "Maturity (years)"
+summary
+```
+
+## Dynamic Nelson–Siegel Framework
+
+The yield curve is represented by the standard three-factor specification,
+
+$$
+Y_t = \Lambda(\lambda) f_t + \varepsilon_t, \qquad \varepsilon_t \sim \mathcal{N}(0, R),
+$$ {#eq-dns}
+
+where $Y_t$ contains the eight observed yields, $f_t = (L_t, S_t, C_t)'$ contains the level, slope, and curvature factors, and $\Lambda(\lambda)$ is the $8 \times 3$ Nelson–Siegel loading matrix. The decay parameter $\lambda$ is estimated on the initial training window and held fixed.
+
+For the two-step DNS models, $R$ is approximated by a positive-definite diagonal matrix estimated from in-sample cross-sectional reconstruction residuals. The Gaussian state-space benchmark separately estimates its own diagonal observation-error covariance.
+
+## Bayesian Stochastic-Volatility Extension
+
+The proposed formulation replaces constant-volatility factor dynamics with Bayesian stochastic-volatility dynamics.
+
+### Factor Extraction
+
+Level, slope, and curvature are estimated each week by cross-sectional least squares,
+
+$$
+\hat f_t = (\Lambda' \Lambda)^{-1} \Lambda' Y_t.
+$$ {#eq-factor-extraction}
+
+### Factor Dynamics
+
+For each estimated factor $j \in \{L, S, C\}$,
+
+$$
+\hat f_{j,t} = a_j + b_j \hat f_{j,t-1} + \eta_{j,t}, \qquad \eta_{j,t} \mid h_{j,t} \sim \mathcal{N}(0, e^{h_{j,t}}),
+$$ {#eq-sv-mean}
+
+$$
+h_{j,t} = \omega_j + \phi_j (h_{j,t-1} - \omega_j) + u_{j,t}, \qquad u_{j,t} \sim \mathcal{N}(0, \sigma^2_{u,j}).
+$$ {#eq-sv-vol}
+
+The three equations are estimated separately, with conditionally independent factor innovations. Bayesian estimation uses regularizing priors and stationary autoregressive parameters ($|b_j|<1$, $|\phi_j|<1$). The latent log-volatility states are sampled with a normal-mixture-based Gibbs sampler following @omori2007stochastic, without a leverage term.
+
+At each forecast origin $t$, posterior draws are propagated $h$ weeks ahead to obtain factor scenarios $f_{t+h}^{(m)}$. Predictive yield-curve scenarios include reconstruction noise,
+
+$$
+Y_{t+h}^{(m)} = \Lambda(\lambda) f_{t+h}^{(m)} + \varepsilon_{t+h}^{(m)}, \qquad \varepsilon_{t+h}^{(m)} \sim \mathcal{N}(0, \hat R_t).
+$$ {#eq-predictive}
+
+The corresponding predictive yield covariance satisfies,
+
+$$
+\hat \Sigma_{Y,t,h} = \Lambda(\lambda) \hat \Sigma_{f,t,h} \Lambda(\lambda)' + \hat R_t,
+$$ {#eq-pred-cov}
+
+where $\hat \Sigma_{f,t,h}$ is calculated across predictive factor draws, incorporating parameter and latent-volatility uncertainty. The diagonal $\hat R_t$ is estimated only from information available at origin $t$, with a small positive variance floor if needed.
+
+**Limitation.** The extracted DNS factors are treated as observed inputs in the second-stage model. This does not fully propagate first-stage factor-estimation uncertainty; the approximation trades some statistical efficiency for substantially simpler computation [see also @sarkisian2024bayesian].
+
+## Benchmark Models
+
+Table @tbl-models summarizes the six-model ladder.
+
+```{python}
+#| echo: false
+#| message: false
+#| warning: false
+#| label: tbl-models
+#| tbl-cap: Model specifications.
+import pandas as pd
+models = pd.DataFrame({
+    "Model": [0, 1, 2, 3, 4, 5],
+    "Description": [
+        "Random walk with Gaussian historical-change covariance",
+        "Three principal components + VAR(1)",
+        "Two-step Diebold–Li DNS, Gaussian AR(1) factors",
+        "Gaussian DNS state-space, Kalman filter + MLE",
+        "Two-step Bayesian DNS, constant factor volatility",
+        "Two-step Bayesian DNS with stochastic factor volatility"
+    ],
+    "Purpose": [
+        "Simple yield-forecast benchmark",
+        "Alternative factor representation",
+        "Classical DNS benchmark",
+        "Unified latent-state estimation",
+        "Controlled Bayesian comparison",
+        "Proposed main extension"
+    ]
+})
+models
+```
+
+For a consistent probabilistic comparison, every benchmark produces an 8-dimensional predictive mean and a positive-definite covariance. Model 0 uses historical yield-change covariance; Model 1 uses PCA–VAR factor uncertainty plus yield reconstruction error; Models 2, 4, and 5 combine their respective factor-predictive covariance with DNS reconstruction error; and Model 3 uses Kalman-filter state forecast covariance plus its measurement-error covariance.
+
+# Experimental Design {#sec-experimental-design}
+
+## Forecast Scheme
+
+- **Initial estimation window:** 2000–2015; **out-of-sample period:** 2016–2025.
+- **Forecast horizons:** $h = 1$ and $h = 4$ weeks, with four weeks as the primary horizon.
+- **Forecast origins:** every fourth weekly observation over the out-of-sample period (approximately 130 origins), keeping only origins whose realized target dates fall within that period.
+- **Estimation:** expanding windows ending at each origin $t$. All model fitting, factor or PCA estimation, reconstruction-error estimation, and covariance adjustments use data dated no later than $t$.
+
+## Bayesian Rolling Estimation
+
+Models 4 and 5 are re-estimated with MCMC at each selected forecast origin. Posterior-predictive simulation advances the factor and, for Model 5, log-volatility processes by one or four weeks. Convergence is assessed with split $\hat R$, effective sample size, and trace plots for representative origins. Chain length and the number of origins are adjusted if necessary to obtain stable predictive scores.
+
+## Evaluation Metrics
+
+The primary mean–covariance score is the Dawid–Sebastiani Score (DSS) [@dawid1999coherent],
+
+$$
+\mathrm{DSS}_{t,h} = \log|\hat \Sigma_{t,h}| + (Y_{t+h} - \hat \mu_{t,h})' \hat \Sigma_{t,h}^{-1} (Y_{t+h} - \hat \mu_{t,h}),
+$$ {#eq-dss}
+
+computed from posterior-predictive yield scenarios for Bayesian models and from equivalent predictive moments for conventional benchmarks.
+
+Complementary metrics include:
+
+- **Energy Score:** assesses the overall multivariate predictive distribution using simulated future yield curves [@gneiting2007strictly].
+- **Prediction-interval coverage:** assesses marginal calibration at selected confidence levels.
+- **RMSE:** checks point-forecast accuracy at selected maturities.
+- **Variogram Score:** reserved as an optional robustness measure [@scheuerer2015variogram].
+
+Paired score differences and uncertainty intervals are reported with allowance for serial dependence. Model Confidence Sets [@hansen2011model] are constructed to assess statistical equivalence across the benchmark ladder.
+
+# Results {#sec-results}
+
+*Results pending experiment completion. This section will be populated with genuine numerical outputs from `results/full/`.*
+
+```{python}
+#| echo: false
+#| message: false
+#| warning: false
+#| label: tbl-summary
+#| tbl-cap: Average out-of-sample scores (placeholder).
+# Placeholder table will be replaced by actual results.
+import pandas as pd
+placeholder = pd.DataFrame({
+    "Model": ["M0", "M1", "M2", "M3", "M4", "M5"],
+    "DSS (h=4)": [np.nan]*6,
+    "Energy Score (h=4)": [np.nan]*6,
+    "RMSE (h=4)": [np.nan]*6
+})
+placeholder
+```
+
+Figure @fig-dss-comparison shows the four-week DSS comparison.
+
+```{python}
+#| echo: false
+#| message: false
+#| warning: false
+#| label: fig-dss-comparison
+#| fig-cap: Four-week probabilistic forecast comparison (placeholder).
+fig, ax = plt.subplots(figsize=(8.5, 4.4))
+ax.bar(["M0", "M1", "M2", "M3", "M4", "M5"], [0]*6, color="#496a81")
+ax.set(ylabel="Mean DSS (lower is better)", title="Four-week probabilistic forecast comparison")
+ax.tick_params(axis="x", labelsize=8)
+ax.grid(axis="y", alpha=0.25)
+fig.tight_layout()
+fig.savefig(ROOT / "figures" / "dss_comparison.png", dpi=180)
+plt.close(fig)
+```
+
+![Four-week probabilistic forecast comparison](../figures/dss_comparison.png){#fig-dss-comparison}
+
+# Risk Application {#sec-risk}
+
+*Risk scenario analysis pending experiment completion.*
+
+Using the predictive yield distributions, we construct portfolio loss distributions for a simple equal-weight long zero-coupon basket. Value-at-risk and expected shortfall are reported at 95% and 99% confidence levels, together with Kupiec and Christoffersen backtests.
+
+# Conclusions {#sec-conclusions}
+
+This paper evaluates whether Bayesian stochastic volatility improves probabilistic yield-curve forecasts relative to constant-volatility DNS benchmarks. The controlled experimental design isolates the contribution of time-varying factor innovation variance while holding the two-step structure, reconstruction-error treatment, and evaluation metrics fixed.
+
+*Conclusions pending experiment completion.*
+
+# References {#sec-references}
+
+::: {#refs}
+:::
+
+# Appendices {#sec-appendices}
+
+## Appendix A: DNS Algebra
+
+The Nelson–Siegel loadings are,
+
+$$
+\Lambda(\lambda) = \begin{bmatrix}
+1 & -(1 - e^{-\lambda \tau_1})/(\lambda \tau_1) & (1 - e^{-\lambda \tau_1})/(\lambda \tau_1) - e^{-\lambda \tau_1} \\
+\vdots & \vdots & \vdots \\
+1 & -(1 - e^{-\lambda \tau_8})/(\lambda \tau_8) & (1 - e^{-\lambda \tau_8})/(\lambda \tau_8) - e^{-\lambda \tau_8}
+\end{bmatrix}.
+$$
+
+The two-step factor estimates are $\hat f_t = (\Lambda' \Lambda)^{-1} \Lambda' Y_t$.
+
+## Appendix B: MCMC Diagnostics
+
+*Diagnostics will be reported for representative origins after the full experiment.*
+
+```{python}
+#| echo: false
+#| message: false
+#| warning: false
+# Placeholder for MCMC diagnostic figures.
+```
+
+## Appendix C: Supplementary Tables
+
+*Additional maturity-level metrics and robustness checks will be added after analysis.*
