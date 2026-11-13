@@ -6,4 +6,4 @@
 | M4 | -21.450 | 0.418 | 23.577 | 93.077 | 92.143 |
 | M5 | -21.840 | 0.407 | 23.415 | 94.327 | 92.719 |
 
-: Accepted 4-week forecasts at 130 common origins. Lower DSS, Energy Score and RMSE are better; marginal coverage targets 90%. Width is mean central-90% marginal interval width. One basis point equals 0.01 percentage points. {#tbl-joint-h4}
+: Four-week forecasts at 130 common origins. Lower DSS, Energy Score and RMSE are better; marginal coverage targets 90%. Width is mean central-90% marginal interval width. One basis point equals 0.01 percentage points. {#tbl-joint-h4}

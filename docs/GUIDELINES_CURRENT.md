@@ -1,9 +1,7 @@
 # Current guideline assessment
 
-Canonical reconciled matrix: [guidelines_compliance.md](guidelines_compliance.md), grounded in all four pages of `../MQF MRP Guidelines 2026.pdf`.
+The current institutional requirements are in `../MQF MRP Guidelines 2026.pdf`. This note is a status summary, not a complete compliance matrix or a submission-readiness certification.
 
-**No blanket compliance or submission-readiness claim.** Machine-reported formatting checks do not establish supervisor permission for AI use, student understanding/ownership, complete scientific research, actual submission or signoff. The primary Bayesian comparison remains unresolved and M3 remains rejected.
+The finite-moment M4/M5 comparison is accepted at 130 matched origins, as documented in `MRP_PROGRESS.md`. M3 remains excluded after failing the existing likelihood-start stability criterion. Scientific acceptance of the reported experiment does not by itself establish full guideline compliance.
 
-See [specification_audit.md](specification_audit.md) for proposal-versus-guideline distinctions and manuscript corrections. Final artifact properties must come from the parent workstream's refreshed PDF report after changes, not the older duplicated 34-page statement.
-
-The previous duplicate is preserved in `archive_pre_resumption/progress_compliance_reconciliation_20261027T181127505231Z/GUIDELINES_CURRENT.md`.
+Human confirmation is still required for author and supervisor details, permitted AI assistance, student understanding and ownership, and final university sign-off. Formatting checks and a successful PDF build cannot establish those requirements.

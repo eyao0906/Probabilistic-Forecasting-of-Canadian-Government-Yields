@@ -37,6 +37,12 @@ Accepted-run names are unchanged to preserve frozen references. Original pre-fin
 From this repository, using the existing Windows Python 3.14.7 environment and installed Quarto/LuaLaTeX:
 
 ```bash
+# Regenerate the posterior volatility figure from saved chains; no model fitting.
+.venv/Scripts/python.exe -B src/plot_factor_volatility.py
+
+# Create manuscript figures with publication-only M3/M4 labels; no model fitting.
+.venv/Scripts/python.exe -B src/plot_manuscript_presentations.py
+
 # Render saved reporting assets; no model fitting.
 quarto render paper/MRP_Draft.qmd --to pdf
 .venv/Scripts/python.exe -B -c "from src.verify_paper import verify; r=verify(write_outputs=False, previews=False); print(r); assert r['passed']"
