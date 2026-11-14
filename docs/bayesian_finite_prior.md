@@ -1,6 +1,6 @@
 # Finite-moment Bayesian M5: specification and mathematical audit
 
-This is a new, explicitly authorized M5 prior, not a reinterpretation of the old inverse-gamma model. Historical source, chains, diagnostics and rejected conclusions remain in their original directories. The factor likelihood and extraction are unchanged. Mathematical validity does not imply that a numerical run has converged.
+This note records the finite-moment stochastic-volatility specification used in the accepted baseline comparison, not a reinterpretation of the old inverse-gamma model. The later training-calibrated coefficient and log-variance prior candidate is documented in [the prior audit](bayesian_prior_justification.md); it changes the factor-mean/persistence prior and the scale of $m$, while retaining the bounded $v$ and transformed SV construction described here. Historical source, chains and diagnostics remain in their original directories. Mathematical validity does not imply that a numerical run has converged.
 
 ## 1. Model, training-only calibration, and proper priors
 

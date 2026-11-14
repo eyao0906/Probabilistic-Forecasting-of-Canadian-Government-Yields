@@ -1,0 +1,115 @@
+{
+  "status": "completed",
+  "prior_set": "current",
+  "seed": 20261114,
+  "n_draws_per_model": 100000,
+  "models": [
+    "M3",
+    "M4"
+  ],
+  "presentation_model_mapping": {
+    "M3": "internal M4 constant volatility",
+    "M4": "internal M5 stochastic volatility"
+  },
+  "training_period": [
+    "2000-01-01",
+    "2015-12-31"
+  ],
+  "training_observations": 835,
+  "conditioning_date": "2015-12-31",
+  "conditioning_factors": [
+    2.5351274982818266,
+    -1.879554613587308,
+    -3.569288472469892
+  ],
+  "conditioning_yield_curve_percentage_points": [
+    0.48292999999999997,
+    0.4862,
+    0.5019100000000001,
+    0.47004999999999997,
+    0.7929999999999999,
+    1.09318,
+    1.5209300000000001,
+    2.22585
+  ],
+  "fixed_lambda_per_year": 0.5160377358490565,
+  "maturities_years": [
+    0.25,
+    0.5,
+    1.0,
+    2.0,
+    5.0,
+    7.0,
+    10.0,
+    30.0
+  ],
+  "measurement_error_variances": [
+    0.009971697249056768,
+    0.0005276916038855889,
+    0.009484962820655642,
+    0.006856838480060837,
+    0.0024481508272917213,
+    0.005719841984039622,
+    0.013308188265948108,
+    0.010193776563378202
+  ],
+  "priors": {
+    "a": "Normal(0, 25), independent across factors",
+    "b": "Normal(0.7, 0.09) truncated to (-1,1), independent across factors",
+    "m": "Normal(training OLS log-MSE, 25)",
+    "phi": "2*Beta(20,1.5)-1",
+    "v": "rate-one exponential truncated to (0,4); M4 only"
+  },
+  "candidate_training_ols_coefficients": null,
+  "sv_initial_state": "h_T sampled from the stationary N(m-v/2, v) distribution",
+  "yield_reconstruction": "fixed DNS loadings plus independent Gaussian diagonal error using 2000-2015 mean squared residuals",
+  "empirical_tail_thresholds": "Training-only observed level ranges and 95th/99th percentiles of absolute 1- and 4-week changes",
+  "input_sha256": "0b2af5c3c7bb261973ea4ec04c151eedbf7cf1428f22d0e08eaae87a212bfd77",
+  "source_sha256": {
+    "data\\processed\\canada_weekly.csv": "0b2af5c3c7bb261973ea4ec04c151eedbf7cf1428f22d0e08eaae87a212bfd77",
+    "results\\bayesian_revised_pilot\\extended\\metadata.json": "b5be9549e05edb542cb048ccb3eb1a9b1c7b568c06f0cabb87c493547111ddf9",
+    "src\\bayesian_stage_a.py": "7c418152731c0516f7a205e726daa924660f49295718f4f86525011d4c4a8d2b",
+    "src\\bayesian_revised.py": "3bf5fd44aebf3212fca550cb6752323c74ff050a872a4ab4533fbfd29ea7aa5a",
+    "src\\bayesian_finite.py": "aad902cbff0a5ce54965f82c8e881dc8f91b5448dc3ae72c7c87f1847a5a6597",
+    "src\\experiment.py": "06943e59d48ddb08f2ce2bf1f25327a692c9c0ab057067a9ba19dbb0f4b35e8e",
+    "src\\models.py": "a6cf98254fffdd3e07b5ff7df2dbb123c5a5ed94a38c74814936db5f16d44b64",
+    "src\\prior_predictive_bayesian_dns.py": "72821cbd142ebf5c3cb0d0e8ed8cfcba8e6eb227ad4e2b06ad4c9e9e5c6e7718"
+  },
+  "numerical_failures": {
+    "overflow_by_quantity": {
+      "M3_innovation_sd_week_1": 0,
+      "M3_innovation_sd_week_2": 0,
+      "M3_innovation_sd_week_3": 0,
+      "M3_innovation_sd_week_4": 0,
+      "M3_level_innovation_variance": 0,
+      "M3_slope_innovation_variance": 0,
+      "M3_curvature_innovation_variance": 0,
+      "M4_innovation_sd_week_1": 0,
+      "M4_innovation_sd_week_2": 0,
+      "M4_innovation_sd_week_3": 0,
+      "M4_innovation_sd_week_4": 0,
+      "M4_level_innovation_variance": 0,
+      "M4_slope_innovation_variance": 0,
+      "M4_curvature_innovation_variance": 0
+    },
+    "underflow_by_quantity": {
+      "M3_innovation_sd_week_1": 0,
+      "M3_innovation_sd_week_2": 0,
+      "M3_innovation_sd_week_3": 0,
+      "M3_innovation_sd_week_4": 0,
+      "M3_level_innovation_variance": 0,
+      "M3_slope_innovation_variance": 0,
+      "M3_curvature_innovation_variance": 0,
+      "M4_innovation_sd_week_1": 0,
+      "M4_innovation_sd_week_2": 0,
+      "M4_innovation_sd_week_3": 0,
+      "M4_innovation_sd_week_4": 0,
+      "M4_level_innovation_variance": 0,
+      "M4_slope_innovation_variance": 0,
+      "M4_curvature_innovation_variance": 0
+    },
+    "nonfinite_by_quantity": {}
+  },
+  "all_draws_retained": true,
+  "forecast_scores_used_to_choose_priors": false
+}

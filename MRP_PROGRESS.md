@@ -1,5 +1,11 @@
 # MRP — current status
 
+## Current manuscript update: revised priors
+
+The revised-prior Bayesian run completed and its independent archive audit passed: 130/130 origins, 520 forecasts, no failures. Maximum rank-normalized R-hat is 1.00965; minimum bulk/tail ESS are 1,057.6/2,094.5. The manuscript's M3/M4 are internal archive M4/M5. At four weeks, stochastic minus constant volatility changes DSS by −0.3805 and Energy Score by −0.01048 (2.51%); RMSE changes by −0.1297 basis points with a 95% interval including zero. The random walk remains descriptively better on aggregate scores and RMSE.
+
+`paper/MRP_Draft.qmd` and the rendered 35-page PDF use the revised results and passed the no-write paper verifier. The direct-mean and log-variance prior changes, training calibration, synthetic recovery misses, current outputs and reproduction commands are documented in `docs/bayesian_prior_justification.md`, `docs/PROJECT_HANDOFF.md` and `docs/reproduction_runbook.md`. The original U=2/8 checks used different priors and are not sensitivity evidence for the revised run. The sections below are retained as a **historical original-baseline record**, not current manuscript results.
+
 ## Scientific work complete
 
 - Main finite-moment M4/M5 experiment accepted: **130/130 matched origins, 520 records, no failures**, horizons 1/4 weeks and eight maturities. Persistent pipeline `proc_3c897e1a1f02` exited **0**; no active numerical stage remains. Accepted checkpoints were reused, not refitted.

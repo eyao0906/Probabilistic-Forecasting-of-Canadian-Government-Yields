@@ -2,6 +2,12 @@
 
 **Paper:** [`paper/MRP_Draft.pdf`](paper/MRP_Draft.pdf) · **Source:** [`paper/MRP_Draft.qmd`](paper/MRP_Draft.qmd) · **Status:** [`MRP_PROGRESS.md`](MRP_PROGRESS.md)
 
+## Current manuscript: revised priors
+
+The manuscript uses the completed, independently audited revised-prior Bayesian comparison in `results/bayesian_prior_revised_20261114/` (130 origins, no failures). In the paper, M3 is constant-volatility DNS and M4 is stochastic-volatility DNS; the archives use internal labels M4 and M5, respectively. At four weeks, the paired M4-minus-M3 differences are −0.3805 for DSS and −0.01048 for Energy Score (a 2.51% reduction); the RMSE change is −0.1297 basis points with a 95% interval including zero. The random walk remains descriptively better on aggregate scores and RMSE. The revised priors use an initial-training-calibrated long-run factor mean and persistence and a log-variance prior with standard deviation one. The earlier U=2/8 sensitivity runs use the original priors and do not establish robustness for the revised run.
+
+For current reproduction commands, prior rationale and caveats, see [`docs/reproduction_runbook.md`](docs/reproduction_runbook.md) and [`docs/bayesian_prior_justification.md`](docs/bayesian_prior_justification.md). The sections below document the **original baseline**, not the revised manuscript's numerical results.
+
 ## Research objective and experiment
 
 Does stochastic factor volatility improve joint probabilistic forecasting within Bayesian Dynamic Nelson–Siegel (DNS)? M4 (constant volatility) and M5 (stochastic volatility) share factor extraction, coefficient priors, long-run expected-innovation-variance priors, reconstruction noise and dates. The finite-moment M5 prior uses U=4; U=2/8 are pre-specified representative sensitivities, not test-score-selected bounds. External accepted benchmarks are M0 random walk, M1 PCA–VAR and M2 classical DNS. M3 failed existing fit-stability acceptance and is excluded.
@@ -24,7 +30,8 @@ The RMSE difference is only −0.162 basis points and its interval contains zero
 - `results/validated_baselines/` — accepted M0–M2.
 - `results/bayesian_finite_20261027T194239Z/rolling_main/` — accepted M4/M5 checkpoints; `analysis/` holds numerical comparisons.
 - `results/bayesian_finite_20261027T194239Z/bound_sensitivity/` — U=2/8 cases and acceptance/failure evidence.
-- Other `results/` — historical evidence retained where code or frozen manifests require original paths, not accepted inference.
+- `results/bayesian_prior_revised_20261114/` — accepted revised-prior run and archive audit used by the current manuscript.
+- Other `results/` — historical evidence retained where code or frozen manifests require original paths.
 - `figures/finite/`, `figures/validated/` — paper figures.
 - `docs/` — finite-prior mathematics, literature/source evidence and reproduction notes.
 - `references.bib`, `requirements-lock.txt` — bibliography and pinned Python packages.

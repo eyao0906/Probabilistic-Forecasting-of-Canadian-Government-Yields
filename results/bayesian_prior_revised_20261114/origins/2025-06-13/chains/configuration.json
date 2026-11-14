@@ -1,0 +1,77 @@
+{
+  "window": {
+    "name": "2025-06-13",
+    "index": 1328,
+    "date": "2025-06-13",
+    "n_training": 1328,
+    "targets": {
+      "1": "2025-06-20",
+      "4": "2025-07-11"
+    }
+  },
+  "warmup": 3000,
+  "draws": 6000,
+  "chains": 4,
+  "models": [
+    "M4",
+    "M5"
+  ],
+  "seed": 132102701,
+  "input_sha256": "0b2af5c3c7bb261973ea4ec04c151eedbf7cf1428f22d0e08eaae87a212bfd77",
+  "lambda": 0.5160377358490565,
+  "priors": [
+    {
+      "long_run_mean_center": 4.329854738972304,
+      "long_run_mean_variance": 4.459927303256551,
+      "persistence_center": 0.9972229659736745,
+      "persistence_variance": 0.0009,
+      "log_variance_center": -4.888703286518594,
+      "log_variance_variance": 1.0,
+      "phi_alpha": 20.0,
+      "phi_beta": 1.5,
+      "v_upper": 4.0,
+      "v_rate": 1.0
+    },
+    {
+      "long_run_mean_center": -2.174504619293203,
+      "long_run_mean_variance": 7.908406642052331,
+      "persistence_center": 0.9955122684604066,
+      "persistence_variance": 0.0009,
+      "log_variance_center": -4.122200307075525,
+      "log_variance_variance": 1.0,
+      "phi_alpha": 20.0,
+      "phi_beta": 1.5,
+      "v_upper": 4.0,
+      "v_rate": 1.0
+    },
+    {
+      "long_run_mean_center": -1.109835998452534,
+      "long_run_mean_variance": 13.320012494328935,
+      "persistence_center": 0.9768145226369132,
+      "persistence_variance": 0.0009,
+      "log_variance_center": -1.9698068059412788,
+      "log_variance_variance": 1.0,
+      "phi_alpha": 20.0,
+      "phi_beta": 1.5,
+      "v_upper": 4.0,
+      "v_rate": 1.0
+    }
+  ],
+  "parameterization": "mu=a/(1-b), prior specified directly on mu and b",
+  "source_sha256": {
+    "src/bayesian_prior_longrun.py": "94444b75eb7b4c6b9a85b8b9caba8e47e8a0e3f1080bdcede3bc85d93f99d132",
+    "src/bayesian_prior_longrun_experiment.py": "37dc68fa221134284126be4ab766a5b426a09fe56d99fefea76b3c3709ceb255",
+    "src/bayesian_finite.py": "aad902cbff0a5ce54965f82c8e881dc8f91b5448dc3ae72c7c87f1847a5a6597",
+    "src/bayesian_revised.py": "3bf5fd44aebf3212fca550cb6752323c74ff050a872a4ab4533fbfd29ea7aa5a",
+    "src/bayesian_stage_a.py": "7c418152731c0516f7a205e726daa924660f49295718f4f86525011d4c4a8d2b",
+    "src/bayesian_stage_a_checks.py": "28e255dcf8aca04bf9e4ccd69d15468bcddfe0b313cfee9b6557b4f9d925427f",
+    "src/bayesian_finite_validation.py": "3a5b80dc4f0173ae15ec1b3c0c4bfe62ac1a90b2f1d554b118c23d11df23eeb8",
+    "src/bayesian_finite_analysis.py": "e4c1a492c66b730712fe5c2f5a666f3d1429abc9f92461a2aa2f41bec0d76549",
+    "src/bayesian_finite_gate.py": "e0209a34ad2635d9c234bb236b43df801b13a6cb448559911bf4acfb7b10ecf9",
+    "src/experiment.py": "06943e59d48ddb08f2ce2bf1f25327a692c9c0ab057067a9ba19dbb0f4b35e8e",
+    "src/models.py": "a6cf98254fffdd3e07b5ff7df2dbb123c5a5ed94a38c74814936db5f16d44b64",
+    "src/scores.py": "a1cdd0d45ee4c64d8a10b437dac016a31f29a63eb8d7b172a49fdf455862d9d8",
+    "src/prior_predictive_bayesian_dns.py": "72821cbd142ebf5c3cb0d0e8ed8cfcba8e6eb227ad4e2b06ad4c9e9e5c6e7718",
+    "src/prior_predictive_longrun_mean.py": "eb4b77f67b57d3d8c74c4f6220b859c5935509e80a2cce7f24025385aada6a8c"
+  }
+}

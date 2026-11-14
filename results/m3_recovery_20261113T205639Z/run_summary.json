@@ -1,0 +1,64 @@
+{
+  "status": "targeted_complete",
+  "scope": "targeted",
+  "n_origins": 8,
+  "forecast_records_new_variants": 64,
+  "variants": [
+    "A_original_multistart",
+    "B_wide_persistence",
+    "C_fixed_measurement",
+    "D_regularized_measurement"
+  ],
+  "fit_records": 32,
+  "elapsed_seconds": 182.25325179999345,
+  "accepted_baselines_unchanged": true,
+  "baseline_hashes_before": {
+    "forecasts.npz": "cbc990365f3161058597dc9c18ffceb996bfefa78bb984a4625b432f035d447a",
+    "maturity_by_origin.csv": "6f11bf9507de08c9f7ce93085bc436af5347e3ff7f6a3afdbcdd7be290b208f9",
+    "metadata.json": "95e43b5399b06c004c9b836a5590eaeb54b2d01908de45a8f80d7077667b7489",
+    "origin_audit.csv": "bab9abe176a5259a3950ef247cf395171130ccfd4e6fca161d857301ca446796",
+    "risk_scenarios.csv": "ce205a9affa41f5046138cf06243181162c33a9b82a14f53d7d352c770a0bda8",
+    "scores.csv": "8b85e341bb87b4751398a5f335e27921c02b8980838f3354ff5eaaa2aab51b3e",
+    "summary.csv": "3c621eb20d0ac8fba415eddc50c6c99a96566ef5b3e2e280192bbff5ecb82f0c",
+    "verification.json": "6bdf9b37ea9c27bc724f6b610a2dca738c293369326344702c329d95a5be930a"
+  },
+  "baseline_hashes_after": {
+    "forecasts.npz": "cbc990365f3161058597dc9c18ffceb996bfefa78bb984a4625b432f035d447a",
+    "maturity_by_origin.csv": "6f11bf9507de08c9f7ce93085bc436af5347e3ff7f6a3afdbcdd7be290b208f9",
+    "metadata.json": "95e43b5399b06c004c9b836a5590eaeb54b2d01908de45a8f80d7077667b7489",
+    "origin_audit.csv": "bab9abe176a5259a3950ef247cf395171130ccfd4e6fca161d857301ca446796",
+    "risk_scenarios.csv": "ce205a9affa41f5046138cf06243181162c33a9b82a14f53d7d352c770a0bda8",
+    "scores.csv": "8b85e341bb87b4751398a5f335e27921c02b8980838f3354ff5eaaa2aab51b3e",
+    "summary.csv": "3c621eb20d0ac8fba415eddc50c6c99a96566ef5b3e2e280192bbff5ecb82f0c",
+    "verification.json": "6bdf9b37ea9c27bc724f6b610a2dca738c293369326344702c329d95a5be930a"
+  },
+  "accepted_bayesian_analysis_unchanged": true,
+  "accepted_bayesian_analysis_hashes_before": {
+    "results\\bayesian_finite_20261027T194239Z\\protocol.md": "1f8146233e51b6f6b770e933d93ed8cdb1bf3fa96b580e5e520bf111fdad9095",
+    "results\\bayesian_finite_20261027T194239Z\\rolling_main\\analysis\\paired_summary.csv": "dbb7224e183c4e5a36fa1b865f55c7835a67fcadd3dfdbaad9677879c534c75d",
+    "results\\bayesian_finite_20261027T194239Z\\rolling_main\\analysis\\per_maturity.csv": "40743f05fc198c789e777a24e80aaf40cb77cf4dfb1d498dbb78a0791043333f",
+    "results\\bayesian_finite_20261027T194239Z\\rolling_main\\analysis\\summary.json": "618b96eb3b7980e135b58b067086c7a5f7b8cc050a801d24b8560c57497fe40a"
+  },
+  "accepted_bayesian_analysis_hashes_after": {
+    "results\\bayesian_finite_20261027T194239Z\\protocol.md": "1f8146233e51b6f6b770e933d93ed8cdb1bf3fa96b580e5e520bf111fdad9095",
+    "results\\bayesian_finite_20261027T194239Z\\rolling_main\\analysis\\paired_summary.csv": "dbb7224e183c4e5a36fa1b865f55c7835a67fcadd3dfdbaad9677879c534c75d",
+    "results\\bayesian_finite_20261027T194239Z\\rolling_main\\analysis\\per_maturity.csv": "40743f05fc198c789e777a24e80aaf40cb77cf4dfb1d498dbb78a0791043333f",
+    "results\\bayesian_finite_20261027T194239Z\\rolling_main\\analysis\\summary.json": "618b96eb3b7980e135b58b067086c7a5f7b8cc050a801d24b8560c57497fe40a"
+  },
+  "output_sha256": {
+    "experiment_config.json": "3516ae2342195219e24cd3dbbd027e04a24f223523b183b4f3bdced853493c66",
+    "fits.json": "8a67095393124d309e59dd381440f7142e29e8be12099db36e5b8ef5bf245173",
+    "forecasts.npz": "3e47c6e97bbe8a9b73ac5b66f11c4838b81be9dc2b90ab6b94527a8428bd975e",
+    "initial_measurement_covariance.json": "07d71bc7ad5db7f261d2423d090bf4f9ebba6935836a835dea28dc36a2ca9d2e",
+    "regularization_cv.json": "fce9df7cb718863f56e6a6e10759da9d1b0815eaea1a25c5f0b91ee21a65a6ac",
+    "run.log": "d6874259b3c81201002204e77735069072d73202f335c31df72983767257c1be",
+    "scores.csv": "c56f45041125582ab1dd014c38167c9f4f9b306440367e884f16b4150e08ab8f",
+    "summary.csv": "c0e9b24da50993311dd0322dbe6469b76f0c11f85285d05a156a6c892c5adc28"
+  },
+  "limitations": [
+    "Historical results retain the existing weekly 1- and 4-observation horizons.",
+    "Only targeted or explicitly selected rolling origins are evaluated.",
+    "Gaussian forecasts condition on fitted parameters; parameter uncertainty is not propagated.",
+    "Energy Score and risk scenarios use finite Monte Carlo samples."
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "status": "completed",
+  "training_period": [
+    "2000-01-01",
+    "2015-12-31"
+  ],
+  "training_observations": 835,
+  "transition_count": 834,
+  "factor_names": [
+    "level",
+    "slope",
+    "curvature"
+  ],
+  "maturities_years": [
+    0.25,
+    0.5,
+    1,
+    2,
+    5,
+    7,
+    10,
+    30
+  ],
+  "fixed_lambda_per_year": 0.5160377358490565,
+  "input_sha256": "0b2af5c3c7bb261973ea4ec04c151eedbf7cf1428f22d0e08eaae87a212bfd77",
+  "source_sha256": {
+    "data\\processed\\canada_weekly.csv": "0b2af5c3c7bb261973ea4ec04c151eedbf7cf1428f22d0e08eaae87a212bfd77",
+    "src\\bayesian_stage_a.py": "7c418152731c0516f7a205e726daa924660f49295718f4f86525011d4c4a8d2b",
+    "src\\bayesian_revised.py": "3bf5fd44aebf3212fca550cb6752323c74ff050a872a4ab4533fbfd29ea7aa5a",
+    "src\\bayesian_finite.py": "aad902cbff0a5ce54965f82c8e881dc8f91b5448dc3ae72c7c87f1847a5a6597",
+    "src\\bayesian_finite_runner.py": "84dfafac3d0cd15844019e54b64fc56a4c9035fa47c5ecb76eebcd7cb53a5211",
+    "src\\experiment.py": "06943e59d48ddb08f2ce2bf1f25327a692c9c0ab057067a9ba19dbb0f4b35e8e",
+    "src\\models.py": "a6cf98254fffdd3e07b5ff7df2dbb123c5a5ed94a38c74814936db5f16d44b64",
+    "docs\\bayesian_finite_prior.md": "66e8d69b0b38943b587d207d43528a5c1c0c8cbc228fefd24d1a3da896fa4186",
+    "references.bib": "82bc9902a35948a57e8ed0bf77c4506be1f24d7fc5680da74755b6b28a935c35",
+    "src\\audit_bayesian_priors.py": "605d657c36e13a328f32f8d08868544dc1495da8dd032d58135ddf43e2589556"
+  },
+  "posterior_comparison": {
+    "forecast": "results\\bayesian_finite_20261027T194239Z\\rolling_main\\origins\\2025-11-28\\forecast.json",
+    "forecast_sha256": "9471adbb8da919a8d927f53126e13090e881861d9d109a68fa0c4cb5eaf2c72c",
+    "chain_source": "results\\bayesian_finite_20261027T194239Z\\fix1_late_seed9102701",
+    "summary_sha256": "3c7d1d594b170117ee5916979ecef117038c4e085d17490deacc71b6cb62f08a",
+    "validation_sha256": "910c723800353d76d16383dd1be85d4fe5fd1c46bc64979398e74bc39878605d",
+    "accepted": true,
+    "posterior_draws_per_factor": 24000,
+    "chain_sha256": {
+      "M5_level_chain0.npz": "85fb66fa7611db2ee61a6355ddf52288c53dcb84343a38c3fa8af6e581ff1c40",
+      "M5_level_chain1.npz": "45dda1803761565db387cde6c517c182f6f7032c5db159133081f64dae4dc388",
+      "M5_level_chain2.npz": "bb8b26788556332b86f80236d474ca37361680dab9cd66f7021c487f0a07d361",
+      "M5_level_chain3.npz": "6c851ced05e9fc84de8cf73db49189a6edd32b932e4bc505c929af180989d958",
+      "M5_slope_chain0.npz": "a6e0c3850e5e07b4b30b206ae8c9db208a4374649bff178206fba516f1e40b98",
+      "M5_slope_chain1.npz": "fba057f700b4227e77ac30ee1137f99d147e0c3275978fbb387757d240bc2182",
+      "M5_slope_chain2.npz": "34aaa6af03981e687f98227b7daa72d94e9ab098daf0a6e7100fd9514e939f8b",
+      "M5_slope_chain3.npz": "7a2b5238f5cb95f412cabc584131b49d1c810b55444cac81a68999fc2bf7fd98",
+      "M5_curvature_chain0.npz": "41b7e0e04ab15f1483d0435fa90ea355c70771500965bdd6b17f6f7fb4dcb069",
+      "M5_curvature_chain1.npz": "1a1749243dc1cf9801eeee4442315d79dde039d43906eab012964f1c4fd1bec7",
+      "M5_curvature_chain2.npz": "2fd78111aeb473e3066b03a89235050683ad963fcb36c9458a3767f33cd2ff3e",
+      "M5_curvature_chain3.npz": "adf64c8fa9b9f804a63b1a46672ef089fa569e9e0213f4c7126cfeb029d36791"
+    }
+  },
+  "inference_caveat": "OLS/HAC intervals are descriptive under near-unit-root persistence; the auxiliary OLS estimate is not forced into the Bayesian stationary support."
+}
