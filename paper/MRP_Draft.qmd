@@ -149,29 +149,47 @@ Public holidays can change the weekday and elapsed calendar time between observa
 
 ## Nelson–Siegel observation equation
 
-Let $Y_t$ be the eight-dimensional yield vector and $f_t=(L_t,S_t,C_t)'$ the factors. For maturity $\tau$ in years define
+The Nelson–Siegel yield representation describes the zero-coupon yield $y_t(\tau)$ observed at time $t$ for maturity $\tau$ in years using three time-varying factors [@diebold2006forecasting]:
+
+$$
+\begin{aligned}
+y_t(\tau)={}&L_t
++S_t\left(\frac{1-e^{-\lambda\tau}}{\lambda\tau}\right)\\
+&+C_t\left(\frac{1-e^{-\lambda\tau}}{\lambda\tau}-e^{-\lambda\tau}\right).
+\end{aligned}
+$$
+
+The level factor $L_t$ loads equally across maturities; the slope loading declines from the short end toward zero at long maturities; and the curvature loading peaks at intermediate maturities. Thus, the factor labels describe loading shapes, not formal economic identification. The decay parameter $\lambda>0$ controls the slope and curvature loading profiles.
+
+The empirical specification adds a maturity-specific reconstruction error:
+
+$$
+y_t(\tau)=L_t+S_t s(\tau;\lambda)+C_t c(\tau;\lambda)+\varepsilon_t(\tau).
+$$
+
+Define the slope and curvature loadings as
 
 $$
 s(\tau;\lambda)=\frac{1-e^{-\lambda\tau}}{\lambda\tau},
 \qquad c(\tau;\lambda)=s(\tau;\lambda)-e^{-\lambda\tau}.
 $$ {#eq-loadings}
 
-The row of the loading matrix at $\tau$ is $(1,s,c)$. Level loads equally at all maturities, slope declines toward zero at longer maturities, and curvature has a hump-shaped loading. The observation equation is
+Let $Y_t$ be the eight-dimensional yield vector, $f_t=(L_t,S_t,C_t)'$, and $\Lambda(\lambda)$ the loading matrix. The matrix observation equation is
 
 $$
 Y_t=\Lambda(\lambda)f_t+\varepsilon_t,
 \qquad \varepsilon_t\sim N(0,R_t).
 $$ {#eq-observation}
 
-The decay rate has units of inverse years; it is not a monthly autoregressive parameter. A grid search over 160 values from 0.05 through 2.0 inverse years minimizes initial-window cross-sectional squared error. The selected value, 0.516038 inverse years, is fixed throughout the forecast exercise.
+For maturity $\tau$, a row of $\Lambda(\lambda)$ is $(1,s(\tau;\lambda),c(\tau;\lambda))$. The decay parameter is in inverse years; a 160-value grid from 0.05 to 2.0 minimizes initial-training-window cross-sectional squared error, selecting $\lambda=0.516038$ for the full forecast exercise.
 
-At each date the two-step factor estimator is
+At each date, the two-step procedure extracts the factors by cross-sectional least squares:
 
 $$
 \widehat f_t=(\Lambda'\Lambda)^{-1}\Lambda'Y_t.
 $$ {#eq-extraction}
 
-The factor estimator is obtained by least squares rather than by explicitly forming the inverse. The maturity-specific diagonal of $R_t$ is the origin-specific mean squared reconstruction error, floored at $10^{-6}$ squared percentage points. This parsimonious reconstruction-error model is shared across specifications; it does not imply that actual residual errors are independent.
+The estimator is computed by least squares without explicitly forming the inverse. The diagonal elements of $R_t$ are maturity-specific mean squared reconstruction errors at each forecast origin, floored at $10^{-6}$ squared percentage points. This common diagonal covariance does not assert independent residual errors. Extracted factors are observed inputs to second-stage dynamics: M2 uses conventional autoregressions, M3 Bayesian constant volatility, and M4 Bayesian stochastic volatility. M3 and M4 change factor dynamics and innovation volatility, not the Nelson–Siegel loadings.
 
 ## Conventional two-step DNS
 
@@ -251,7 +269,7 @@ $$
 \qquad E[\phi_j]=2\frac{20}{21.5}-1\approx0.86.
 $$ {#eq-volatility-persistence-prior}
 
-This transformation restricts $\phi_j$ to $(-1,1)$. A canonical likelihood-based analysis of stochastic volatility in financial returns [@kim1998stochastic] motivates a prior allowing persistent latent log variance. This is general SV precedent, not evidence about Canadian yield factors or validation of the specific Beta hyperparameters used here.
+Following @kim1998stochastic, we use the transformed Beta(20, 1.5) prior for log-volatility persistence. Kim et al. adopt these hyperparameters to favor persistent but stationary volatility dynamics and address identification concerns near unit persistence. Although this provides an established statistical basis for the choice, its suitability for weekly Canadian DNS factors is assessed through the posterior estimates rather than assumed from the original application.
 
 To retain the same interpretation of $m_j$ as in M3, let $v_j$ be the stationary variance of log volatility and set
 
@@ -272,7 +290,9 @@ p_U(v_j)=\frac{e^{-v_j}}{1-e^{-U}}\,1_{(0,U)}(v_j),
 \qquad U=4.
 $$ {#eq-finite-prior}
 
-The bound keeps stationary log-volatility variance below four (standard deviation below two), but does not bound realized volatility. The truncated exponential prior favors smaller $v_j$; without truncation, 1.83% of its mass would exceed four. Initial-window log-squared OLS residual variances (4.87, 5.67 and 5.91, versus approximately 4.935 for the $\log(\chi_1^2)$ noise) are only a rough scale check, not fitted volatility estimates or evidence that $U=4$ is optimal. The bound is a modeling choice; alternative bounds were not evaluated under the revised coefficient and variance priors.
+The rate-one truncated prior favors smaller $v_j$; without truncation, 1.83% of its mass lies above four. A finite bound supports finite-horizon predictive moments, but does not bound realized volatility or yield changes. Since $\sigma_{j,t}=\exp(h_{j,t}/2)$, $\operatorname{SD}(\log\sigma_{j,t})=\sqrt{v_j}/2$; at $v_j=4$, the central 95% stationary range is 0.141–7.10 times its conditional median. This describes the boundary, not a typical range.
+
+Following @gelman2017prior, we assess the prior through its implications for training-sample yield changes. With $U=4$, the prior-predictive median, 95th and 99th percentiles of eight-maturity RMS movement are 0.168, 0.423 and 0.628 percentage points at one week, and 0.357, 1.063 and 1.533 at four weeks. Increasing $U$ to eight changes the four-week 99th percentile by less than 0.2%; however, the prior remains broad, with 46% of four-week draws exceeding the training 95th-percentile movement. Training-only auxiliary estimates of $v_j$ are 0, 0.65 and 0.95 for level, slope and curvature. They are noisy scale checks, not fitted volatility estimates or an upper confidence bound, and neither they nor the prior-predictive comparison establish an optimal value of $U$.
 
 The bounded $v_j$ prior and proper coefficient priors imply finite posterior-predictive moments at every finite horizon; the appendix gives the argument. This establishes existence of the covariance used in DSS, not realistic uncertainty or calibration. Nor does it imply finite unconditional stationary factor variance when mixing over coefficients arbitrarily close to a unit root.
 
@@ -378,6 +398,8 @@ To show how the data update the stochastic-volatility parameters, @tbl-posterior
 
 The truncated persistence-prior medians are 0.979, 0.978 and 0.968 for level, slope and curvature, respectively; the posterior medians are higher and their intervals narrower. The corresponding long-run-mean prior centers are 4.330, −2.175 and −1.110, compared with posterior medians of 2.724, −0.113 and −1.645. The slope mean remains uncertain, consistent with persistence close to one. The prior medians (5th–95th percentiles) are 0.886 [0.649, 0.983] for $\phi_j$ and 0.675 [0.050, 2.697] for $v_j$. Posterior $v_j$ is more concentrated than its prior for each factor, while posterior $\phi_j$ remains in the persistent range favored by its prior. The posterior $m_j$ medians remain near their training-calibrated centers. These comparisons show parameter-specific updating alongside prior regularization, not proof that every estimate is insensitive to the prior.
 
+Across all 130 accepted M5 fits, the largest factor-specific posterior 99th percentile of $v_j$ is 2.87 (curvature); the largest posterior probability above 3.5 is 0.24%. Four curvature fits assign more than 5% probability to $v_j>2$, but none assigns more than 0.8% to $v_j>3$. The largest individual draw is 3.99999, as the truncated support permits draws arbitrarily near four. These results do not indicate sustained posterior concentration near the bound, but a model restricted to $v_j<4$ cannot show what posterior mass or forecasts would arise above four.
+
 ## Primary four-week comparison
 
 {{< include generated/revised_prior/presentation_joint_h4.md >}}
@@ -436,7 +458,7 @@ Limited short-horizon predictability is one possible explanation, but it is not 
 
 ## Model and prior limitations
 
-Extracted factors are treated as observations, so factor-extraction and fixed-$\lambda$ uncertainty are omitted. Independent factor innovations and diagonal reconstruction noise also restrict cross-maturity dependence. The finite-moment prior is substantive: matching $m$ aligns long-run expected innovation variance, not higher moments. The empirical-Bayes calibration uses training data also present in the likelihood. Sensitivity to alternative volatility bounds and to the revised coefficient and log-variance priors remains unassessed.
+Extracted factors are treated as observations, so factor-extraction and fixed-$\lambda$ uncertainty are omitted. Independent factor innovations and diagonal reconstruction noise also restrict cross-maturity dependence. The finite-moment prior is substantive: matching $m$ aligns long-run expected innovation variance, not higher moments. The empirical-Bayes calibration uses training data also present in the likelihood. Training-only prior-predictive and saved-posterior diagnostics suggest that $U=4$ is not obviously binding, but do not establish forecasting-score robustness to alternative bounds or posterior behavior above four.
 
 Finite-horizon predictive moments do not establish finite unconditional stationary factor variance when the coefficient prior allows $|b|$ arbitrarily close to one. The single synthetic recovery exercise is a computational diagnostic, not repeated-sampling evidence. Convergence diagnostics assess sampling behavior, not model truth.
 
