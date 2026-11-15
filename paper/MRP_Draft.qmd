@@ -193,7 +193,7 @@ The yield covariance is $\Lambda\operatorname{diag}(V^{\mathrm{fc}}_h)\Lambda'+R
 
 ## Bayesian constant-volatility DNS
 
-M3 is the primary control. It retains the factor AR(1) mean equation a>nd assumes a constant innovation variance $\exp(m_j)$. The intercept $a_j$ determines the drift, while $b_j$ controls persistence. For $|b_j|<1$, their implied long-run factor mean is $\mu_j=a_j/(1-b_j)$. We specify independent priors on this mean and persistence and derive the intercept:
+M3 is the primary control. It retains the factor AR(1) mean equation and assumes a constant innovation variance $\exp(m_j)$. The intercept $a_j$ determines the drift, while $b_j$ controls persistence. For $|b_j|<1$, their implied long-run factor mean is $\mu_j=a_j/(1-b_j)$. We specify independent priors on this mean and persistence and derive the intercept:
 
 $$
 \mu_j\sim N\!\left(\bar f_{j,\mathrm{train}},(2s_{j,\mathrm{train}})^2\right),
@@ -204,6 +204,10 @@ $$ {#eq-coefficient-prior}
 Here $\bar f_{j,\mathrm{train}}$ and $s_{j,\mathrm{train}}$ are the mean and sample standard deviation of the initial extracted factors, and $\hat b_{j,\mathrm{OLS}}$ is the auxiliary initial-sample AR(1) slope. For level, slope and curvature, the respective training means are 4.329855, −2.174505 and −1.109836; the standard deviations are 1.055927, 1.406094 and 1.824830; and the OLS persistence centers are 0.997223, 0.995512 and 0.976815. The long-run mean prior is broad on the observed factor scale, with a standard deviation of twice the training standard deviation. The persistence prior reflects the highly persistent initial estimates while the truncation enforces stationarity for each draw. These training-calibrated choices are held fixed across expanding windows and used in both Bayesian models; they are not selected using evaluation-period scores.
 
 The direct prior gives the long-run mean finite moments even when persistence is close to one. In contrast, an independent broad intercept prior combined with persistence support arbitrarily close to one would give $a_j/(1-b_j)$ heavy tails. The induced intercept and persistence are dependent under the present specification.
+
+With SD 0.03, central 90% prior intervals are 0.939–0.998 (level), 0.938–0.998 (slope) and 0.924–0.996 (curvature). In 100,000 training-only draws, the implied mean lies outside the observed range in 33.9% of level draws, 32.1–32.3% of slope draws and 23.4–23.9% of curvature draws, compared with 88.9%, 83.8% and 71.9% under the original priors. Because the direct-mean parameterization also changed, these figures support the joint revision, not SD 0.03 in isolation.
+
+We introduced these priors after evaluating the original specification, but selected values using initial-sample diagnostics and prior-predictive checks, not 2016–2025 scores. Results assess the revised specification.
 
 The constant innovation variance has the prior
 
@@ -224,7 +228,7 @@ and set
 $$
 \mu_{0j}=\log\!\left(\frac{1}{834}\sum_{t=2}^{835}\hat e_{j,t}^{\,2}\right).
 $$
-For level, slope and curvature, respectively, the resulting centers are $-4.888703$, $-4.122200$ and $-1.969807$. Their exponentials are innovation-variance scales of $0.007531$, $0.016209$ and $0.139484$ squared percentage points. The same centers are held fixed across expanding windows and used in both Bayesian specifications. The log-scale prior standard deviation of one allows substantial uncertainty while keeping prior-predictive yield changes closer to the observed training scale than a much more diffuse alternative. Because the initial observations calibrate the priors and also enter the likelihood, this is an empirical-Bayes choice rather than independent prior elicitation. Posterior-predictive simulation averages over parameter draws, propagates future factor innovations and adds the common reconstruction error, incorporating second-stage parameter uncertainty omitted by classical M2.
+For level, slope and curvature, respectively, the resulting centers are $-4.888703$, $-4.122200$ and $-1.969807$, corresponding to innovation-variance medians of $0.007531$, $0.016209$ and $0.139484$ squared percentage points. These centers are fixed across windows. With log-scale SD one, the prior median of $\exp(m_j)$ remains $\exp(\mu_{0j})$ and its mean is $\exp(\mu_{0j}+1/2)$: 0.0124, 0.0267 and 0.2300. A 90% interval spans 0.19–5.18 times the median. Under the former SD of five, the prior means would be about 2,021, 4,349 and 37,429; thus SD one lowers them by $\exp(12)\approx162{,}755$. In 100,000 training-only draws from the revised joint specification, median curve-change RMS is 0.167–0.174 percentage points at one week and 0.357–0.365 at four weeks, close to training 95th-percentile thresholds 0.1845 and 0.3849. Under the original prior, medians were 4.63–4.70 and 10.32–10.44, with over 99.9% above those thresholds. These simulations change several prior components jointly; the lognormal mean comparison isolates the effect of the $m_j$ scale. Since training data set the hyperparameters and enter the likelihood, this is empirical Bayes, not independent prior elicitation. Posterior simulation also propagates factor innovations and adds the common reconstruction error, incorporating second-stage parameter uncertainty omitted by classical M2.
 
 ## Bayesian DNS with stochastic factor volatility
 
@@ -247,7 +251,7 @@ $$
 \qquad E[\phi_j]=2\frac{20}{21.5}-1\approx0.86.
 $$ {#eq-volatility-persistence-prior}
 
-This transformation restricts $\phi_j$ to $(-1,1)$, and the prior favors persistent log volatility, a common feature of financial volatility processes. The particular Beta hyperparameters remain modeling choices.
+This transformation restricts $\phi_j$ to $(-1,1)$. A canonical likelihood-based analysis of stochastic volatility in financial returns [@kim1998stochastic] motivates a prior allowing persistent latent log variance. This is general SV precedent, not evidence about Canadian yield factors or validation of the specific Beta hyperparameters used here.
 
 To retain the same interpretation of $m_j$ as in M3, let $v_j$ be the stationary variance of log volatility and set
 
