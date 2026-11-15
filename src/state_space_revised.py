@@ -50,18 +50,56 @@ def prepare_design(dates, y, config):
     selected = select_origins(dates, date.fromisoformat(config['oos_start']),
                               date.fromisoformat(config['oos_end']), config['horizons_weeks'],
                               config['origin_stride_observations'])
+    load = ns_loadings(np.array(config['maturities_years']), lam)
+    measurement_variance = calibrate_measurement_covariance(
+        y[initial], load, config.get('variance_floor_percent_squared', 1e-6))
     return {'lambda_per_year': lam, 'initial_sse': sse, 'initial_indices': initial,
             'initial_training_n': len(initial), 'first_training_index': first,
             'selected': selected, 'origin_indices': sorted({t for t, _, _ in selected}),
-            'load': ns_loadings(np.array(config['maturities_years']), lam)}
+            'load': load, 'initial_measurement_variance': measurement_variance,
+            'initial_training_end_index': initial[-1]}
 
 
-def parameter_bounds(dimension):
-    """Preserve legacy restrictions, explicitly: mu/u/log(Q)/log(R)."""
-    return np.array([(-20., 30.)]*3 + [(-3., 3.)]*3 + [(-15., 5.)]*(3+dimension))
+def parameter_bounds(dimension, persistence_bound=3., measurement_mode='estimated'):
+    """Bounds in mu/u/log(Q)/log(R) order; fixed-R models omit log(R)."""
+    if measurement_mode not in {'estimated', 'fixed', 'regularized'}:
+        raise ValueError(f'unknown measurement covariance mode: {measurement_mode}')
+    if not np.isfinite(persistence_bound) or persistence_bound <= 0:
+        raise ValueError('persistence_bound must be finite and positive')
+    return np.array([(-20., 30.)]*3 + [(-persistence_bound, persistence_bound)]*3
+                    + [(-15., 5.)]*(3 + (dimension if measurement_mode != 'fixed' else 0)))
 
 
-def starting_values(y, load, n_starts=3, warm_start=None):
+def parameter_count(dimension, measurement_mode='estimated'):
+    if measurement_mode not in {'estimated', 'fixed', 'regularized'}:
+        raise ValueError(f'unknown measurement covariance mode: {measurement_mode}')
+    return 9 if measurement_mode == 'fixed' else 9 + dimension
+
+
+def calibrate_measurement_covariance(y, load, floor=1e-6):
+    """Training-only diagonal R calibration from cross-sectional DNS residuals."""
+    y = np.asarray(y, dtype=float); load = np.asarray(load, dtype=float)
+    if y.ndim != 2 or load.shape != (y.shape[1], 3) or len(y) < 2:
+        raise ValueError('expected at least two T by D yields and a D by 3 loading matrix')
+    if not np.isfinite(y).all() or not np.isfinite(load).all():
+        raise ValueError('calibration inputs must be finite')
+    if not np.isfinite(floor) or floor <= 0:
+        raise ValueError('measurement variance floor must be finite and positive')
+    factors = np.linalg.lstsq(load, y.T, rcond=None)[0].T
+    residual = y - factors @ load.T
+    variance = np.mean(residual**2, axis=0)
+    if not np.isfinite(variance).all():
+        raise ValueError('non-finite training measurement covariance calibration')
+    return np.maximum(variance, floor)
+
+
+def _stationary_variances(u, q):
+    """Compute q/(1-tanh(u)^2) without subtractive cancellation."""
+    return q * np.cosh(u)**2
+
+
+def starting_values(y, load, n_starts=3, warm_start=None, persistence_bound=3.,
+                    measurement_mode='estimated', fixed_measurement=None):
     factors = np.linalg.lstsq(load, y.T, rcond=None)[0].T
     mu = factors.mean(axis=0); rho = np.empty(3); q = np.empty(3)
     for j in range(3):
@@ -71,8 +109,16 @@ def starting_values(y, load, n_starts=3, warm_start=None):
         intercept = np.mean(target-rho[j]*lag)
         q[j] = max(np.mean((target-intercept-rho[j]*lag)**2), 1e-4)
     r = np.maximum(np.mean((y-factors@load.T)**2, axis=0), 1e-6)
-    base = np.r_[mu, np.arctanh(rho), np.log(q), np.log(r)]
-    bounds = parameter_bounds(y.shape[1])
+    base = np.r_[mu, np.arctanh(rho), np.log(q)]
+    if measurement_mode == 'fixed':
+        if fixed_measurement is None:
+            raise ValueError('fixed measurement mode requires fixed_measurement')
+        fixed_measurement = np.asarray(fixed_measurement, dtype=float)
+        if fixed_measurement.shape != (y.shape[1],) or not np.isfinite(fixed_measurement).all() or np.any(fixed_measurement <= 0):
+            raise ValueError('fixed_measurement must be a positive finite variance per maturity')
+    else:
+        base = np.r_[base, np.log(r)]
+    bounds = parameter_bounds(y.shape[1], persistence_bound, measurement_mode)
     starts = [base]
     for k in range(1, n_starts):
         candidate = base.copy()
@@ -81,13 +127,19 @@ def starting_values(y, load, n_starts=3, warm_start=None):
         elif k % 2:
             candidate[3:6] *= .65
             candidate[6:9] += np.log(2.)
-            candidate[9:] += np.log(.5)
+            if measurement_mode != 'fixed':
+                candidate[9:] += np.log(.5)
         else:
             candidate[:3] += np.array([.4, -.3, .5])
             candidate[3:6] *= 1.2
             candidate[6:9] += np.log(.5)
-            candidate[9:] += np.log(2.)
+            if measurement_mode != 'fixed':
+                candidate[9:] += np.log(2.)
+        if candidate.shape != base.shape:
+            raise ValueError('warm_start parameter dimension does not match model specification')
         starts.append(candidate)
+    # Clipping applies only to initial points; all optimizer solutions remain
+    # explicitly subject to the same declared box constraints.
     return [np.clip(p, bounds[:, 0], bounds[:, 1]) for p in starts]
 
 
@@ -99,55 +151,225 @@ def projected_gradient(params, gradient, bounds):
     return projected
 
 
-def fit_mle(y, load, n_starts=3, maxiter=1000, warm_start=None):
-    """Multistart constrained MLE; convergence is assessed separately from exit flags."""
+def fit_mle(y, load, n_starts=3, maxiter=1000, warm_start=None, *,
+            persistence_bound=3., measurement_mode='estimated', fixed_measurement=None,
+            penalty_strength=0., measurement_target=None, restart_count=0,
+            restart_seed=271026, ftol=1e-14, gtol=2e-7):
+    """Optimize original starts, then deterministic local restarts if requested.
+
+    The three original starts are always optimized and retained. ``accepted``
+    preserves the original all-start, 0.02 raw-NLL-spread diagnostic;
+    ``revised_accepted`` separately assesses the best refined solution.
+    """
     y = np.ascontiguousarray(y, dtype=float); load = np.ascontiguousarray(load, dtype=float)
-    bounds = parameter_bounds(y.shape[1]); diagnostics = []; candidates = []
-    starts = starting_values(y, load, n_starts, warm_start)
-    def objective(p):
-        value, gradient = likelihood_gradient(y, load, p)
-        return value/len(y), gradient/len(y)
-    # Exclude first compilation from individual optimizer timings, report at run level.
-    objective(starts[0])
-    for k, start in enumerate(starts):
-        before = time.perf_counter(); initial_nll = filter_state(y, load, start)[0]
-        result = minimize(objective, start, method='L-BFGS-B', jac=True, bounds=bounds,
-                          options={'maxiter': maxiter, 'ftol': 1e-14, 'gtol': 2e-7,
-                                   'maxls': 40, 'maxcor': 20})
-        value, gradient = likelihood_gradient(y, load, result.x)
-        projected = projected_gradient(result.x, gradient, bounds)
-        pg = float(np.max(abs(projected))/len(y))
-        active = np.flatnonzero((result.x <= bounds[:, 0]+1e-6) | (result.x >= bounds[:, 1]-1e-6))
-        diagnostic = {'start_id': k, 'initial_nll': float(initial_nll), 'nll': float(value),
-                      'success': bool(result.success), 'message': str(result.message),
-                      'iterations': int(result.nit), 'evaluations': int(result.nfev),
-                      'elapsed_s': time.perf_counter()-before, 'projected_gradient_per_observation': pg,
-                      'raw_gradient_inf': float(np.max(abs(gradient))),
-                      'active_bound_indices': active.tolist(), 'gradient': gradient.tolist(),
-                      'params': result.x.tolist(), 'initial_params': start.tolist()}
-        diagnostics.append(diagnostic); candidates.append(result.x)
-    best = int(np.argmin([d['nll'] for d in diagnostics])); chosen = diagnostics[best]
-    spread = float(np.ptp([d['nll'] for d in diagnostics]))
-    accepted = all(d['projected_gradient_per_observation'] < 1e-5 and np.isfinite(d['nll'])
-                   for d in diagnostics) and spread < .02
-    return {'params': candidates[best], 'nll': chosen['nll'], 'diagnostics': diagnostics,
-            'selected_start': best, 'start_nll_spread': spread, 'accepted': bool(accepted),
-            'projected_gradient_per_observation': chosen['projected_gradient_per_observation']}
+    if y.ndim != 2 or load.shape != (y.shape[1], 3) or len(y) == 0:
+        raise ValueError('expected nonempty T by D yields and a D by 3 loading matrix')
+    if n_starts < 1 or restart_count < 0 or maxiter < 1:
+        raise ValueError('n_starts/maxiter must be positive and restart_count nonnegative')
+    if not np.isfinite(penalty_strength) or penalty_strength < 0:
+        raise ValueError('penalty_strength must be finite and nonnegative')
+    if measurement_mode == 'regularized':
+        if measurement_target is None or penalty_strength <= 0:
+            raise ValueError('regularized mode requires measurement_target and positive penalty_strength')
+        measurement_target = np.asarray(measurement_target, dtype=float)
+        if measurement_target.shape != (y.shape[1],) or not np.isfinite(measurement_target).all():
+            raise ValueError('measurement_target must be finite log variances per maturity')
+    elif penalty_strength != 0:
+        raise ValueError('a measurement penalty is only valid in regularized mode')
+    bounds = parameter_bounds(y.shape[1], persistence_bound, measurement_mode)
+    starts = starting_values(y, load, n_starts, warm_start, persistence_bound,
+                             measurement_mode, fixed_measurement)
+    fixed_r = np.asarray(fixed_measurement, dtype=float) if fixed_measurement is not None else None
+    rng = np.random.default_rng(restart_seed)
+
+    def terms(p):
+        raw_nll, raw_gradient = likelihood_gradient(
+            y, load, p, measurement_mode, fixed_r)
+        objective_nll = float(raw_nll)
+        objective_gradient = raw_gradient.copy()
+        if penalty_strength:
+            difference = p[9:] - measurement_target
+            objective_nll += .5 * penalty_strength * float(difference @ difference)
+            objective_gradient[9:] += penalty_strength * difference
+        return float(raw_nll), objective_nll, raw_gradient, objective_gradient
+
+    def optimizer_objective(p):
+        _, objective_nll, _, objective_gradient = terms(p)
+        return objective_nll/len(y), objective_gradient/len(y)
+
+    def valid_solution(p, objective_nll):
+        if not np.isfinite(objective_nll) or not np.isfinite(p).all():
+            return False
+        if np.any(p < bounds[:, 0]-1e-10) or np.any(p > bounds[:, 1]+1e-10):
+            return False
+        try:
+            raw_nll, state, covariance = filter_state(
+                y, load, p, measurement_mode, fixed_r)
+            return bool(np.isfinite(raw_nll) and np.isfinite(state).all()
+                        and np.isfinite(covariance).all()
+                        and np.linalg.eigvalsh(covariance).min() >= -1e-9)
+        except (FloatingPointError, ValueError, np.linalg.LinAlgError):
+            return False
+
+    attempts = []
+    def optimize(start, *, start_id, is_restart, restart_id=None,
+                 restart_center_start_id=None, restart_strategy=None, attempt_seed=None):
+        start = np.asarray(start, dtype=float)
+        initial_raw = float(filter_state(y, load, start, measurement_mode, fixed_r)[0])
+        initial_objective = terms(start)[1]
+        before = time.perf_counter()
+        result = minimize(
+            optimizer_objective,
+            start, method='L-BFGS-B', jac=True, bounds=bounds,
+            options={'maxiter': maxiter, 'ftol': ftol, 'gtol': gtol,
+                     'maxls': 40, 'maxcor': 20})
+        raw_nll, objective_nll, raw_gradient, objective_gradient = terms(result.x)
+        pg = float(np.max(np.abs(projected_gradient(
+            result.x, objective_gradient, bounds)))/len(y))
+        active = np.flatnonzero(
+            (result.x <= bounds[:, 0]+1e-6) | (result.x >= bounds[:, 1]-1e-6))
+        diagnostic = {
+            'start_id': int(start_id), 'is_restart': bool(is_restart),
+            'restart_id': restart_id, 'restart_seed': attempt_seed,
+            'restart_master_seed': restart_seed if is_restart else None,
+            'restart_center_start_id': restart_center_start_id,
+            'perturbation_strategy': restart_strategy,
+            'initial_params': start.tolist(), 'params': result.x.tolist(),
+            'initial_nll': initial_raw, 'nll': raw_nll,
+            'initial_objective': initial_objective, 'objective': objective_nll,
+            'raw_log_likelihood': -raw_nll, 'penalty': objective_nll-raw_nll,
+            'success': bool(result.success), 'status': int(result.status),
+            'message': str(result.message), 'iterations': int(result.nit),
+            'evaluations': int(result.nfev), 'elapsed_s': time.perf_counter()-before,
+            'projected_gradient_per_observation': pg,
+            'raw_gradient_inf': float(np.max(np.abs(raw_gradient))),
+            'objective_gradient_inf': float(np.max(np.abs(objective_gradient))),
+            'active_bound_indices': active.tolist(),
+            'distance_to_nearest_bound': np.minimum(
+                result.x-bounds[:, 0], bounds[:, 1]-result.x).tolist(),
+            'numerically_valid': valid_solution(result.x, objective_nll),
+            'gradient': objective_gradient.tolist(),
+        }
+        attempts.append(diagnostic)
+        return diagnostic
+
+    # Compile before recording per-start optimizer time.
+    terms(starts[0])
+    original = [optimize(start, start_id=k, is_restart=False)
+                for k, start in enumerate(starts)]
+    original_valid = [d for d in original if d['numerically_valid']]
+    if not original_valid:
+        raise RuntimeError('all original M3 starts produced invalid likelihood solutions')
+
+    def distinct_centers(diagnostics):
+        ordered = sorted((d for d in diagnostics if d['numerically_valid']),
+                         key=lambda item: item['objective'])
+        centers = []
+        scale = bounds[:, 1]-bounds[:, 0]
+        for item in ordered:
+            p = np.asarray(item['params'])
+            if not any(np.max(np.abs(p-np.asarray(center['params']))/scale) <= 1e-3
+                       for center in centers):
+                centers.append(item)
+        return centers
+
+    initial_centers = distinct_centers(original)
+    for restart_id in range(restart_count):
+        centers = initial_centers[:3]
+        center = centers[restart_id % len(centers)]
+        center_start = np.asarray(center['params'])
+        step = np.ones(len(center_start))
+        step[:3] = .15; step[3:6] = .10; step[6:9] = .30
+        if measurement_mode != 'fixed':
+            step[9:] = .30
+        perturbation_seed = int(rng.integers(0, 2**32-1))
+        local_rng = np.random.default_rng(perturbation_seed)
+        restart = np.clip(center_start + local_rng.normal(size=len(step))*step,
+                          bounds[:, 0], bounds[:, 1])
+        optimize(restart, start_id=int(center['start_id']), is_restart=True,
+                 restart_id=restart_id, restart_center_start_id=int(center['start_id']),
+                 restart_strategy='normal_perturbation_round_robin_original_basins',
+                 attempt_seed=perturbation_seed)
+
+    for basin_id, center in enumerate(distinct_centers(attempts)):
+        center_params = np.asarray(center['params'])
+        scale = bounds[:, 1]-bounds[:, 0]
+        for item in attempts:
+            p = np.asarray(item['params'])
+            if np.max(np.abs(p-center_params)/scale) <= 1e-3:
+                item['basin_id'] = basin_id
+                item['objective_gap_to_best'] = None
+                item['raw_nll_gap_to_best'] = None
+
+    valid = [d for d in attempts if d['numerically_valid']]
+    chosen = min(valid, key=lambda item: (item['objective'], item['nll']))
+    best_objective = chosen['objective']; best_nll = chosen['nll']
+    for item in attempts:
+        item['objective_gap_to_best'] = (
+            float(item['objective']-best_objective) if item['numerically_valid'] else None)
+        item['raw_nll_gap_to_best'] = (
+            float(item['nll']-best_nll) if item['numerically_valid'] else None)
+
+    original_nlls = [d['nll'] for d in original if np.isfinite(d['nll'])]
+    original_objectives = [d['objective'] for d in original if np.isfinite(d['objective'])]
+    original_nll_spread = float(np.ptp(original_nlls))
+    original_objective_spread = float(np.ptp(original_objectives))
+    legacy_diagnostic_applicable = (
+        measurement_mode == 'estimated' and penalty_strength == 0.)
+    original_acceptance = (
+        len(original_valid) == len(original)
+        and all(d['projected_gradient_per_observation'] < 1e-5 for d in original)
+        and original_nll_spread < .02)
+    original_basin_count = len(distinct_centers(original))
+    chosen_basin_replicates = sum(
+        d.get('basin_id') == chosen.get('basin_id') for d in attempts)
+    revised_accepted = bool(
+        chosen['numerically_valid']
+        and chosen['projected_gradient_per_observation'] < 1e-5
+        and chosen_basin_replicates >= 2)
+    return {
+        'params': np.asarray(chosen['params']), 'nll': chosen['nll'],
+        'objective': chosen['objective'], 'raw_log_likelihood': chosen['raw_log_likelihood'],
+        'diagnostics': attempts, 'original_diagnostics': original,
+        'restart_diagnostics': attempts[len(original):],
+        'selected_start': int(chosen['start_id']),
+        'selected_restart_id': chosen['restart_id'],
+        'selected_basin_id': chosen.get('basin_id'),
+        'start_nll_spread': original_nll_spread,
+        'original_start_nll_spread': original_nll_spread,
+        'original_start_objective_spread': original_objective_spread,
+        'original_acceptance': bool(original_acceptance),
+        'legacy_original_acceptance_applicable': legacy_diagnostic_applicable,
+        'accepted': bool(original_acceptance) if legacy_diagnostic_applicable else False,
+        'revised_accepted': revised_accepted,
+        'original_distinct_basin_count': original_basin_count,
+        'distinct_basin_count': len(distinct_centers(attempts)),
+        'selected_basin_replicates': int(chosen_basin_replicates),
+        'projected_gradient_per_observation': chosen['projected_gradient_per_observation'],
+        'persistence_bound': float(persistence_bound),
+        'measurement_mode': measurement_mode,
+        'penalty_strength': float(penalty_strength),
+        'restart_seed': int(restart_seed),
+        'restart_count': int(restart_count),
+    }
 
 
 @njit(cache=False)
-def _filter(y, load, params):
+def _filter(y, load, params, fixed_r):
     """Scalar innovation form is exact because R is diagonal."""
     mu = params[:3]
     rho = np.tanh(params[3:6])
-    q = np.exp(params[6:9]); r = np.exp(params[9:])
-    state = mu.copy(); p = np.diag(q / (1 - rho * rho))
+    q = np.exp(params[6:9])
+    r = fixed_r if len(params) == 9 else np.exp(params[9:])
+    state = mu.copy(); p = np.diag(q * np.cosh(params[3:6])**2)
     total = 0.0
     for t in range(len(y)):
         for i in range(y.shape[1]):
             h = load[i]
             b = p @ h
             variance = h @ b + r[i]
+            if not np.isfinite(variance) or variance <= 0.:
+                return np.inf, np.full(3, np.nan), np.full((3, 3), np.nan)
             innovation = y[t, i] - h @ state
             total += .5 * (np.log(2*np.pi) + np.log(variance) + innovation**2 / variance)
             state += b * (innovation / variance)
@@ -159,25 +381,41 @@ def _filter(y, load, params):
     return total, state, p
 
 
-def filter_state(y, load, params):
+def filter_state(y, load, params, measurement_mode='estimated', fixed_measurement=None):
     """Return exact stationary-initialized negative log likelihood and last filter."""
     y = np.ascontiguousarray(y, dtype=float)
     load = np.ascontiguousarray(load, dtype=float)
     params = np.asarray(params, dtype=float)
+    if measurement_mode not in {'estimated', 'fixed', 'regularized'}:
+        raise ValueError(f'unknown measurement covariance mode: {measurement_mode}')
     if y.ndim != 2 or y.shape[1] != len(load) or load.shape[1] != 3:
         raise ValueError('expected T by D yields and D by 3 loadings')
-    if len(params) != 9 + len(load) or len(y) == 0 or not np.isfinite(y).all():
+    if len(params) != parameter_count(len(load), measurement_mode) or len(y) == 0 or not np.isfinite(y).all():
         raise ValueError('invalid parameter length or input observations')
-    return _filter(y, load, params)
+    if not np.isfinite(params).all():
+        raise ValueError('parameters must be finite')
+    if measurement_mode == 'fixed':
+        fixed_measurement = np.asarray(fixed_measurement, dtype=float)
+        if (fixed_measurement.shape != (len(load),) or not np.isfinite(fixed_measurement).all()
+                or np.any(fixed_measurement <= 0)):
+            raise ValueError('fixed mode requires positive finite measurement variances')
+    else:
+        fixed_measurement = np.empty(0, dtype=float)
+    result = _filter(y, load, params, fixed_measurement)
+    if not np.isfinite(result[0]) or not np.isfinite(result[1]).all() or not np.isfinite(result[2]).all():
+        raise FloatingPointError('Kalman filter produced a non-finite likelihood or state')
+    return result
 
 
 @njit(cache=False)
-def likelihood_gradient(y, load, params):
+def _likelihood_gradient(y, load, params, fixed_r):
     """Forward sensitivity recursion: exact gradient of stationary Gaussian NLL."""
     mu = params[:3]; rho = np.tanh(params[3:6])
-    q = np.exp(params[6:9]); r = np.exp(params[9:])
+    q = np.exp(params[6:9])
+    fixed_measurement = len(params) == 9
+    r = fixed_r if fixed_measurement else np.exp(params[9:])
     npar = len(params)
-    state = mu.copy(); p = np.diag(q / (1-rho*rho))
+    state = mu.copy(); p = np.diag(q * np.cosh(params[3:6])**2)
     dm = np.zeros((npar, 3)); dp = np.zeros((npar, 3, 3))
     for j in range(3):
         dm[j, j] = 1.
@@ -194,7 +432,9 @@ def likelihood_gradient(y, load, params):
                 for j in range(3):
                     db[j] = dp[k, j, 0]*h[0] + dp[k, j, 1]*h[1] + dp[k, j, 2]*h[2]
                 dv = -(h[0]*dm[k, 0] + h[1]*dm[k, 1] + h[2]*dm[k, 2])
-                df = h[0]*db[0] + h[1]*db[1] + h[2]*db[2] + (r[i] if k == 9+i else 0.)
+                df = h[0]*db[0] + h[1]*db[1] + h[2]*db[2]
+                if not fixed_measurement and k == 9+i:
+                    df += r[i]
                 gradient[k] += .5*((1/variance-innovation**2/variance**2)*df + 2*innovation/variance*dv)
                 for j in range(3):
                     dm[k, j] += db[j]*innovation/variance + b[j]*dv/variance - b[j]*innovation*df/variance**2
@@ -224,16 +464,47 @@ def likelihood_gradient(y, load, params):
     return total, gradient
 
 
-def unpack(params):
+def likelihood_gradient(y, load, params, measurement_mode='estimated', fixed_measurement=None):
+    """Return raw-NLL and gradient for estimated, fixed, or penalized-diagonal R."""
     params = np.asarray(params, dtype=float)
-    return params[:3], np.tanh(params[3:6]), np.exp(params[6:9]), np.exp(params[9:])
+    if measurement_mode not in {'estimated', 'fixed', 'regularized'}:
+        raise ValueError(f'unknown measurement covariance mode: {measurement_mode}')
+    if len(params) != parameter_count(np.asarray(load).shape[0], measurement_mode):
+        raise ValueError('parameter length does not match measurement covariance mode')
+    if measurement_mode == 'fixed':
+        fixed_r = np.asarray(fixed_measurement, dtype=float)
+        if (fixed_r.shape != (np.asarray(load).shape[0],) or not np.isfinite(fixed_r).all()
+                or np.any(fixed_r <= 0)):
+            raise ValueError('fixed mode requires positive finite measurement variances')
+    else:
+        fixed_r = np.empty(0, dtype=float)
+    return _likelihood_gradient(np.ascontiguousarray(y, dtype=float),
+                                np.ascontiguousarray(load, dtype=float), params, fixed_r)
 
 
-def forecast_moments(state, covariance, load, params, horizon):
+def unpack(params, measurement_mode='estimated', fixed_measurement=None):
+    params = np.asarray(params, dtype=float)
+    if params.ndim != 1 or len(params) < 9 or not np.isfinite(params).all():
+        raise ValueError('parameters must be a finite vector with at least nine entries')
+    if measurement_mode == 'fixed':
+        r = np.asarray(fixed_measurement, dtype=float)
+        if len(params) != 9 or r.ndim != 1 or not np.isfinite(r).all() or np.any(r <= 0):
+            raise ValueError('fixed mode requires nine parameters and positive finite measurement variances')
+    elif measurement_mode in {'estimated', 'regularized'}:
+        if len(params) <= 9:
+            raise ValueError('estimated measurement mode requires log-variance parameters')
+        r = np.exp(params[9:])
+    else:
+        raise ValueError(f'unknown measurement covariance mode: {measurement_mode}')
+    return params[:3], np.tanh(params[3:6]), np.exp(params[6:9]), r
+
+
+def forecast_moments(state, covariance, load, params, horizon,
+                     measurement_mode='estimated', fixed_measurement=None):
     """Conditional Gaussian moments, without Monte Carlo or eigenvalue clipping."""
     if not isinstance(horizon, (int, np.integer)) or horizon < 1:
         raise ValueError('horizon must be a positive integer')
-    mu, rho, q, r = unpack(params)
+    mu, rho, q, r = unpack(params, measurement_mode, fixed_measurement)
     ah = rho ** horizon
     mean_f = mu + ah * (state - mu)
     cov_f = ah[:, None] * covariance * ah[None, :]
@@ -242,18 +513,23 @@ def forecast_moments(state, covariance, load, params, horizon):
     return load @ mean_f, (covariance_y + covariance_y.T) / 2
 
 
-def boundary_profiles(y, load, params):
+def boundary_profiles(y, load, params, persistence_bound=3., measurement_mode='estimated',
+                      fixed_measurement=None):
     """One-coordinate inward/outward checks, diagnostic only; no change to bounds."""
-    bounds = parameter_bounds(y.shape[1]); value = filter_state(y, load, params)[0]
+    bounds = parameter_bounds(y.shape[1], persistence_bound, measurement_mode)
+    value = filter_state(y, load, params, measurement_mode, fixed_measurement)[0]
     active = np.flatnonzero((params <= bounds[:, 0]+1e-6) | (params >= bounds[:, 1]-1e-6))
     profiles = []
     for j in active:
-        inward = params.copy(); outward = params.copy(); step = .05 if j < 6 else .5
+        inward = params.copy(); outward = params.copy()
+        step = .05 if j < 6 else .5
         direction = 1 if params[j] <= bounds[j, 0]+1e-6 else -1
         inward[j] += direction*step; outward[j] -= direction*step
         profiles.append({'parameter_index': int(j), 'inward_step': direction*step,
-                         'inward_delta_nll': float(filter_state(y, load, inward)[0]-value),
-                         'outward_delta_nll': float(filter_state(y, load, outward)[0]-value)})
+                         'inward_delta_nll': float(filter_state(
+                             y, load, inward, measurement_mode, fixed_measurement)[0]-value),
+                         'outward_delta_nll': float(filter_state(
+                             y, load, outward, measurement_mode, fixed_measurement)[0]-value)})
     return profiles
 
 

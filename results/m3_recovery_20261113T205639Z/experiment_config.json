@@ -1,0 +1,481 @@
+{
+  "scope": "targeted",
+  "origins": [
+    "2023-02-24",
+    "2023-03-24",
+    "2023-04-21",
+    "2023-05-19",
+    "2023-06-16",
+    "2023-07-14",
+    "2023-08-10",
+    "2023-09-08"
+  ],
+  "horizons_observations": [
+    1,
+    4
+  ],
+  "note": "The checked-in design uses weekly observation steps [1,4]; no 1/5/20 business-day design is substituted.",
+  "variants": [
+    {
+      "name": "A_original_multistart",
+      "measurement_mode": "estimated",
+      "persistence_bound": 3.0
+    },
+    {
+      "name": "B_wide_persistence",
+      "measurement_mode": "estimated",
+      "persistence_bound": 4.0
+    },
+    {
+      "name": "C_fixed_measurement",
+      "measurement_mode": "fixed",
+      "persistence_bound": 3.0
+    },
+    {
+      "name": "D_regularized_measurement",
+      "measurement_mode": "regularized",
+      "persistence_bound": 3.0
+    }
+  ],
+  "n_starts": 3,
+  "restart_count": 8,
+  "restart_seed_master": 271026,
+  "optimizer": {
+    "method": "L-BFGS-B",
+    "maxiter": 1000,
+    "ftol": 1e-14,
+    "gtol": 2e-07
+  },
+  "penalty_selection": {
+    "selection_rule": "minimum pooled blocked-validation raw conditional NLL per observation",
+    "training_scope": "2000-2015 initial training sample only",
+    "candidate_penalty_grid": [
+      0.1,
+      1.0,
+      10.0
+    ],
+    "fold_train_fractions": [
+      0.55,
+      0.65,
+      0.75
+    ],
+    "validation_length_observations": 52,
+    "aggregate_scores": [
+      {
+        "penalty_strength": 0.1,
+        "prior_sd_on_log_R": 3.162277660168379,
+        "validation_raw_nll": -1089.7925261563332,
+        "validation_raw_nll_per_observation": -6.985849526643162
+      },
+      {
+        "penalty_strength": 1.0,
+        "prior_sd_on_log_R": 1.0,
+        "validation_raw_nll": -1088.0828633054148,
+        "validation_raw_nll_per_observation": -6.974890149393684
+      },
+      {
+        "penalty_strength": 10.0,
+        "prior_sd_on_log_R": 0.31622776601683794,
+        "validation_raw_nll": -1084.3811823057063,
+        "validation_raw_nll_per_observation": -6.951161425036578
+      }
+    ],
+    "selected_penalty_strength": 0.1,
+    "selected_prior_sd_on_log_R": 3.162277660168379,
+    "folds": [
+      {
+        "fold_id": 0,
+        "train_end_index_exclusive": 459,
+        "train_end_date": "2008-10-17",
+        "validation_start_date": "2008-10-24",
+        "validation_end_date": "2009-10-16",
+        "validation_n": 52,
+        "lambda_per_year": 0.20943396226415095,
+        "initial_sse": 31.8208426089615,
+        "measurement_variance_target": [
+          0.023198713203425956,
+          0.0014761090290898006,
+          0.013396428172085065,
+          0.01804150633484531,
+          0.0017164446215313317,
+          0.0036421654190155043,
+          0.006634784465511411,
+          0.0012203032402505131
+        ],
+        "candidates": [
+          {
+            "penalty_strength": 0.1,
+            "train_raw_nll": -3033.2010929590324,
+            "train_penalized_objective": -3031.2202645982056,
+            "validation_raw_nll": -183.85216085538787,
+            "validation_raw_nll_per_observation": -3.535618477988228,
+            "original_start_nll_spread": 6.488550297945039e-06,
+            "original_start_objective_spread": 2.1600499167107046e-10,
+            "best_projected_gradient_per_observation": 9.869977843984897e-08,
+            "selected_parameters": [
+              4.767199442459188,
+              -1.4549621553165055,
+              2.25136554858264,
+              2.7956224502181533,
+              3.0,
+              2.417342557960232,
+              -5.5719547578222075,
+              -4.342575733088879,
+              -2.1036562905814966,
+              -3.7747864987446382,
+              -10.360593420456599,
+              -3.942076526010692,
+              -3.4415365654372723,
+              -5.025796858032924,
+              -10.366971828794131,
+              -5.084050278195173,
+              -6.655931854767819
+            ]
+          },
+          {
+            "penalty_strength": 1.0,
+            "train_raw_nll": -3029.212236354708,
+            "train_penalized_objective": -3020.9087892409516,
+            "validation_raw_nll": -184.53011948764197,
+            "validation_raw_nll_per_observation": -3.5486561439931146,
+            "original_start_nll_spread": 6.842242419224931e-05,
+            "original_start_objective_spread": 1.7589627532288432e-09,
+            "best_projected_gradient_per_observation": 8.447888770767972e-08,
+            "selected_parameters": [
+              4.766017598573363,
+              -1.4560211114258181,
+              2.2656501322674383,
+              2.797451190497244,
+              3.0,
+              2.4390410211608486,
+              -5.573807153306111,
+              -4.354477198494233,
+              -2.151009553759872,
+              -3.7668847194048585,
+              -8.74687588995068,
+              -3.950306877502788,
+              -3.4531495963084873,
+              -5.0470010945305,
+              -8.688090302921905,
+              -5.0907229519137145,
+              -6.673878987653063
+            ]
+          },
+          {
+            "penalty_strength": 10.0,
+            "train_raw_nll": -3010.243638505091,
+            "train_penalized_objective": -2983.20433748717,
+            "validation_raw_nll": -189.36938783438882,
+            "validation_raw_nll_per_observation": -3.6417189968151695,
+            "original_start_nll_spread": 2.3751567823637743e-05,
+            "original_start_objective_spread": 6.202753866091371e-10,
+            "best_projected_gradient_per_observation": 1.2160221762578873e-07,
+            "selected_parameters": [
+              4.762593191931812,
+              -1.4579745399635438,
+              2.304932056766919,
+              2.800940638747785,
+              3.0,
+              2.4922567816278596,
+              -5.575824452078283,
+              -4.379451094470213,
+              -2.2641390016557437,
+              -3.7414662799003957,
+              -7.476838340130555,
+              -3.989561034527178,
+              -3.5088119292126074,
+              -5.160502811520639,
+              -7.2474254509032585,
+              -5.097543321960192,
+              -6.716953578771959
+            ]
+          }
+        ]
+      },
+      {
+        "fold_id": 1,
+        "train_end_index_exclusive": 542,
+        "train_end_date": "2010-05-21",
+        "validation_start_date": "2010-05-28",
+        "validation_end_date": "2011-05-20",
+        "validation_n": 52,
+        "lambda_per_year": 0.19716981132075473,
+        "initial_sse": 37.22024960808313,
+        "measurement_variance_target": [
+          0.021684235395806443,
+          0.0016049366045447092,
+          0.012495163474800751,
+          0.017440980200446588,
+          0.00220803323582587,
+          0.003575848093361152,
+          0.008546971956807425,
+          0.0011158782857928831
+        ],
+        "candidates": [
+          {
+            "penalty_strength": 0.1,
+            "train_raw_nll": -3501.291139373822,
+            "train_penalized_objective": -3499.419129439451,
+            "validation_raw_nll": -427.6501674627593,
+            "validation_raw_nll_per_observation": -8.224041681976141,
+            "original_start_nll_spread": 1.0232838121737586e-05,
+            "original_start_objective_spread": 6.875779945403337e-10,
+            "best_projected_gradient_per_observation": 1.2207003516853563e-07,
+            "selected_parameters": [
+              4.513380497873281,
+              -1.7399530772199938,
+              2.766367838078006,
+              3.0,
+              3.0,
+              2.4532019434633483,
+              -5.572990217292911,
+              -4.4177475722961494,
+              -2.0374754747806754,
+              -3.8760015214525683,
+              -10.686402283070258,
+              -4.03021307912475,
+              -3.4888482652580692,
+              -4.9896244472705735,
+              -9.827812056327188,
+              -4.534034071673114,
+              -6.691201365384965
+            ]
+          },
+          {
+            "penalty_strength": 1.0,
+            "train_raw_nll": -3497.498937340251,
+            "train_penalized_objective": -3489.6795267673074,
+            "validation_raw_nll": -426.1852274263442,
+            "validation_raw_nll_per_observation": -8.195869758198928,
+            "original_start_nll_spread": 5.483046834342531e-05,
+            "original_start_objective_spread": 2.2600943339057267e-09,
+            "best_projected_gradient_per_observation": 1.58310734109996e-07,
+            "selected_parameters": [
+              4.511370585445746,
+              -1.7384813080893098,
+              2.7869729040322557,
+              3.0,
+              3.0,
+              2.4781262795494583,
+              -5.5748483792451085,
+              -4.42383099144937,
+              -2.085464650978057,
+              -3.8693957126741054,
+              -8.986229552656557,
+              -4.03748362201795,
+              -3.501468543532635,
+              -5.016618496758054,
+              -8.362461318666078,
+              -4.541826011268165,
+              -6.728528836317023
+            ]
+          },
+          {
+            "penalty_strength": 10.0,
+            "train_raw_nll": -3478.9715684867874,
+            "train_penalized_objective": -3455.298504807807,
+            "validation_raw_nll": -421.17858727721114,
+            "validation_raw_nll_per_observation": -8.099588216869446,
+            "original_start_nll_spread": 4.315281876188237e-05,
+            "original_start_objective_spread": 2.9103830456733704e-11,
+            "best_projected_gradient_per_observation": 4.2002839133662653e-08,
+            "selected_parameters": [
+              4.504638994489097,
+              -1.7333610678919902,
+              2.843801235397909,
+              3.0,
+              3.0,
+              2.536476730064256,
+              -5.57981134409174,
+              -4.442588777942157,
+              -2.191973621808951,
+              -3.842724459844159,
+              -7.592316659211639,
+              -4.0720064204648345,
+              -3.5579367743354298,
+              -5.1362626595676835,
+              -7.068008484672889,
+              -4.5621558109840255,
+              -6.803479720679504
+            ]
+          }
+        ]
+      },
+      {
+        "fold_id": 2,
+        "train_end_index_exclusive": 626,
+        "train_end_date": "2011-12-30",
+        "validation_start_date": "2012-01-06",
+        "validation_end_date": "2012-12-28",
+        "validation_n": 52,
+        "lambda_per_year": 0.1849056603773585,
+        "initial_sse": 41.017282836755456,
+        "measurement_variance_target": [
+          0.01936848258195821,
+          0.001757872580742603,
+          0.010770835467443615,
+          0.01674402580714161,
+          0.0031559976404698076,
+          0.003063474357693493,
+          0.009655221302048073,
+          0.0010069062956582467
+        ],
+        "candidates": [
+          {
+            "penalty_strength": 0.1,
+            "train_raw_nll": -4113.923677738739,
+            "train_penalized_objective": -4111.730627128398,
+            "validation_raw_nll": -478.29019783818603,
+            "validation_raw_nll_per_observation": -9.197888419965116,
+            "original_start_nll_spread": 9.593159120413475e-07,
+            "original_start_objective_spread": 5.184119800105691e-11,
+            "best_projected_gradient_per_observation": 1.239222666373637e-07,
+            "selected_parameters": [
+              4.286444151284603,
+              -1.5620087949724655,
+              2.4080063018939186,
+              3.0,
+              3.0,
+              2.484133263312568,
+              -5.589926646541331,
+              -4.5447033976409505,
+              -1.977267506008346,
+              -4.026244713829355,
+              -10.939689939579655,
+              -4.150870724154057,
+              -3.536699105645566,
+              -4.8956473053232,
+              -10.418267228760932,
+              -4.410779148395313,
+              -6.686690803995068
+            ]
+          },
+          {
+            "penalty_strength": 1.0,
+            "train_raw_nll": -4109.444030530543,
+            "train_penalized_objective": -4100.3452503643875,
+            "validation_raw_nll": -477.3675163914286,
+            "validation_raw_nll_per_observation": -9.18014454598901,
+            "original_start_nll_spread": 1.4431979252549354e-05,
+            "original_start_objective_spread": 8.549250196665525e-11,
+            "best_projected_gradient_per_observation": 6.924081528707911e-08,
+            "selected_parameters": [
+              4.285726006308298,
+              -1.5619078656392869,
+              2.4070741109690768,
+              3.0,
+              3.0,
+              2.5043366181380713,
+              -5.591849341040931,
+              -4.548816966459234,
+              -2.015354490911296,
+              -4.019993524886828,
+              -9.187099111240105,
+              -4.15636758417989,
+              -3.5457233086417275,
+              -4.908791654744335,
+              -8.765721808764559,
+              -4.4133909658321855,
+              -6.723663171599402
+            ]
+          },
+          {
+            "penalty_strength": 10.0,
+            "train_raw_nll": -4088.021507328692,
+            "train_penalized_objective": -4060.5901192772276,
+            "validation_raw_nll": -473.8332071941063,
+            "validation_raw_nll_per_observation": -9.112177061425122,
+            "original_start_nll_spread": 7.182029685282032e-05,
+            "original_start_objective_spread": 1.468833943363279e-10,
+            "best_projected_gradient_per_observation": 1.2452225231771147e-07,
+            "selected_parameters": [
+              4.283283592059134,
+              -1.5616561469220187,
+              2.406830511808693,
+              3.0,
+              3.0,
+              2.559208015976144,
+              -5.5944835129155335,
+              -4.560101030125349,
+              -2.1161048856772173,
+              -3.9924023882062634,
+              -7.717494021990126,
+              -4.185193382183808,
+              -3.589750225730132,
+              -4.973973516784222,
+              -7.38799634504409,
+              -4.422556912184874,
+              -6.830966119120511
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "optimizer_settings": {
+    "n_starts": 3,
+    "restart_count": 8,
+    "maxiter": 1000,
+    "ftol": 1e-14,
+    "gtol": 2e-07,
+    "restart_seed_master": 271026
+  },
+  "measurement_variance_calibration": {
+    "period_start": "2000-01-07",
+    "period_end": "2015-12-31",
+    "n_observations": 835,
+    "method": "maturity-wise mean squared cross-sectional DNS residual, floored at configured variance floor",
+    "variance_floor": 1e-06,
+    "values": [
+      0.00997646221980652,
+      0.0005270977311415204,
+      0.009492773063693297,
+      0.00685912569201087,
+      0.0024467619320164167,
+      0.005723353249450776,
+      0.013295665605362309,
+      0.010193516634439553
+    ]
+  },
+  "git": {
+    "branch": "research/m3-recovery",
+    "commit": "98ee4d9f40b8eb57bbc170b30397bd5f0c90127f",
+    "worktree_status": "D Archive/MRP_Draft.pdf\n M paper/MRP_Draft.pdf\n M src/state_space_revised.py\n?? Archive/MRP_Draft_M3.pdf\n?? docs/PROJECT_HANDOFF.md\n?? results/m3_recovery_20261113T205426Z/\n?? src/m3_recovery.py\n?? tests/test_m3_recovery.py"
+  },
+  "environment": {
+    "python": "3.14.7 (tags/v3.14.7:823f032, Aug  5 2026, 10:51:32) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\ethan\\Downloads\\Probabilistic-Forecasting-of-Canadian-Government-Yields\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "numba": "0.68.0"
+  },
+  "inputs_and_sources_sha256": {
+    "src\\state_space_revised.py": "bc82b9fc41ad8789b453d638d67e90e60823c02c482fe669badd2d7febe02e0e",
+    "src\\m3_recovery.py": "8deee537fc086a58a3d3481c9f82fdcaaeee14be278d010ee75984e2b8a2d9b3",
+    "tests\\test_m3_recovery.py": "bc97564d6076c638cd3930226158d8455e44f05f4ba16238afb5dd29db9b12eb",
+    "config\\experiment.json": "ece2e990313d5674e03bec0a818b32291895a280edfa7db89acc3283f389657f",
+    "data\\processed\\canada_weekly.csv": "0b2af5c3c7bb261973ea4ec04c151eedbf7cf1428f22d0e08eaae87a212bfd77",
+    "results\\state_space_revised\\optimizer_diagnostics.json": "884259dc8f1e8bec542c84838c6fefb4f872e6201719dce4de7605758a12e84d",
+    "results\\state_space_revised\\scores.csv": "823a153c4165acaf8d78bb3a615d7ae97e181d3701f9c03b6f7a2d76dd70e706",
+    "results\\state_space_revised\\metadata.json": "476a87266e626c6c07b4b2ad977f5177c7e0281c5c063aded7d2d55d313b98d4",
+    "results\\state_space_revised\\forecasts.npz": "af71c2ab64d2feb90b63602b35997cad19549ea8568b1f3908b6a8311131bf16",
+    "results\\validated_baselines\\scores.csv": "8b85e341bb87b4751398a5f335e27921c02b8980838f3354ff5eaaa2aab51b3e"
+  },
+  "baseline_hashes_before": {
+    "forecasts.npz": "cbc990365f3161058597dc9c18ffceb996bfefa78bb984a4625b432f035d447a",
+    "maturity_by_origin.csv": "6f11bf9507de08c9f7ce93085bc436af5347e3ff7f6a3afdbcdd7be290b208f9",
+    "metadata.json": "95e43b5399b06c004c9b836a5590eaeb54b2d01908de45a8f80d7077667b7489",
+    "origin_audit.csv": "bab9abe176a5259a3950ef247cf395171130ccfd4e6fca161d857301ca446796",
+    "risk_scenarios.csv": "ce205a9affa41f5046138cf06243181162c33a9b82a14f53d7d352c770a0bda8",
+    "scores.csv": "8b85e341bb87b4751398a5f335e27921c02b8980838f3354ff5eaaa2aab51b3e",
+    "summary.csv": "3c621eb20d0ac8fba415eddc50c6c99a96566ef5b3e2e280192bbff5ecb82f0c",
+    "verification.json": "6bdf9b37ea9c27bc724f6b610a2dca738c293369326344702c329d95a5be930a"
+  },
+  "accepted_bayesian_analysis_hashes_before": {
+    "results\\bayesian_finite_20261027T194239Z\\protocol.md": "1f8146233e51b6f6b770e933d93ed8cdb1bf3fa96b580e5e520bf111fdad9095",
+    "results\\bayesian_finite_20261027T194239Z\\rolling_main\\analysis\\paired_summary.csv": "dbb7224e183c4e5a36fa1b865f55c7835a67fcadd3dfdbaad9677879c534c75d",
+    "results\\bayesian_finite_20261027T194239Z\\rolling_main\\analysis\\per_maturity.csv": "40743f05fc198c789e777a24e80aaf40cb77cf4dfb1d498dbb78a0791043333f",
+    "results\\bayesian_finite_20261027T194239Z\\rolling_main\\analysis\\summary.json": "618b96eb3b7980e135b58b067086c7a5f7b8cc050a801d24b8560c57497fe40a"
+  }
+}

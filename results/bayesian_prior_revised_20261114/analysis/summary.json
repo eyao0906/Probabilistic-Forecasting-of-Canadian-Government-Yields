@@ -1,0 +1,1764 @@
+{
+  "n_origins": 130,
+  "yield_units": "percentage points",
+  "rmse_basis_point_multiplier": 100,
+  "maturities_years": [
+    0.25,
+    0.5,
+    1,
+    2,
+    5,
+    7,
+    10,
+    30
+  ],
+  "horizons": {
+    "1": {
+      "main": {
+        "n_origins": 130,
+        "maturities": 8,
+        "method": "paired stationary percentile bootstrap",
+        "block_length_origins": 8,
+        "repetitions": 9999,
+        "seed": 271026,
+        "confidence": 0.95,
+        "metrics": {
+          "dss": {
+            "M4": -25.3574451646131,
+            "M5": -25.636469646299226,
+            "M5_minus_M4": -0.27902448168612537,
+            "ci95": [
+              -0.6190577357036181,
+              -0.0033353671156417897
+            ],
+            "bootstrap_se": 0.1579068635354684
+          },
+          "energy_score": {
+            "M4": 0.25574230398876424,
+            "M5": 0.2524537607084427,
+            "M5_minus_M4": -0.003288543280321521,
+            "ci95": [
+              -0.005238569814792656,
+              -0.0013772211124876003
+            ],
+            "bootstrap_se": 0.0010006631139452982
+          },
+          "rmse": {
+            "M4": 0.13877541019722964,
+            "M5": 0.1389291236709943,
+            "M5_minus_M4": 0.00015371347376466615,
+            "ci95": [
+              -0.00011248734856492137,
+              0.00041377878866276775
+            ],
+            "bootstrap_se": 0.00013337961230568428
+          },
+          "coverage_90": {
+            "M4": 0.9432692307692307,
+            "M5": 0.9432692307692307,
+            "M5_minus_M4": 0.0,
+            "ci95": [
+              -0.019230769230769273,
+              0.02019230769230773
+            ],
+            "bootstrap_se": 0.01018188021936054
+          }
+        }
+      },
+      "dependence_sensitivity": {
+        "4": {
+          "n_origins": 130,
+          "maturities": 8,
+          "method": "paired stationary percentile bootstrap",
+          "block_length_origins": 4,
+          "repetitions": 9999,
+          "seed": 271026,
+          "confidence": 0.95,
+          "metrics": {
+            "dss": {
+              "M4": -25.3574451646131,
+              "M5": -25.636469646299226,
+              "M5_minus_M4": -0.27902448168612537,
+              "ci95": [
+                -0.6119690284621191,
+                -0.021337269749998708
+              ],
+              "bootstrap_se": 0.15110388972978236
+            },
+            "energy_score": {
+              "M4": 0.25574230398876424,
+              "M5": 0.2524537607084427,
+              "M5_minus_M4": -0.003288543280321521,
+              "ci95": [
+                -0.005182384877772532,
+                -0.001390222200576292
+              ],
+              "bootstrap_se": 0.0009723376035175534
+            },
+            "rmse": {
+              "M4": 0.13877541019722964,
+              "M5": 0.1389291236709943,
+              "M5_minus_M4": 0.00015371347376466615,
+              "ci95": [
+                -0.00011945077870079145,
+                0.00041489230202701997
+              ],
+              "bootstrap_se": 0.0001373289268737463
+            },
+            "coverage_90": {
+              "M4": 0.9432692307692307,
+              "M5": 0.9432692307692307,
+              "M5_minus_M4": 0.0,
+              "ci95": [
+                -0.016346153846153788,
+                0.0163461538461539
+              ],
+              "bootstrap_se": 0.008361881545155075
+            }
+          }
+        },
+        "12": {
+          "n_origins": 130,
+          "maturities": 8,
+          "method": "paired stationary percentile bootstrap",
+          "block_length_origins": 12,
+          "repetitions": 9999,
+          "seed": 271026,
+          "confidence": 0.95,
+          "metrics": {
+            "dss": {
+              "M4": -25.3574451646131,
+              "M5": -25.636469646299226,
+              "M5_minus_M4": -0.27902448168612537,
+              "ci95": [
+                -0.6034681412349062,
+                -0.0022096556863683715
+              ],
+              "bootstrap_se": 0.154027820653108
+            },
+            "energy_score": {
+              "M4": 0.25574230398876424,
+              "M5": 0.2524537607084427,
+              "M5_minus_M4": -0.003288543280321521,
+              "ci95": [
+                -0.005161078279568816,
+                -0.0013765077436640838
+              ],
+              "bootstrap_se": 0.0009735648228915526
+            },
+            "rmse": {
+              "M4": 0.13877541019722964,
+              "M5": 0.1389291236709943,
+              "M5_minus_M4": 0.00015371347376466615,
+              "ci95": [
+                -9.44934181105847e-05,
+                0.00039727373142658945
+              ],
+              "bootstrap_se": 0.00012467265975340538
+            },
+            "coverage_90": {
+              "M4": 0.9432692307692307,
+              "M5": 0.9432692307692307,
+              "M5_minus_M4": 0.0,
+              "ci95": [
+                -0.02019230769230773,
+                0.022115384615384537
+              ],
+              "bootstrap_se": 0.010984709298008414
+            }
+          }
+        }
+      },
+      "per_maturity": [
+        {
+          "maturity_years": 0.25,
+          "M4": {
+            "rmse": 0.1349357268278207,
+            "coverage_90": 0.9923076923076923,
+            "mean_interval_width_90": 0.6010690660414716
+          },
+          "M5": {
+            "rmse": 0.13826310424828006,
+            "coverage_90": 0.9923076923076923,
+            "mean_interval_width_90": 0.6020775856948252
+          }
+        },
+        {
+          "maturity_years": 0.5,
+          "M4": {
+            "rmse": 0.08778888418607658,
+            "coverage_90": 0.9846153846153847,
+            "mean_interval_width_90": 0.49123735751600905
+          },
+          "M5": {
+            "rmse": 0.08809260314347163,
+            "coverage_90": 0.9846153846153847,
+            "mean_interval_width_90": 0.49053637728796334
+          }
+        },
+        {
+          "maturity_years": 1,
+          "M4": {
+            "rmse": 0.21586079950288833,
+            "coverage_90": 0.8461538461538461,
+            "mean_interval_width_90": 0.6090822683448736
+          },
+          "M5": {
+            "rmse": 0.21455862808662918,
+            "coverage_90": 0.8692307692307693,
+            "mean_interval_width_90": 0.6090419570484709
+          }
+        },
+        {
+          "maturity_years": 2,
+          "M4": {
+            "rmse": 0.12079196359473039,
+            "coverage_90": 0.9769230769230769,
+            "mean_interval_width_90": 0.567754606985077
+          },
+          "M5": {
+            "rmse": 0.11957407244545074,
+            "coverage_90": 0.9769230769230769,
+            "mean_interval_width_90": 0.558730467460947
+          }
+        },
+        {
+          "maturity_years": 5,
+          "M4": {
+            "rmse": 0.13534069195077872,
+            "coverage_90": 0.9307692307692308,
+            "mean_interval_width_90": 0.4995937141132377
+          },
+          "M5": {
+            "rmse": 0.135457704970307,
+            "coverage_90": 0.9153846153846154,
+            "mean_interval_width_90": 0.4894696513047024
+          }
+        },
+        {
+          "maturity_years": 7,
+          "M4": {
+            "rmse": 0.13926097685429187,
+            "coverage_90": 0.9307692307692308,
+            "mean_interval_width_90": 0.49349547571715213
+          },
+          "M5": {
+            "rmse": 0.13946040942706592,
+            "coverage_90": 0.9153846153846154,
+            "mean_interval_width_90": 0.49214400221983473
+          }
+        },
+        {
+          "maturity_years": 10,
+          "M4": {
+            "rmse": 0.12197730475484223,
+            "coverage_90": 0.9615384615384616,
+            "mean_interval_width_90": 0.5065080413676795
+          },
+          "M5": {
+            "rmse": 0.12238290320053197,
+            "coverage_90": 0.9615384615384616,
+            "mean_interval_width_90": 0.5157412416716214
+          }
+        },
+        {
+          "maturity_years": 30,
+          "M4": {
+            "rmse": 0.11991083588903255,
+            "coverage_90": 0.9230769230769231,
+            "mean_interval_width_90": 0.43810340189675806
+          },
+          "M5": {
+            "rmse": 0.12010197413104733,
+            "coverage_90": 0.9307692307692308,
+            "mean_interval_width_90": 0.45605121882881533
+          }
+        }
+      ]
+    },
+    "4": {
+      "main": {
+        "n_origins": 130,
+        "maturities": 8,
+        "method": "paired stationary percentile bootstrap",
+        "block_length_origins": 8,
+        "repetitions": 9999,
+        "seed": 271026,
+        "confidence": 0.95,
+        "metrics": {
+          "dss": {
+            "M4": -21.45420086370756,
+            "M5": -21.83474204898878,
+            "M5_minus_M4": -0.3805411852812206,
+            "ci95": [
+              -0.7322713606273071,
+              -0.05635851625045691
+            ],
+            "bootstrap_se": 0.17337607668577248
+          },
+          "energy_score": {
+            "M4": 0.41711611416336875,
+            "M5": 0.4066388444915392,
+            "M5_minus_M4": -0.010477269671829548,
+            "ci95": [
+              -0.017564484977019124,
+              -0.003057273322188321
+            ],
+            "bootstrap_se": 0.003688340360973672
+          },
+          "rmse": {
+            "M4": 0.2351370380228735,
+            "M5": 0.23383958796878973,
+            "M5_minus_M4": -0.0012974500540837708,
+            "ci95": [
+              -0.004068694764175868,
+              0.001452991338299571
+            ],
+            "bootstrap_se": 0.0014349551500285522
+          },
+          "coverage_90": {
+            "M4": 0.9326923076923077,
+            "M5": 0.9442307692307692,
+            "M5_minus_M4": 0.011538461538461497,
+            "ci95": [
+              -0.013461538461538525,
+              0.044230769230769185
+            ],
+            "bootstrap_se": 0.014907205708514696
+          }
+        }
+      },
+      "dependence_sensitivity": {
+        "4": {
+          "n_origins": 130,
+          "maturities": 8,
+          "method": "paired stationary percentile bootstrap",
+          "block_length_origins": 4,
+          "repetitions": 9999,
+          "seed": 271026,
+          "confidence": 0.95,
+          "metrics": {
+            "dss": {
+              "M4": -21.45420086370756,
+              "M5": -21.83474204898878,
+              "M5_minus_M4": -0.3805411852812206,
+              "ci95": [
+                -0.7427900685853374,
+                -0.05101567004108839
+              ],
+              "bootstrap_se": 0.17345629164755977
+            },
+            "energy_score": {
+              "M4": 0.41711611416336875,
+              "M5": 0.4066388444915392,
+              "M5_minus_M4": -0.010477269671829548,
+              "ci95": [
+                -0.017028851711943363,
+                -0.003977544140413218
+              ],
+              "bootstrap_se": 0.0033562375105282314
+            },
+            "rmse": {
+              "M4": 0.2351370380228735,
+              "M5": 0.23383958796878973,
+              "M5_minus_M4": -0.0012974500540837708,
+              "ci95": [
+                -0.0039772847373418215,
+                0.0012987254260978301
+              ],
+              "bootstrap_se": 0.0013574532621670541
+            },
+            "coverage_90": {
+              "M4": 0.9326923076923077,
+              "M5": 0.9442307692307692,
+              "M5_minus_M4": 0.011538461538461497,
+              "ci95": [
+                -0.009615384615384581,
+                0.03653846153846163
+              ],
+              "bootstrap_se": 0.012060260171191035
+            }
+          }
+        },
+        "12": {
+          "n_origins": 130,
+          "maturities": 8,
+          "method": "paired stationary percentile bootstrap",
+          "block_length_origins": 12,
+          "repetitions": 9999,
+          "seed": 271026,
+          "confidence": 0.95,
+          "metrics": {
+            "dss": {
+              "M4": -21.45420086370756,
+              "M5": -21.83474204898878,
+              "M5_minus_M4": -0.3805411852812206,
+              "ci95": [
+                -0.700604740749324,
+                -0.06127820999700394
+              ],
+              "bootstrap_se": 0.16316754964148955
+            },
+            "energy_score": {
+              "M4": 0.41711611416336875,
+              "M5": 0.4066388444915392,
+              "M5_minus_M4": -0.010477269671829548,
+              "ci95": [
+                -0.017427616851032873,
+                -0.0032261583703301813
+              ],
+              "bootstrap_se": 0.003624252129475692
+            },
+            "rmse": {
+              "M4": 0.2351370380228735,
+              "M5": 0.23383958796878973,
+              "M5_minus_M4": -0.0012974500540837708,
+              "ci95": [
+                -0.0038966918555724595,
+                0.00148323461126764
+              ],
+              "bootstrap_se": 0.0013959499443985187
+            },
+            "coverage_90": {
+              "M4": 0.9326923076923077,
+              "M5": 0.9442307692307692,
+              "M5_minus_M4": 0.011538461538461497,
+              "ci95": [
+                -0.015384615384615441,
+                0.0461538461538461
+              ],
+              "bootstrap_se": 0.016064585435636842
+            }
+          }
+        }
+      },
+      "per_maturity": [
+        {
+          "maturity_years": 0.25,
+          "M4": {
+            "rmse": 0.17523695451668042,
+            "coverage_90": 0.9923076923076923,
+            "mean_interval_width_90": 1.0401505846720918
+          },
+          "M5": {
+            "rmse": 0.1828307151665643,
+            "coverage_90": 0.9923076923076923,
+            "mean_interval_width_90": 1.0434025527652064
+          }
+        },
+        {
+          "maturity_years": 0.5,
+          "M4": {
+            "rmse": 0.1992262881485362,
+            "coverage_90": 0.9692307692307692,
+            "mean_interval_width_90": 0.9701078998459547
+          },
+          "M5": {
+            "rmse": 0.19613508695681825,
+            "coverage_90": 0.9846153846153847,
+            "mean_interval_width_90": 0.9723190013385926
+          }
+        },
+        {
+          "maturity_years": 1,
+          "M4": {
+            "rmse": 0.32522351629548246,
+            "coverage_90": 0.8769230769230769,
+            "mean_interval_width_90": 1.0336810698105414
+          },
+          "M5": {
+            "rmse": 0.3184901004927755,
+            "coverage_90": 0.8923076923076924,
+            "mean_interval_width_90": 1.0315495318084866
+          }
+        },
+        {
+          "maturity_years": 2,
+          "M4": {
+            "rmse": 0.24707640770100894,
+            "coverage_90": 0.9384615384615385,
+            "mean_interval_width_90": 1.0232306902651587
+          },
+          "M5": {
+            "rmse": 0.2418861801714801,
+            "coverage_90": 0.9769230769230769,
+            "mean_interval_width_90": 1.009350694972083
+          }
+        },
+        {
+          "maturity_years": 5,
+          "M4": {
+            "rmse": 0.23140808330250126,
+            "coverage_90": 0.9461538461538461,
+            "mean_interval_width_90": 0.9344678479132865
+          },
+          "M5": {
+            "rmse": 0.23066666201961708,
+            "coverage_90": 0.9461538461538461,
+            "mean_interval_width_90": 0.9233596908522366
+          }
+        },
+        {
+          "maturity_years": 7,
+          "M4": {
+            "rmse": 0.232343874122693,
+            "coverage_90": 0.9384615384615385,
+            "mean_interval_width_90": 0.8711248345978744
+          },
+          "M5": {
+            "rmse": 0.23247988744980697,
+            "coverage_90": 0.9461538461538461,
+            "mean_interval_width_90": 0.874000930686021
+          }
+        },
+        {
+          "maturity_years": 10,
+          "M4": {
+            "rmse": 0.22757142409505257,
+            "coverage_90": 0.9230769230769231,
+            "mean_interval_width_90": 0.8177050325505046
+          },
+          "M5": {
+            "rmse": 0.2284773963101712,
+            "coverage_90": 0.9307692307692308,
+            "mean_interval_width_90": 0.8349875069322138
+          }
+        },
+        {
+          "maturity_years": 30,
+          "M4": {
+            "rmse": 0.21395581872170433,
+            "coverage_90": 0.8769230769230769,
+            "mean_interval_width_90": 0.6854601066928069
+          },
+          "M5": {
+            "rmse": 0.21482733656813918,
+            "coverage_90": 0.8846153846153846,
+            "mean_interval_width_90": 0.7253791434660108
+          }
+        }
+      ]
+    }
+  },
+  "accepted_main_analysis": true,
+  "prior_parameterization": [
+    {
+      "long_run_mean_center": 4.329854738972304,
+      "long_run_mean_variance": 4.459927303256551,
+      "persistence_center": 0.9972229659736745,
+      "persistence_variance": 0.0009,
+      "log_variance_center": -4.888703286518594,
+      "log_variance_variance": 1.0,
+      "phi_alpha": 20.0,
+      "phi_beta": 1.5,
+      "v_upper": 4.0,
+      "v_rate": 1.0
+    },
+    {
+      "long_run_mean_center": -2.174504619293203,
+      "long_run_mean_variance": 7.908406642052331,
+      "persistence_center": 0.9955122684604066,
+      "persistence_variance": 0.0009,
+      "log_variance_center": -4.122200307075525,
+      "log_variance_variance": 1.0,
+      "phi_alpha": 20.0,
+      "phi_beta": 1.5,
+      "v_upper": 4.0,
+      "v_rate": 1.0
+    },
+    {
+      "long_run_mean_center": -1.109835998452534,
+      "long_run_mean_variance": 13.320012494328935,
+      "persistence_center": 0.9768145226369132,
+      "persistence_variance": 0.0009,
+      "log_variance_center": -1.9698068059412788,
+      "log_variance_variance": 1.0,
+      "phi_alpha": 20.0,
+      "phi_beta": 1.5,
+      "v_upper": 4.0,
+      "v_rate": 1.0
+    }
+  ],
+  "phase2_gate_sha256": "892e36c620ab480b33697b74d29566d32c7b041937b4228291a184e76d46b8ef",
+  "plan_sha256": "6378aa02f5e69a9b57dd64854c6cf3e4b9884d86003ec5909e19054cc3515eaf",
+  "max_rhat": 1.0096492975768525,
+  "min_bulk_ess": 1057.644915285201,
+  "min_tail_ess": 2094.544695955646,
+  "archive_audits": [
+    {
+      "origin": "2016-01-08",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002300233265775427,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2016-02-05",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0024450930079098964,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2016-03-04",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002441624731758907,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2016-04-01",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002381401562628638,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2016-04-29",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002404110808900835,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2016-05-27",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0023387949102034477,
+      "maximum_dss_error": 2.1316282072803006e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2016-06-24",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0024349509778411453,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2016-07-22",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002652703180112467,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2016-08-19",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0024647168984018386,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2016-09-16",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0024347361271774897,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2016-10-14",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0025259024196165047,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2016-11-10",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002742257041386771,
+      "maximum_dss_error": 1.4210854715202004e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2016-12-09",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0025863741953419833,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2017-01-06",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0024055040513563998,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2017-02-03",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002262384039563759,
+      "maximum_dss_error": 3.552713678800501e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2017-03-03",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002333665475349156,
+      "maximum_dss_error": 3.552713678800501e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2017-03-31",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002370176194149848,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2017-04-28",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002209500414481791,
+      "maximum_dss_error": 0.0,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2017-05-26",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002339915937293282,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2017-06-23",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002577110518071656,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2017-07-21",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002542899938262301,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2017-08-18",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0025379602239001056,
+      "maximum_dss_error": 1.4210854715202004e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2017-09-15",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0025166275851525107,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2017-10-13",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0025182857713702783,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2017-11-10",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0023517948352412142,
+      "maximum_dss_error": 2.1316282072803006e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2017-12-08",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0023181033964221063,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2018-01-05",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0023585470019420783,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2018-02-02",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0024307489944219757,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2018-03-02",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0023986477270886834,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2018-03-29",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0026322820655995346,
+      "maximum_dss_error": 3.552713678800501e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2018-04-27",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0025135477727244375,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2018-05-25",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002564444972669311,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2018-06-22",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002579332927283055,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2018-07-20",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002457713203527618,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2018-08-17",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002499565166244567,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2018-09-14",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0023313020272424357,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2018-10-12",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0024813468222190517,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2018-11-09",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0024964239737748093,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2018-12-07",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.00246191920727478,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2019-01-04",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0023145490603380444,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2019-02-01",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002213374435356516,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2019-03-01",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002246858116173594,
+      "maximum_dss_error": 3.552713678800501e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2019-03-29",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002364485560005492,
+      "maximum_dss_error": 3.552713678800501e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2019-04-26",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0022196169184656167,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2019-05-24",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0022812232159984307,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2019-06-21",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002194528547257729,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2019-07-19",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0024108329230338498,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2019-08-16",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0026066626623265795,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2019-09-13",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0027118302965973198,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2019-10-11",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0027406727291096975,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2019-11-08",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0027224382338940896,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2019-12-06",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002621284825860859,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2020-01-03",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0022797036727453725,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2020-01-31",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0025199467646407595,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2020-02-28",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0025809873260087155,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2020-03-27",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002719632174191542,
+      "maximum_dss_error": 3.552713678800501e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2020-04-23",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002713095869298633,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2020-05-22",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0025712483555832923,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2020-06-19",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.00271875665877825,
+      "maximum_dss_error": 1.4210854715202004e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2020-07-17",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0024219265969827037,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2020-08-14",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002505286981591584,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2020-09-11",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0024285427061011356,
+      "maximum_dss_error": 1.4210854715202004e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2020-10-09",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002427606663903977,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2020-11-06",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0021991256018509867,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2020-12-04",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0023798083639415325,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2020-12-31",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0021252705493093045,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2021-01-29",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0023420606053797055,
+      "maximum_dss_error": 2.1316282072803006e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2021-02-26",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002662067056516059,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2021-03-26",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0026515002540403567,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2021-04-23",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0024003262754511414,
+      "maximum_dss_error": 1.4210854715202004e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2021-05-21",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002334504325532514,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2021-06-18",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0026501062848432928,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2021-07-16",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0025409167763521543,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2021-08-13",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0022666866401497942,
+      "maximum_dss_error": 1.4210854715202004e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2021-09-10",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002252421006422213,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2021-10-08",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002480158072193706,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2021-11-05",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002626909539255488,
+      "maximum_dss_error": 4.618527782440651e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2021-12-03",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002634326891155146,
+      "maximum_dss_error": 3.197442310920451e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2021-12-31",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002645765497159704,
+      "maximum_dss_error": 3.552713678800501e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2022-01-28",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002650234332307766,
+      "maximum_dss_error": 2.1316282072803006e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2022-02-25",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0023947103719212334,
+      "maximum_dss_error": 3.552713678800501e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2022-03-25",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0027071357740373276,
+      "maximum_dss_error": 6.039613253960852e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2022-04-22",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002748705936246123,
+      "maximum_dss_error": 6.394884621840902e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2022-05-20",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0028019487499856242,
+      "maximum_dss_error": 9.237055564881302e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2022-06-17",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002876611121727643,
+      "maximum_dss_error": 3.907985046680551e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2022-07-15",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0029559530674003326,
+      "maximum_dss_error": 3.552713678800501e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2022-08-12",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003033745317952824,
+      "maximum_dss_error": 2.1316282072803006e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2022-09-09",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003025155441827119,
+      "maximum_dss_error": 2.842170943040401e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2022-10-07",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0031195722606959086,
+      "maximum_dss_error": 2.1316282072803006e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2022-11-04",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0031642970751364005,
+      "maximum_dss_error": 4.973799150320701e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2022-12-02",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0032283812310084656,
+      "maximum_dss_error": 4.618527782440651e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2022-12-30",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003277793027279776,
+      "maximum_dss_error": 6.750155989720952e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2023-01-27",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003336490977270568,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2023-02-24",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0033731346158515285,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2023-03-24",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0033967013046145756,
+      "maximum_dss_error": 3.197442310920451e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2023-04-21",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003427999484618841,
+      "maximum_dss_error": 1.7763568394002505e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2023-05-19",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0034578559469693898,
+      "maximum_dss_error": 4.263256414560601e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2023-06-16",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003488499479521344,
+      "maximum_dss_error": 5.684341886080802e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2023-07-14",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003522345072743384,
+      "maximum_dss_error": 2.1316282072803006e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2023-08-10",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003547526693850251,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2023-09-08",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003376587261193795,
+      "maximum_dss_error": 1.4210854715202004e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2023-10-06",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003572996288394988,
+      "maximum_dss_error": 2.1316282072803006e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2023-11-03",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0035846450661690473,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2023-12-01",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003593008600873315,
+      "maximum_dss_error": 2.842170943040401e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2023-12-29",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0036068267461302,
+      "maximum_dss_error": 1.4210854715202004e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2024-01-26",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0036188147543441333,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2024-02-23",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0036303793361423913,
+      "maximum_dss_error": 1.4210854715202004e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2024-03-22",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0036398255242993493,
+      "maximum_dss_error": 3.552713678800501e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2024-04-19",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0036349195461964053,
+      "maximum_dss_error": 3.552713678800501e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2024-05-17",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0034924585252490755,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2024-06-14",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0035307767196293394,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2024-07-12",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0033818730804664157,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2024-08-09",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003608615551192789,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2024-09-06",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0036037522032680513,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2024-10-04",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0035995479349205835,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2024-11-01",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003593985509848626,
+      "maximum_dss_error": 3.552713678800501e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2024-11-29",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003589935339889041,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2024-12-27",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0035825051765480584,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2025-01-24",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0035746454646784563,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2025-02-21",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0030997309630151054,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2025-03-21",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003448317527081456,
+      "maximum_dss_error": 3.552713678800501e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2025-04-17",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0035501806607576808,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2025-05-16",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003142416173798103,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2025-06-13",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.003304750353903658,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2025-07-11",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0033086762458895106,
+      "maximum_dss_error": 0.0,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2025-08-08",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0031677718953684155,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2025-09-05",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0029266867004187264,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2025-10-03",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002921139628127944,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2025-10-31",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.002934096751070495,
+      "maximum_dss_error": 7.105427357601002e-15,
+      "maximum_energy_error": 0.0
+    },
+    {
+      "origin": "2025-11-28",
+      "passes": true,
+      "record_count": 4,
+      "energy_reconstruction_checked": false,
+      "minimum_eigenvalue": 0.0028385464930609683,
+      "maximum_dss_error": 1.0658141036401503e-14,
+      "maximum_energy_error": 0.0
+    }
+  ],
+  "source_sha256": {
+    "src/bayesian_prior_longrun_experiment.py": "37dc68fa221134284126be4ab766a5b426a09fe56d99fefea76b3c3709ceb255",
+    "src/bayesian_finite_analysis.py": "e4c1a492c66b730712fe5c2f5a666f3d1429abc9f92461a2aa2f41bec0d76549",
+    "src/scores.py": "a1cdd0d45ee4c64d8a10b437dac016a31f29a63eb8d7b172a49fdf455862d9d8"
+  }
+}

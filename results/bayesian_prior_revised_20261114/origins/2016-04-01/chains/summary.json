@@ -1,0 +1,599 @@
+{
+  "configuration": {
+    "window": {
+      "name": "2016-04-01",
+      "index": 848,
+      "date": "2016-04-01",
+      "n_training": 848,
+      "targets": {
+        "1": "2016-04-08",
+        "4": "2016-04-29"
+      }
+    },
+    "warmup": 3000,
+    "draws": 6000,
+    "chains": 4,
+    "models": [
+      "M4",
+      "M5"
+    ],
+    "seed": 12102701,
+    "input_sha256": "0b2af5c3c7bb261973ea4ec04c151eedbf7cf1428f22d0e08eaae87a212bfd77",
+    "lambda": 0.5160377358490565,
+    "priors": [
+      {
+        "long_run_mean_center": 4.329854738972304,
+        "long_run_mean_variance": 4.459927303256551,
+        "persistence_center": 0.9972229659736745,
+        "persistence_variance": 0.0009,
+        "log_variance_center": -4.888703286518594,
+        "log_variance_variance": 1.0,
+        "phi_alpha": 20.0,
+        "phi_beta": 1.5,
+        "v_upper": 4.0,
+        "v_rate": 1.0
+      },
+      {
+        "long_run_mean_center": -2.174504619293203,
+        "long_run_mean_variance": 7.908406642052331,
+        "persistence_center": 0.9955122684604066,
+        "persistence_variance": 0.0009,
+        "log_variance_center": -4.122200307075525,
+        "log_variance_variance": 1.0,
+        "phi_alpha": 20.0,
+        "phi_beta": 1.5,
+        "v_upper": 4.0,
+        "v_rate": 1.0
+      },
+      {
+        "long_run_mean_center": -1.109835998452534,
+        "long_run_mean_variance": 13.320012494328935,
+        "persistence_center": 0.9768145226369132,
+        "persistence_variance": 0.0009,
+        "log_variance_center": -1.9698068059412788,
+        "log_variance_variance": 1.0,
+        "phi_alpha": 20.0,
+        "phi_beta": 1.5,
+        "v_upper": 4.0,
+        "v_rate": 1.0
+      }
+    ],
+    "parameterization": "mu=a/(1-b), prior specified directly on mu and b",
+    "source_sha256": {
+      "src/bayesian_prior_longrun.py": "94444b75eb7b4c6b9a85b8b9caba8e47e8a0e3f1080bdcede3bc85d93f99d132",
+      "src/bayesian_prior_longrun_experiment.py": "37dc68fa221134284126be4ab766a5b426a09fe56d99fefea76b3c3709ceb255",
+      "src/bayesian_finite.py": "aad902cbff0a5ce54965f82c8e881dc8f91b5448dc3ae72c7c87f1847a5a6597",
+      "src/bayesian_revised.py": "3bf5fd44aebf3212fca550cb6752323c74ff050a872a4ab4533fbfd29ea7aa5a",
+      "src/bayesian_stage_a.py": "7c418152731c0516f7a205e726daa924660f49295718f4f86525011d4c4a8d2b",
+      "src/bayesian_stage_a_checks.py": "28e255dcf8aca04bf9e4ccd69d15468bcddfe0b313cfee9b6557b4f9d925427f",
+      "src/bayesian_finite_validation.py": "3a5b80dc4f0173ae15ec1b3c0c4bfe62ac1a90b2f1d554b118c23d11df23eeb8",
+      "src/bayesian_finite_analysis.py": "e4c1a492c66b730712fe5c2f5a666f3d1429abc9f92461a2aa2f41bec0d76549",
+      "src/bayesian_finite_gate.py": "e0209a34ad2635d9c234bb236b43df801b13a6cb448559911bf4acfb7b10ecf9",
+      "src/experiment.py": "06943e59d48ddb08f2ce2bf1f25327a692c9c0ab057067a9ba19dbb0f4b35e8e",
+      "src/models.py": "a6cf98254fffdd3e07b5ff7df2dbb123c5a5ed94a38c74814936db5f16d44b64",
+      "src/scores.py": "a1cdd0d45ee4c64d8a10b437dac016a31f29a63eb8d7b172a49fdf455862d9d8",
+      "src/prior_predictive_bayesian_dns.py": "72821cbd142ebf5c3cb0d0e8ed8cfcba8e6eb227ad4e2b06ad4c9e9e5c6e7718",
+      "src/prior_predictive_longrun_mean.py": "eb4b77f67b57d3d8c74c4f6220b859c5935509e80a2cce7f24025385aada6a8c"
+    }
+  },
+  "signature": "2e9aa71ba784bf39b6a7f504f157a1962bb21420305087f8aa73772776054417",
+  "diagnostics": [
+    {
+      "model": "M4",
+      "factor": "level",
+      "parameter": "a",
+      "rhat": 1.0000658736340713,
+      "ess_bulk": 13351.226416664998,
+      "ess_tail": 19450.141650886846,
+      "passes": true
+    },
+    {
+      "model": "M4",
+      "factor": "level",
+      "parameter": "b",
+      "rhat": 1.0000846691007568,
+      "ess_bulk": 13985.66213746769,
+      "ess_tail": 19251.944654969175,
+      "passes": true
+    },
+    {
+      "model": "M4",
+      "factor": "level",
+      "parameter": "long_run_mean",
+      "rhat": 1.0001216381349392,
+      "ess_bulk": 20679.146666099605,
+      "ess_tail": 19038.16597053674,
+      "passes": true
+    },
+    {
+      "model": "M4",
+      "factor": "level",
+      "parameter": "log_variance",
+      "rhat": 1.0001613799551585,
+      "ess_bulk": 24076.280182942926,
+      "ess_tail": 18075.277103930843,
+      "passes": true
+    },
+    {
+      "model": "M4",
+      "factor": "slope",
+      "parameter": "a",
+      "rhat": 1.00002019360141,
+      "ess_bulk": 15570.073357942976,
+      "ess_tail": 20821.37524300021,
+      "passes": true
+    },
+    {
+      "model": "M4",
+      "factor": "slope",
+      "parameter": "b",
+      "rhat": 1.0000892882259522,
+      "ess_bulk": 13932.057283462455,
+      "ess_tail": 21137.225214726244,
+      "passes": true
+    },
+    {
+      "model": "M4",
+      "factor": "slope",
+      "parameter": "long_run_mean",
+      "rhat": 1.000322501385885,
+      "ess_bulk": 23515.775197109346,
+      "ess_tail": 19824.283651274305,
+      "passes": true
+    },
+    {
+      "model": "M4",
+      "factor": "slope",
+      "parameter": "log_variance",
+      "rhat": 1.0000910557080096,
+      "ess_bulk": 23442.853594860495,
+      "ess_tail": 17342.115618499265,
+      "passes": true
+    },
+    {
+      "model": "M4",
+      "factor": "curvature",
+      "parameter": "a",
+      "rhat": 1.0000990327721802,
+      "ess_bulk": 21923.31035145301,
+      "ess_tail": 19699.103442181622,
+      "passes": true
+    },
+    {
+      "model": "M4",
+      "factor": "curvature",
+      "parameter": "b",
+      "rhat": 1.0002142477134857,
+      "ess_bulk": 14583.92225891709,
+      "ess_tail": 13874.528186348103,
+      "passes": true
+    },
+    {
+      "model": "M4",
+      "factor": "curvature",
+      "parameter": "long_run_mean",
+      "rhat": 1.0000275876087878,
+      "ess_bulk": 22009.674959436554,
+      "ess_tail": 16423.275672472413,
+      "passes": true
+    },
+    {
+      "model": "M4",
+      "factor": "curvature",
+      "parameter": "log_variance",
+      "rhat": 0.9999672396735633,
+      "ess_bulk": 23369.774840085684,
+      "ess_tail": 17193.68161227981,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "level",
+      "parameter": "a",
+      "rhat": 1.0008693456991957,
+      "ess_bulk": 8718.38674501775,
+      "ess_tail": 16489.37604420866,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "level",
+      "parameter": "b",
+      "rhat": 1.0005749413071896,
+      "ess_bulk": 9612.950664622074,
+      "ess_tail": 16428.475355323575,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "level",
+      "parameter": "long_run_mean",
+      "rhat": 1.0007485954762039,
+      "ess_bulk": 11372.809935342622,
+      "ess_tail": 16062.316176373324,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "level",
+      "parameter": "m",
+      "rhat": 1.0003335447834634,
+      "ess_bulk": 12690.000683720758,
+      "ess_tail": 13089.120854271057,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "level",
+      "parameter": "phi",
+      "rhat": 1.002457697690239,
+      "ess_bulk": 2022.519116707733,
+      "ess_tail": 3835.685644947096,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "level",
+      "parameter": "v",
+      "rhat": 1.0004056636836163,
+      "ess_bulk": 6762.491799650542,
+      "ess_tail": 8770.778702913023,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "level",
+      "parameter": "omega",
+      "rhat": 1.000165830142559,
+      "ess_bulk": 16716.144586093298,
+      "ess_tail": 14586.308406062304,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "level",
+      "parameter": "q",
+      "rhat": 1.0018470940409296,
+      "ess_bulk": 2003.6459843204289,
+      "ess_tail": 3780.7717244291052,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "level",
+      "parameter": "h_first",
+      "rhat": 1.0004818443605465,
+      "ess_bulk": 13574.286914731549,
+      "ess_tail": 17899.614641610475,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "level",
+      "parameter": "h_mid",
+      "rhat": 1.000243286913754,
+      "ess_bulk": 11825.941534011967,
+      "ess_tail": 14609.909240002868,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "level",
+      "parameter": "h_last",
+      "rhat": 1.0001408956410391,
+      "ess_bulk": 11798.075615029304,
+      "ess_tail": 17517.7204897795,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "slope",
+      "parameter": "a",
+      "rhat": 1.0006511624441812,
+      "ess_bulk": 6828.223857596635,
+      "ess_tail": 13828.728220961391,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "slope",
+      "parameter": "b",
+      "rhat": 1.0015879839631248,
+      "ess_bulk": 6266.951884241312,
+      "ess_tail": 11844.00789591155,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "slope",
+      "parameter": "long_run_mean",
+      "rhat": 1.000650699650857,
+      "ess_bulk": 6880.209881121583,
+      "ess_tail": 11454.468737901294,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "slope",
+      "parameter": "m",
+      "rhat": 1.0001849185688374,
+      "ess_bulk": 8416.464601739564,
+      "ess_tail": 13638.073257053136,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "slope",
+      "parameter": "phi",
+      "rhat": 1.0020903419577842,
+      "ess_bulk": 1731.3903243658858,
+      "ess_tail": 3415.942077392505,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "slope",
+      "parameter": "v",
+      "rhat": 1.0008036779299287,
+      "ess_bulk": 4879.3984598417765,
+      "ess_tail": 9006.894600262991,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "slope",
+      "parameter": "omega",
+      "rhat": 1.000294421082355,
+      "ess_bulk": 11987.899024895994,
+      "ess_tail": 16419.777607210104,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "slope",
+      "parameter": "q",
+      "rhat": 1.0024569616040213,
+      "ess_bulk": 1733.643624817649,
+      "ess_tail": 3637.319199383951,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "slope",
+      "parameter": "h_first",
+      "rhat": 1.000251291702499,
+      "ess_bulk": 10998.712272786015,
+      "ess_tail": 17325.17238041035,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "slope",
+      "parameter": "h_mid",
+      "rhat": 1.0000836642648228,
+      "ess_bulk": 10500.760680537745,
+      "ess_tail": 14351.749256985662,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "slope",
+      "parameter": "h_last",
+      "rhat": 1.0000465842327135,
+      "ess_bulk": 11856.863302249745,
+      "ess_tail": 16947.17455822279,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "curvature",
+      "parameter": "a",
+      "rhat": 1.0001218134208245,
+      "ess_bulk": 12404.786832578118,
+      "ess_tail": 13057.757503935913,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "curvature",
+      "parameter": "b",
+      "rhat": 1.0003184420088875,
+      "ess_bulk": 11894.963401318038,
+      "ess_tail": 11671.99005249218,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "curvature",
+      "parameter": "long_run_mean",
+      "rhat": 1.000201371270731,
+      "ess_bulk": 17944.348814759287,
+      "ess_tail": 14604.325386642018,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "curvature",
+      "parameter": "m",
+      "rhat": 1.000198169157692,
+      "ess_bulk": 17638.42961414897,
+      "ess_tail": 17904.362816146462,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "curvature",
+      "parameter": "phi",
+      "rhat": 1.000483718210058,
+      "ess_bulk": 4245.371638039896,
+      "ess_tail": 7373.945683816542,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "curvature",
+      "parameter": "v",
+      "rhat": 1.0001004496054393,
+      "ess_bulk": 7967.186167287178,
+      "ess_tail": 10592.94370982251,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "curvature",
+      "parameter": "omega",
+      "rhat": 1.0001324365085502,
+      "ess_bulk": 20959.338190061277,
+      "ess_tail": 18539.219050005362,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "curvature",
+      "parameter": "q",
+      "rhat": 1.000476488066033,
+      "ess_bulk": 3066.350498361592,
+      "ess_tail": 6805.536630138592,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "curvature",
+      "parameter": "h_first",
+      "rhat": 1.0001972383555722,
+      "ess_bulk": 10433.6738931596,
+      "ess_tail": 15637.909743285538,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "curvature",
+      "parameter": "h_mid",
+      "rhat": 1.0004239338737133,
+      "ess_bulk": 10866.146572151458,
+      "ess_tail": 16603.56447952615,
+      "passes": true
+    },
+    {
+      "model": "M5",
+      "factor": "curvature",
+      "parameter": "h_last",
+      "rhat": 1.0001444890117974,
+      "ess_bulk": 9877.24540311806,
+      "ess_tail": 14946.678459642726,
+      "passes": true
+    }
+  ],
+  "parameter_gate_passed": true,
+  "moment_audits": [
+    {
+      "posterior_proper": true,
+      "finite_predictive_second_moment": true,
+      "finite_predictive_fourth_moment": true,
+      "stage_a_mathematical_gate_passed": true,
+      "proof": "The direct Gaussian prior on the long-run mean has finite polynomial moments; |1-b|<2 bounds the induced intercept, and the bounded stationary log-volatility variance preserves finite-horizon predictive moments.",
+      "log_likelihood_normalizer_upper_bound": 450519.6499042163,
+      "log_prior_expected_innovation_variance": -4.388703286518594,
+      "log_prior_innovation_fourth_moment": -5.274014476423301,
+      "prior_prediction_caveat": "The log-variance prior SD is 1; finite moments do not by themselves establish good prior calibration.",
+      "v_upper": 4.0,
+      "v_rate": 1.0,
+      "factor": "level",
+      "long_run_mean_prior_mean": 4.329854738972304,
+      "long_run_mean_prior_variance": 4.459927303256551,
+      "long_run_mean_second_moment_finite": true,
+      "long_run_mean_absolute_mean_finite": true
+    },
+    {
+      "posterior_proper": true,
+      "finite_predictive_second_moment": true,
+      "finite_predictive_fourth_moment": true,
+      "stage_a_mathematical_gate_passed": true,
+      "proof": "The direct Gaussian prior on the long-run mean has finite polynomial moments; |1-b|<2 bounds the induced intercept, and the bounded stationary log-volatility variance preserves finite-horizon predictive moments.",
+      "log_likelihood_normalizer_upper_bound": 450195.03589242214,
+      "log_prior_expected_innovation_variance": -3.6222003070755253,
+      "log_prior_innovation_fourth_moment": -3.7410085175371632,
+      "prior_prediction_caveat": "The log-variance prior SD is 1; finite moments do not by themselves establish good prior calibration.",
+      "v_upper": 4.0,
+      "v_rate": 1.0,
+      "factor": "slope",
+      "long_run_mean_prior_mean": -2.174504619293203,
+      "long_run_mean_prior_variance": 7.908406642052331,
+      "long_run_mean_second_moment_finite": true,
+      "long_run_mean_absolute_mean_finite": true
+    },
+    {
+      "posterior_proper": true,
+      "finite_predictive_second_moment": true,
+      "finite_predictive_fourth_moment": true,
+      "stage_a_mathematical_gate_passed": true,
+      "proof": "The direct Gaussian prior on the long-run mean has finite polynomial moments; |1-b|<2 bounds the induced intercept, and the bounded stationary log-volatility variance preserves finite-horizon predictive moments.",
+      "log_likelihood_normalizer_upper_bound": 449283.49724469177,
+      "log_prior_expected_innovation_variance": -1.4698068059412788,
+      "log_prior_innovation_fourth_moment": 0.5637784847313294,
+      "prior_prediction_caveat": "The log-variance prior SD is 1; finite moments do not by themselves establish good prior calibration.",
+      "v_upper": 4.0,
+      "v_rate": 1.0,
+      "factor": "curvature",
+      "long_run_mean_prior_mean": -1.109835998452534,
+      "long_run_mean_prior_variance": 13.320012494328935,
+      "long_run_mean_second_moment_finite": true,
+      "long_run_mean_absolute_mean_finite": true
+    }
+  ],
+  "moment_gate_passed": true,
+  "chain_seeds": [
+    12102701,
+    12102702,
+    12102703,
+    12102704,
+    12103701,
+    12103702,
+    12103703,
+    12103704,
+    12104701,
+    12104702,
+    12104703,
+    12104704,
+    12202701,
+    12202702,
+    12202703,
+    12202704,
+    12203701,
+    12203702,
+    12203703,
+    12203704,
+    12204701,
+    12204702,
+    12204703,
+    12204704
+  ],
+  "checkpoints": {
+    "M4_level_chain0.npz": "b3427240fd483149ac27065c422cca602353ff95252f7fe7a1ffeb08cc137768",
+    "M4_level_chain1.npz": "31bb78c752ef12b64593ea52dc67070df18eedda7b0cdf6d39086b050557b12e",
+    "M4_level_chain2.npz": "fa1b1a79c1d4f4bf72620f8e851c344e30e358169a213bc1e9bbce58c068234b",
+    "M4_level_chain3.npz": "2e224eb64be511f44af700dc22403ce75f09142c62309403d80f8a5ee57270af",
+    "M4_slope_chain0.npz": "dfa4241760ed575fddb2caf48bdb760fe21c7a93fd372110abadda61b38417d0",
+    "M4_slope_chain1.npz": "7c1138098a0ac228f43bf99d55908ccb823ea3eb4e31df9c2981c29ee19af6e6",
+    "M4_slope_chain2.npz": "5519244456e402ef36d1f042edfdc6fbd0f2a32e96538a3d87952a68e286504e",
+    "M4_slope_chain3.npz": "57ee12355e271de4c9b42b835eff78de9c3839f9d3f7cd9b52c607db1e6e2208",
+    "M4_curvature_chain0.npz": "02c5d0e8f80dcd85759a63bd0fc9b222a2c7c55332bf377172019854b9a7b2c3",
+    "M4_curvature_chain1.npz": "96c88dcbf9ee4331e92ec76c36cae69dca9fa5d688cca5f32da7ec509c81cc2a",
+    "M4_curvature_chain2.npz": "ed661b387b0d282dd72db6069f06424d62fdda4d2218e7277d389a6ac3de726d",
+    "M4_curvature_chain3.npz": "de977ab411f0e4703890ea27e88de42deea347767c99dc09a16b187ab9dcae6e",
+    "M5_level_chain0.npz": "25763afcf8cbc10d08c66dd2ff5612dd70e1501728dcdb23ec37455e35826375",
+    "M5_level_chain1.npz": "d5a16514e5284a21bf0c3b2312cbea21ef47d06e5448387c4bcfadf58ffd4a61",
+    "M5_level_chain2.npz": "303f05699c8ab5d71d12bf434ff9aefef18a36c221bf2a5cab9bf6ed1e488580",
+    "M5_level_chain3.npz": "b753e5ab97ceab98acb960784c467a3eff5c428c93d12988c4311791948b2575",
+    "M5_slope_chain0.npz": "3b0f7a5bff4c90154d0545c8931189c464a684684514cd42f4501d7a8bf78ddf",
+    "M5_slope_chain1.npz": "eb1d1d6018563e9f06024cfc05712acaa2544627285da357321e21c0d95214fe",
+    "M5_slope_chain2.npz": "7d762a68c10903a83175b8f898fb26e14f21c034424ad83e6ad0a891c3a38a84",
+    "M5_slope_chain3.npz": "0e2006ba778f6f5e85375de9737dc43cedb00855d86bf8dfe5ddbc3df6d02196",
+    "M5_curvature_chain0.npz": "3dc05a0f737ab12084ca7e5a9194070819bed4e028774b0ff8a4f9cb9a0df863",
+    "M5_curvature_chain1.npz": "0c9d0643efc0c6ab71329a0492def94606dbfc1404c803894f35da528c7ac34b",
+    "M5_curvature_chain2.npz": "28b050441add01481905e5cedaa0937495cc128587b7df9f3bd41d7b3e08111a",
+    "M5_curvature_chain3.npz": "d832e01f919a49400a5f50b50b7fee9b7547182b8870dad4a45c5cc3242c16c2"
+  },
+  "accepted_for_rolling": false,
+  "status": "parameter fit only; predictive validation is separate"
+}

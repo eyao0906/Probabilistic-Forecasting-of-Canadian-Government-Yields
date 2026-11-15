@@ -1,6 +1,26 @@
 # Reproducing the current paper
 
-The accepted finite-moment M4/M5 comparison is complete: 130 matched origins, 520 model-horizon records and no failed origins. Accepted checkpoints and analysis outputs are in `results/bayesian_finite_20261027T194239Z/rolling_main/`; the accepted prior-bound sensitivity runs are in the sibling `bound_sensitivity/` directory. M0-M2 are accepted external benchmarks. M3 remains excluded because its likelihood fits did not pass the existing stability criterion.
+The current manuscript uses the **revised-prior** Bayesian run in `results/bayesian_prior_revised_20261114/`. All 130 origins and the archive audit passed. Paper M3/M4 correspond to internal archive M4/M5, respectively. The original finite-prior results described below remain historical baseline evidence; their U=2/8 sensitivities do not apply to the revised priors.
+
+To regenerate the current paper's tables and figures without fitting, then render and verify:
+
+```powershell
+.\.venv\Scripts\python.exe -B src\render_revised_prior_results.py
+quarto render paper\MRP_Draft.qmd --to pdf
+.\.venv\Scripts\python.exe -B -c "from src.verify_paper import verify; r=verify(write_outputs=False, previews=False); print(r); assert r['passed']"
+```
+
+To reconstruct the revised archive audit and comparison without sampling:
+
+```powershell
+.\.venv\Scripts\python.exe -B -m src.bayesian_prior_longrun_experiment --phase analyze
+```
+
+The rolling audit reconstructs DSS and intervals at every origin; Energy Scores were independently reconstructed for both models and horizons at 2016-01-08, 2020-03-27 and 2025-11-28. See `docs/bayesian_prior_justification.md` for the prior audit, synthetic-recovery caveats and accepted results.
+
+## Historical baseline
+
+The original finite-moment M4/M5 comparison is complete: 130 matched origins, 520 model-horizon records and no failed origins. Accepted checkpoints and analysis outputs are in `results/bayesian_finite_20261027T194239Z/rolling_main/`; the baseline prior-bound sensitivity runs are in the sibling `bound_sensitivity/` directory. M0-M2 are accepted external benchmarks. The historical state-space M3 was excluded because its likelihood fits did not pass the existing stability criterion; it is not the current paper's constant-volatility M3.
 
 Use the current `README.md` as the authoritative entry point. The commands below render and verify the manuscript and reconstruct comparisons from saved results; they do not refit the Bayesian models.
 

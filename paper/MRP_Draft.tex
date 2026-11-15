@@ -237,27 +237,36 @@ University of Waterloo\par
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
-This study investigates whether stochastic factor volatility improves
+This study investigates whether time-varying factor volatility improves
 probabilistic forecasts of Canadian government yields. Using weekly
-yields at eight maturities, we compare Bayesian two-step Dynamic
-Nelson--Siegel forecasts with constant and stochastic factor volatility
-at 130 common expanding-window origins over 2016--2025. Stochastic
-volatility DNS places a bounded prior on stationary log-volatility
-variance; under the stated priors, this yields finite
-posterior-predictive moments at finite horizons, so the predictive
-covariance used in DSS exists.
+Canadian yields at eight maturities, we compare two Bayesian two-step
+Dynamic Nelson--Siegel models that share the same factor representation
+and mean dynamics but differ in their assumptions about factor
+volatility. Starting with a 2000--2015 training sample, both models are
+re-estimated at 130 common forecast dates, selected every fourth weekly
+observation during 2016--2025, with the estimation window expanding to
+incorporate newly observed data. At each date, the models generate joint
+yield-curve forecasts one and four weeks ahead. The
+stochastic-volatility extension incorporates a bounded prior on the
+stationary variance of latent log-volatility, ensuring finite
+posterior-predictive moments at finite horizons and a well-defined
+predictive covariance.
 
-Relative to constant volatility, stochastic volatility improves mean DSS
-and Energy Score at both one and four-week horizons. At four weeks, its
-Energy Score is 2.52\% lower, while pooled RMSE falls by only 0.162
-basis points and the 95\% paired interval includes zero. The random walk
-performs better than either Bayesian model on aggregate DSS, Energy
-Score and RMSE. The results therefore indicate a modest
-probabilistic-forecasting gain from stochastic volatility within the
-matched DNS pair, not general predictive dominance. Because the
-historical vintage and publication lag do not provide real-time
-information sets, the findings are retrospective observation-time
-comparisons.
+Forecast performance is evaluated using the Dawid--Sebastiani Score
+(DSS), a multivariate Gaussian quasi-likelihood (QLIKE-type) scoring
+rule that assesses the accuracy of predictive means and covariance
+matrices, alongside the Energy Score for joint predictive distributions
+and root mean squared error (RMSE) for point forecasts. Relative to
+constant volatility, stochastic volatility improves average DSS and
+Energy Score at both horizons. At four weeks, the Energy Score decreases
+by 2.51\%, whereas RMSE improves by only 0.130 basis points, with a 95\%
+paired interval including zero. However, a random-walk benchmark
+outperforms both Bayesian models on aggregate DSS, Energy Score, and
+RMSE. These findings suggest modest improvements in probabilistic
+forecasting within the DNS framework, rather than general forecasting
+superiority. Given historical data-vintage uncertainty and publication
+delays, the results represent retrospective observation-time comparisons
+rather than real-time forecasting performance.
 
 \clearpage
 \chapter*{Acknowledgements}
@@ -283,190 +292,78 @@ of the Canadian zero-coupon yield-curve data.
 \section{Motivation and research
 problem}\label{motivation-and-research-problem}
 
-The term structure of interest rates describes the relationship between
-government bond yields and their maturities, providing a fundamental
-representation of interest-rate conditions across investment horizons.
-Movements in the yield curve are rarely uniform: changes in monetary
-policy expectations, inflation uncertainty, and macroeconomic conditions
-may affect short, intermediate, and long-term yields differently. For
-fixed-income portfolios, these movements translate into changes in bond
-valuations and risk exposures that depend not only on the magnitude of
-individual yield changes but also on their dependence across maturities.
-Consequently, effective interest-rate risk measurement requires more
-than forecasts of individual yields; it requires a coherent
-representation of the joint distribution of future yield-curve
-movements.
+The term structure relates government yields to maturity, and movements
+can differ across short, intermediate and long maturities. Fixed-income
+risk therefore depends on the joint distribution of yield changes, not
+only on separate point forecasts. The Dynamic Nelson--Siegel (DNS) model
+provides a tractable three-factor representation---level, slope and
+curvature---for forecasting the curve (Diebold \& Li
+(\citeproc{ref-diebold2006forecasting}{2006})).
 
-The Dynamic Nelson--Siegel (DNS) model represents the yield curve using
-three factors: level, slope, and curvature. By reducing the
-dimensionality of the term structure, DNS offers a tractable framework
-for modeling yield dynamics and generating forecasts across maturities.
-The dynamic forecasting approach developed by Diebold \& Li
-(\citeproc{ref-diebold2006forecasting}{2006}) provides the foundation
-for this study. However, conventional DNS specifications typically
-assume constant factor-innovation variances, potentially limiting their
-ability to represent changes in predictive uncertainty across different
-interest-rate environments. In particular, periods of market instability
-may be associated with substantially different volatility conditions
-from those observed during more stable periods.
+Conventional DNS specifications often assume constant factor-innovation
+variances. This paper asks whether a Bayesian stochastic-volatility
+extension, motivated by work such as Hautsch \& Yang
+(\citeproc{ref-hautsch2012bayesian}{2012}), improves out-of-sample
+probabilistic forecasts of Canadian government yields. The two-step
+factor extraction is retained, and the extension allows uncertainty in
+factor innovations to vary over time; the study evaluates this
+established-model extension rather than proposing a new term-structure
+representation.
 
-To address this limitation, this paper investigates a Bayesian
-stochastic-volatility extension of the DNS framework, motivated by the
-existing literature on stochastic-volatility yield-curve modeling,
-including Hautsch \& Yang (\citeproc{ref-hautsch2012bayesian}{2012}).
-The proposed approach retains the conventional two-step DNS factor
-extraction procedure while introducing time-varying stochastic
-volatility into the subsequent factor dynamics. Bayesian inference
-provides a framework for estimating these volatility processes and
-generating posterior-predictive distributions of future yield curves.
-The objective is not to develop a new term-structure model, but to
-examine whether a computationally tractable extension of established
-methods can improve the representation of yield-curve uncertainty.
-
-The central research question is whether incorporating Bayesian
-stochastic volatility into DNS factor dynamics improves out-of-sample
-probabilistic forecasts of Canadian government yields relative to
-constant-volatility DNS specifications and conventional forecasting
-benchmarks. The distinction between point forecasting and probabilistic
-forecasting is central to this investigation. Models with similar
-conditional mean forecasts may produce substantially different
-predictive variances, covariance structures, and tail behavior.
-Moreover, accurately reconstructing the observed yield curve does not
-necessarily imply that a model can adequately characterize the
-uncertainty surrounding its future evolution.
-
-Accordingly, the empirical analysis emphasizes the quality of joint
-predictive distributions rather than point-forecast accuracy alone.
-Forecast performance is evaluated primarily through the multivariate
-Gaussian quasi-likelihood, expressed as the Dawid--Sebastiani Score,
-which assesses predictive means and covariance matrices. The Energy
-Score provides a complementary assessment of the broader multivariate
-predictive distribution, while prediction-interval coverage and root
-mean squared error offer additional calibration and point-forecast
-diagnostics. Using Canadian government yield data, the study examines
-whether explicitly modeling stochastic factor volatility produces
-measurable improvements in forecast uncertainty and whether such
-improvements remain meaningful relative to simpler forecasting
-alternatives.
+The evaluation emphasizes joint predictive distributions: the
+Dawid--Sebastiani Score assesses predictive means and covariances, while
+the Energy Score evaluates simulated yield curves. Interval coverage and
+RMSE provide complementary calibration and point-forecast measures.
+Similar conditional mean forecasts can still imply different predictive
+covariances and tail behavior, so accurate curve reconstruction alone is
+not evidence of a well-calibrated forecast distribution.
 
 \section{Contribution and scope}\label{contribution-and-scope}
 
-This paper focuses on improving probabilistic yield-curve forecasting
-within the DNS framework by introducing Bayesian stochastic volatility
-into the factor dynamics. The study extends the conventional DNS
-approach to examine whether modeling time-varying factor volatility
-provides a better representation of forecast uncertainty. The main
-comparison is between Bayesian DNS with constant factor volatility and
-Bayesian DNS with stochastic factor volatility. Both models share the
-same extracted factors, coefficient priors, forecast dates, and yield
-reconstruction-error treatment, allowing the effect of stochastic
-volatility to be evaluated within a consistent framework. The prior
-specifications also preserve a common interpretation of long-run factor
-innovation variance, while the bounded volatility prior ensures that the
-required finite-horizon predictive moments exist under the stated model.
+The contribution is a matched comparison of Bayesian DNS with constant
+and stochastic factor volatility. The models share factors, coefficient
+priors, forecast origins and reconstruction-error treatment; the
+stochastic-volatility prior also retains the constant model's
+interpretation of long-run expected innovation variance. The evaluation
+uses 130 common one- and four-week origins and includes the random walk,
+PCA--VAR and classical DNS as external benchmarks. The study does not
+claim general dominance; joint state-space estimation and longer
+horizons remain outside its scope.
 
-The empirical analysis uses Canadian government yield curves across 130
-common out-of-sample forecast origins at one- and four-week horizons.
-The results suggest that introducing stochastic volatility modestly
-improves joint probabilistic forecasting within the Bayesian DNS
-framework, although improvements in point-forecast accuracy remain
-uncertain. Conventional forecasting methods, including the random walk,
-PCA--VAR, and two-step Diebold--Li models, are included as external
-benchmarks to place these findings in context, rather than as separate
-methodological contributions. The random walk remains stronger on
-aggregate forecasting metrics, highlighting the difficulty of improving
-yield forecasts at short horizons.
-
-The scope of this study is limited to evaluating probabilistic forecasts
-within the DNS framework. It does not aim to establish that Bayesian DNS
-models consistently outperform conventional forecasting approaches.
-Further extensions, including joint Bayesian state-space estimation and
-longer forecasting horizons, are left for future research.
-
-\section{Organization}\label{organization}
-
-Section~\ref{sec-literature} motivates the representation and scores.
-Section~\ref{sec-data} defines the historical panel and information set.
-Section~\ref{sec-methods} specifies the forecasting models and
-finite-moment prior. Section~\ref{sec-design} describes the evaluation
-and inference procedures. Section~\ref{sec-results} reports empirical
-comparisons; Section~\ref{sec-discussion} interprets their scope and
-limitations, followed by conclusions. Appendices provide derivations and
-classical robustness results.
-
-\chapter{Literature and conceptual framework}\label{sec-literature}
+\chapter{Methodology and conceptual framework}\label{sec-literature}
 
 \section{DNS representation and conventional factor
 forecasting}\label{dns-representation-and-conventional-factor-forecasting}
 
-The DNS framework separates the cross-sectional representation of the
-yield curve from the time-series dynamics of its factors. Diebold \& Li
-(\citeproc{ref-diebold2006forecasting}{2006}) estimates level, slope and
-curvature factors using fixed Nelson--Siegel loadings, then forecasts
-those factors with autoregressions. Its reported gains are more
-pronounced at a one-year horizon than at one month, underscoring that
-performance depends on the forecasting horizon. The conventional
-two-step DNS model provides the foundation for the present comparison.
-
-The factors are interpreted through their maturity loadings: level loads
-equally at every maturity, slope is strongest at short maturities and
-approaches zero at long maturities, and curvature has a hump-shaped
-loading. These labels describe the loading patterns; they do not
-establish factor stationarity, cointegration or economic identification.
-Factor extraction alone does not specify a predictive distribution;
-assumptions about factor dynamics and innovations are also required.
-
-PCA--VAR provides a secondary external comparison because its basis is
-estimated from yield variation rather than imposed by the DNS loading
-functions. Its factors need not share DNS's economic interpretation.
-Differences between PCA--VAR and DNS can reflect the representation,
-dynamics, covariance restrictions or parameter uncertainty, and
-therefore do not isolate the contribution of stochastic volatility.
+The DNS framework separates cross-sectional yield loadings from factor
+dynamics. Diebold \& Li (\citeproc{ref-diebold2006forecasting}{2006})
+estimates level, slope and curvature factors using fixed Nelson--Siegel
+loadings and forecasts them with autoregressions. The labels describe
+maturity-loading patterns, not factor stationarity or economic
+identification. PCA--VAR provides a secondary benchmark with an
+empirically estimated basis; its differences from DNS do not isolate the
+effect of stochastic volatility.
 
 \section{Bayesian inference for DNS}\label{bayesian-inference-for-dns}
 
-Bayesian DNS retains the two-step factor representation while assigning
-probability distributions to factor-dynamic parameters.
-Posterior-predictive forecasts integrate over parameter uncertainty,
-unlike the plug-in forecasts of classical DNS. A constant-volatility
-Bayesian specification is a useful control: it preserves the DNS
-loadings and factor AR(1) mean structure while providing a direct
-comparison for a stochastic-volatility extension.
-
-The present models are two-step approximations. Extracted factors are
-treated as observations in the second-stage Bayesian analysis, so
-uncertainty in factor extraction and the fixed decay parameter is not
-fully propagated. The results consequently concern Bayesian inference
-conditional on the estimated factor representation, not a fully joint
-latent-factor model.
+Bayesian DNS integrates over factor-dynamic parameter uncertainty,
+unlike classical plug-in forecasts. Here, extracted factors are treated
+as observations, so the two-step analysis does not propagate uncertainty
+in factor extraction or the fixed decay parameter.
 
 \section{Stochastic factor
 volatility}\label{stochastic-factor-volatility}
 
-Stochastic-volatility DNS extends the constant-variance factor model by
-allowing the log innovation variance to evolve over time. Hautsch \&
-Yang (\citeproc{ref-hautsch2012bayesian}{2012}) studies Bayesian
-stochastic volatility in monthly U.S. yield factors and reports
-persistent factor volatility; Caldeira et al.
-(\citeproc{ref-caldeira2010bayesian}{2010}) examines common and
-factor-specific volatility structures for futures and Treasury yields.
-These studies motivate allowing uncertainty to change across market
-conditions, but they do not establish that the extension improves weekly
-Canadian yield forecasts. Omori et al.
+Stochastic-volatility DNS allows factor log innovation variances to
+evolve. Hautsch \& Yang (\citeproc{ref-hautsch2012bayesian}{2012}) and
+Caldeira et al. (\citeproc{ref-caldeira2010bayesian}{2010}) motivate
+this flexibility in yield applications, while Omori et al.
 (\citeproc{ref-omori2007stochastic}{2007}) provides a mixture-based
-approach to stochastic-volatility inference. The current model uses a
-no-leverage restriction and evaluates the incremental forecasting value
-of time-varying factor volatility within the same two-step DNS
-framework.
-
-The central comparison holds the factor extraction, factor AR mean
-structure, coefficient priors, reconstruction-error treatment, forecast
-dates and evaluation criteria fixed. It changes the factor
-innovation-variance specification from constant to stochastic. This
-controlled comparison is informative about that extension under the
-stated assumptions, but it is not a causal effect separated from all
-differences in the resulting volatility priors and predictive
-distributions.
+inference method. The present no-leverage model changes constant to
+stochastic factor variance while holding extraction, mean dynamics and
+forecast design fixed. The resulting comparison is conditional on the
+specified models and priors, not a causal effect isolated from every
+distributional difference.
 
 \section{Probabilistic forecast
 evaluation}\label{probabilistic-forecast-evaluation}
@@ -498,42 +395,58 @@ model superiority.
 
 \section{Source and provenance}\label{source-and-provenance}
 
-The primary source is the Bank of Canada's public zero-coupon
-yield-curve series (\citeproc{ref-bocdata}{Bank of Canada, 2026}). Its
-source page describes daily curves derived from Government of Canada
-bonds and treasury bills, a quarterly maturity grid from 0.25 through 30
-years, decimal yield units, missing observations marked \texttt{na}, and
-a typical two-week update lag. These are estimated curves rather than a
-panel of directly traded zero-coupon security prices at all maturities.
-The Bank identifies Bolder et al.
-(\citeproc{ref-bolder2004canadian}{2004}) as the methodology reference.
+The study uses the Bank of Canada's publicly available zero-coupon
+Government of Canada yield-curve estimates (\citeproc{ref-bocdata}{Bank
+of Canada, 2026}), covering the period from 2000 to 2025. These daily
+yield curves are estimated from Government of Canada bonds and treasury
+bills using the term-structure estimation methodology documented by
+Bolder et al. (\citeproc{ref-bolder2004canadian}{2004}). The published
+series provides yields across maturities from three months to 30 years
+at quarterly-year intervals. Unlike directly observed market yields on
+individual securities, these estimates provide a consistent term
+structure across maturities, making them suitable for analyzing
+yield-curve dynamics and forecasting jointly across different investment
+horizons.
 
-The supplied raw Canadian CSV is preserved separately from the processed
-weekly panel. Its original retrieval transaction is not authenticated,
-and the historical vintage may contain revisions. A separate
-official-endpoint check found exact agreement for the eight maturities
-on 21 complete December 2015 dates; this checks only that slice, not the
-entire historical panel. Source evidence is retained under
-\texttt{docs/sources/}; \texttt{src/prepare\_data.py} defines the
-processor.
+The empirical analysis focuses on eight representative maturities: 0.25,
+0.5, 1, 2, 5, 7, 10, and 30 years, sampled weekly from the daily series.
+The data are drawn from a historical extract rather than reconstructed
+real-time publication vintages. Although a limited comparison against
+the Bank's official series confirmed agreement across all eight
+maturities for 21 observations in December 2015, the provenance and
+revision status of the complete historical extract have not been
+independently verified. Furthermore, the Bank's typical publication
+delay of approximately two weeks means that observation dates do not
+necessarily correspond to contemporaneous public information
+availability. These limitations are considered when interpreting the
+retrospective forecasting results.
 
 \section{Cleaning, units and weekly
 sampling}\label{cleaning-units-and-weekly-sampling}
 
-The selected maturity grid is \((0.25,0.5,1,2,5,7,10,30)\) years.
-Headers are stripped of leading spaces; dates are parsed and checked for
-uniqueness. A daily observation is eligible only if all eight selected
-yields are present. The processor converts decimal yields to percentage
-points by multiplying by 100 and selects the last eligible observation
-in each ISO calendar week. This is neither averaging nor interpolation.
+The analysis uses eight representative maturities,
+\(0.25, 0.5, 1, 2, 5, 7, 10, 30\) years, spanning the short,
+intermediate, and long ends of the Canadian government yield curve.
+Daily observations are retained only when yields are available at all
+eight maturities, ensuring a consistent cross-sectional representation
+throughout the sample. Yields are converted from decimal form to
+percentage points by multiplying by 100. To construct the weekly series,
+the last available complete observation in each ISO calendar week is
+selected, without averaging or interpolating yields across dates.
 
-The research sample excludes the weekly observation dated 31 December
-1999 and all dates in 2026. It contains 1,356 weekly observations: 835
-through the end of 2015 and 521 in 2016--2025. Table~\ref{tbl-data}
-summarizes this restricted sample. All scores use percentage-point
-units; hence 0.01 percentage points equals one basis point. Comparisons
-use identical units across models. Changing units shifts
-determinant-based scores and rescales distance-based scores.
+The sample is restricted to 2000--2025 and contains 1,356 weekly
+yield-curve observations. Of these, 835 observations from 2000--2015
+form the initial estimation sample, while the remaining 521 observations
+from 2016--2025 constitute the out-of-sample evaluation period. Summary
+statistics for the selected maturities are reported in
+Table~\ref{tbl-data}. The selection of forecast origins within the
+evaluation period is described in Section 3.3.
+
+All forecast evaluations are conducted using yields expressed in
+percentage points, with one basis point corresponding to 0.01 percentage
+points. Consistent units are maintained across models because rescaling
+yields shifts the log-determinant component of DSS and proportionally
+rescales distance-based measures such as the Energy Score.
 
 \begin{longtable}[]{@{}lllll@{}}
 \caption{Weekly Canadian yields, 2000--2025, in percentage
@@ -578,35 +491,17 @@ interpretation}\label{forecast-dates-and-calendar-interpretation}
 Forecast horizons count weekly observations, not a fixed number of
 trading days. Every fourth weekly observation in the out-of-sample
 period is considered as an origin. An origin is retained only if both
-its one- and four-observation-ahead targets lie in 2016--2025. This
-gives 130 common origins, from 8 January 2016 to 28 November 2025. The
+its one and four-observation-ahead targets lie in 2016--2025. This gives
+130 common origins, from 8 January 2016 to 28 November 2025. The
 otherwise candidate observation near the end of December 2025 is
 excluded because its four-week target is outside the sample.
 
 Public holidays can change the weekday and elapsed calendar time between
 observations without changing the weekly index. No interval between
 successive observations exceeds ten calendar days. Accordingly, a
-four-week forecast denotes four steps ahead in the weekly sample; its
-target date follows from the observed calendar rather than a fixed
+four-week forecast denotes four steps ahead in the weekly sample where
+its target date follows from the observed calendar rather than a fixed
 28-day interval.
-
-\section{Observation-time versus publication-time
-information}\label{observation-time-versus-publication-time-information}
-
-The experiments fit models only to observations dated no later than the
-origin. Lambda selection also uses only the initial training sample.
-This prevents future-dated observation leakage within the supplied
-historical panel. It does \textbf{not} establish a real-time forecasting
-design.
-
-The Bank's typical two-week publication lag means a curve dated \(t\)
-would not normally be publicly available at \(t\). The later historical
-vintage also leaves revision uncertainty. These are therefore
-\textbf{retrospective observation-time forecasts}, not operational
-forecasts under the public release-time information set. A real-time
-backtest needs dated releases or a justified availability-lag rule; a
-fixed lag alone cannot resolve revision uncertainty. No result is
-interpreted as executable historical trading performance.
 
 \chapter{Model specifications}\label{sec-methods}
 
@@ -662,55 +557,111 @@ f_{j,t+1}=a_j+b_j f_{j,t}+\eta_{j,t+1},
 }\end{equation}
 
 For the classical benchmark the fitted intercept and slope are
-unrestricted least-squares estimates. Conditional on fitted parameters,
-factor forecast moments are
+unrestricted least-squares estimates. To distinguish forecast moments
+from the stochastic-volatility parameters defined below, denote the
+horizon-\(h\) forecast mean and variance of factor \(j\) by
+\(\mu^{\mathrm{fc}}_{j,h}\) and \(V^{\mathrm{fc}}_{j,h}\):
 
 \begin{equation}\protect\phantomsection\label{eq-ar-moments}{
- m_{j,h}=b_j^h f_{j,t}+a_j\sum_{k=0}^{h-1}b_j^k,
-\qquad v_{j,h}=q_j\sum_{k=0}^{h-1}b_j^{2k}.
+\mu^{\mathrm{fc}}_{j,h}=b_j^h f_{j,t}+a_j\sum_{k=0}^{h-1}b_j^k,
+\qquad V^{\mathrm{fc}}_{j,h}=q_j\sum_{k=0}^{h-1}b_j^{2k}.
 }\end{equation}
 
-The yield covariance is \(\Lambda\operatorname{diag}(v_h)\Lambda'+R_t\).
-Parameter uncertainty is not added to this classical plug-in forecast.
-Factor innovation independence is an explicit restriction; PCA--VAR
-instead estimates a full covariance for its three factor innovations.
+The yield covariance is
+\(\Lambda\operatorname{diag}(V^{\mathrm{fc}}_h)\Lambda'+R_t\). Parameter
+uncertainty is not added to this classical plug-in forecast. Factor
+innovation independence is an explicit restriction; PCA--VAR instead
+estimates a full covariance for its three factor innovations.
 
 \section{Bayesian constant-volatility
 DNS}\label{bayesian-constant-volatility-dns}
 
 M3 is the primary control. It retains the factor AR(1) mean equation and
-assumes a constant innovation variance \(\exp(m_j)\). Its coefficient
-prior is
+assumes a constant innovation variance \(\exp(m_j)\). The intercept
+\(a_j\) determines the drift, while \(b_j\) controls persistence. For
+\(|b_j|<1\), their implied long-run factor mean is
+\(\mu_j=a_j/(1-b_j)\). We specify independent priors on this mean and
+persistence and derive the intercept:
 
 \begin{equation}\protect\phantomsection\label{eq-coefficient-prior}{
-(a_j,b_j)'\sim N\!\left((0,0.7)',\operatorname{diag}(25,0.09)\right),\qquad |b_j|<1.
+\mu_j\sim N\!\left(\bar f_{j,\mathrm{train}},(2s_{j,\mathrm{train}})^2\right),
+\qquad b_j\sim N(\hat b_{j,\mathrm{OLS}},0.03^2)\ \text{truncated to }(-1,1),
+\qquad a_j=(1-b_j)\mu_j.
 }\end{equation}
 
-Here \(b_j\) controls factor persistence. The restriction \(|b_j|<1\) is
-consistent with the stationary AR(1) specification. Before truncation,
-its prior is centered at 0.7 with standard deviation 0.3, allowing a
-broad range of moderately persistent dynamics. These choices are
-inherited modeling assumptions, not parameters selected using test
-scores.
+Here \(\bar f_{j,\mathrm{train}}\) and \(s_{j,\mathrm{train}}\) are the
+mean and sample standard deviation of the initial extracted factors, and
+\(\hat b_{j,\mathrm{OLS}}\) is the auxiliary initial-sample AR(1) slope.
+For level, slope and curvature, the respective training means are
+4.329855, −2.174505 and −1.109836; the standard deviations are 1.055927,
+1.406094 and 1.824830; and the OLS persistence centers are 0.997223,
+0.995512 and 0.976815. The long-run mean prior is broad on the observed
+factor scale, with a standard deviation of twice the training standard
+deviation. The persistence prior reflects the highly persistent initial
+estimates while the truncation enforces stationarity for each draw.
+These training-calibrated choices are held fixed across expanding
+windows and used in both Bayesian models; they are not selected using
+evaluation-period scores.
+
+The direct prior gives the long-run mean finite moments even when
+persistence is close to one. In contrast, an independent broad intercept
+prior combined with persistence support arbitrarily close to one would
+give \(a_j/(1-b_j)\) heavy tails. The induced intercept and persistence
+are dependent under the present specification.
+
+With SD 0.03, central 90\% prior intervals are 0.939--0.998 (level),
+0.938--0.998 (slope) and 0.924--0.996 (curvature). In 100,000
+training-only draws, the implied mean lies outside the observed range in
+33.9\% of level draws, 32.1--32.3\% of slope draws and 23.4--23.9\% of
+curvature draws, compared with 88.9\%, 83.8\% and 71.9\% under the
+original priors. Because the direct-mean parameterization also changed,
+these figures support the joint revision, not SD 0.03 in isolation.
+
+We introduced these priors after evaluating the original specification,
+but selected values using initial-sample diagnostics and
+prior-predictive checks, not 2016--2025 scores. Results assess the
+revised specification.
 
 The constant innovation variance has the prior
 
 \begin{equation}\protect\phantomsection\label{eq-constant-variance-prior}{
-m_j\sim N(\mu_{0j},25).
+m_j\sim N(\mu_{0j},1).
 }\end{equation}
 
 The parameter \(m_j\) is the log of the long-run expected factor
-innovation variance. The center \(\mu_{0j}\) is calibrated from factor
-residual variances in the initial 835-observation training sample and
-held fixed across expanding windows. The same interpretation and
-calibration are used in both Bayesian specifications. A standard
-deviation of five on the log-variance scale is deliberately broad.
-Because the initial observations calibrate the prior and also enter the
-likelihood, this is an empirical-Bayes choice rather than independent
-prior elicitation. Posterior-predictive simulation averages over
-parameter draws, propagates future factor innovations and adds the
-common reconstruction error, incorporating second-stage parameter
-uncertainty omitted by classical M2.
+innovation variance. To define its prior center precisely, let
+\(\tilde f_{j,t}\) denote the extracted factor in the initial
+835-observation training sample. For each factor, estimate an auxiliary
+OLS AR(1), \[
+(\hat\alpha_j^{\mathrm{OLS}},\hat\beta_j^{\mathrm{OLS}})
+=\arg\min_{\alpha,\beta}\sum_{t=2}^{835}
+(\tilde f_{j,t}-\alpha-\beta\tilde f_{j,t-1})^2,
+\qquad
+\hat e_{j,t}=\tilde f_{j,t}-\hat\alpha_j^{\mathrm{OLS}}
+-\hat\beta_j^{\mathrm{OLS}}\tilde f_{j,t-1},
+\] and set \[
+\mu_{0j}=\log\!\left(\frac{1}{834}\sum_{t=2}^{835}\hat e_{j,t}^{\,2}\right).
+\] For level, slope and curvature, respectively, the resulting centers
+are \(-4.888703\), \(-4.122200\) and \(-1.969807\), corresponding to
+innovation-variance medians of \(0.007531\), \(0.016209\) and
+\(0.139484\) squared percentage points. These centers are fixed across
+windows. With log-scale SD one, the prior median of \(\exp(m_j)\)
+remains \(\exp(\mu_{0j})\) and its mean is \(\exp(\mu_{0j}+1/2)\):
+0.0124, 0.0267 and 0.2300. A 90\% interval spans 0.19--5.18 times the
+median. Under the former SD of five, the prior means would be about
+2,021, 4,349 and 37,429; thus SD one lowers them by
+\(\exp(12)\approx162{,}755\). In 100,000 training-only draws from the
+revised joint specification, median curve-change RMS is 0.167--0.174
+percentage points at one week and 0.357--0.365 at four weeks, close to
+training 95th-percentile thresholds 0.1845 and 0.3849. Under the
+original prior, medians were 4.63--4.70 and 10.32--10.44, with over
+99.9\% above those thresholds. These simulations change several prior
+components jointly; the lognormal mean comparison isolates the effect of
+the \(m_j\) scale. Since training data set the hyperparameters and enter
+the likelihood, this is empirical Bayes, not independent prior
+elicitation. Posterior simulation also propagates factor innovations and
+adds the common reconstruction error, incorporating second-stage
+parameter uncertainty omitted by classical M2.
 
 \section{Bayesian DNS with stochastic factor
 volatility}\label{bayesian-dns-with-stochastic-factor-volatility}
@@ -731,19 +682,27 @@ h_{j,t}=\omega_j+\phi_j(h_{j,t-1}-\omega_j)+u_{j,t},
 }\end{equation}
 
 The latent state \(h_{j,t}\) allows the factor innovation variance to
-change over time. Its persistence parameter has the transformed prior
+change over time. Before reparameterization, \(\omega_j\) is the
+unconditional mean of log variance, whereas
+\(m_j=\log E[\exp(h_{j,t})]\) is the log of the long-run expected
+innovation variance. If the stationary log-volatility variance (denoted
+\(v_j\) below) is \(v_j\), then \(h_{j,t}\sim N(\omega_j,v_j)\) and
+\(E[\exp(h_{j,t})]=\exp(\omega_j+v_j/2)\); hence \(m_j=\omega_j+v_j/2\).
+The persistence parameter \(\phi_j\) has the transformed prior
 
 \begin{equation}\protect\phantomsection\label{eq-volatility-persistence-prior}{
 \frac{\phi_j+1}{2}\sim\operatorname{Beta}(20,1.5),
 \qquad E[\phi_j]=2\frac{20}{21.5}-1\approx0.86.
 }\end{equation}
 
-This transformation restricts \(\phi_j\) to \((-1,1)\), and the prior
-favors persistent log volatility, a common feature of financial
-volatility processes. The particular Beta hyperparameters remain
-modeling choices.
+This transformation restricts \(\phi_j\) to \((-1,1)\). A canonical
+likelihood-based analysis of stochastic volatility in financial returns
+(\citeproc{ref-kim1998stochastic}{Kim et al., 1998}) motivates a prior
+allowing persistent latent log variance. This is general SV precedent,
+not evidence about Canadian yield factors or validation of the specific
+Beta hyperparameters used here.
 
-To match the interpretation of \(m_j\) across M3 and M4, let \(v_j\) be
+To retain the same interpretation of \(m_j\) as in M3, let \(v_j\) be
 the stationary variance of log volatility and set
 
 \begin{equation}\protect\phantomsection\label{eq-finite-reparam}{
@@ -757,6 +716,10 @@ prior interpretation for long-run expected innovation variance, but not
 their full predictive distributions: M4 additionally allows volatility
 to vary over time.
 
+The symbols \(\mu^{\mathrm{fc}}_{j,h}\) and \(V^{\mathrm{fc}}_{j,h}\)
+above denote forecast moments; \(m_j\) and \(v_j\) here are parameters
+of the stochastic-volatility specification.
+
 For \(v_j\), the main specification uses a rate-one exponential prior
 truncated to \((0,U)\):
 
@@ -765,27 +728,22 @@ p_U(v_j)=\frac{e^{-v_j}}{1-e^{-U}}\,1_{(0,U)}(v_j),
 \qquad U=4.
 }\end{equation}
 
-The bound restricts stationary log-volatility variance to below four, or
-its standard deviation to below two; it does not bound realized
-volatility itself. The exponential density places more mass on smaller
-\(v_j\), regularizing toward constant volatility. An untruncated
-rate-one exponential would place \(e^{-4}\approx1.83\%\) probability
-above four. Initial-window log-squared OLS residual variances are
-approximately 4.87, 5.67 and 5.91, compared with about 4.935 for the
-\(\log(\chi_1^2)\) noise variance. This is only a rough plausibility
-check for latent variances of order one or smaller, not a fitted
-stochastic-volatility variance estimate or evidence that \(U=4\) is
-optimal. The bound is a modeling assumption; \(U=2\) and \(U=8\) are
-evaluated at three representative origins only.
+The bound keeps stationary log-volatility variance below four (standard
+deviation below two), but does not bound realized volatility. The
+truncated exponential prior favors smaller \(v_j\); without truncation,
+1.83\% of its mass would exceed four. Initial-window log-squared OLS
+residual variances (4.87, 5.67 and 5.91, versus approximately 4.935 for
+the \(\log(\chi_1^2)\) noise) are only a rough scale check, not fitted
+volatility estimates or evidence that \(U=4\) is optimal. The bound is a
+modeling choice; alternative bounds were not evaluated under the revised
+coefficient and variance priors.
 
-The bounded \(v_j\) prior and stated proper priors imply finite
-posterior-predictive moments at each finite forecast horizon; the
-appendix gives the argument. In particular, the predictive covariance
-needed for DSS exists under these assumptions. This result does not
-guarantee realistic uncertainty forecasts or good calibration, and
-finite-horizon moments do not establish finite unconditional stationary
-factor variance after mixing over coefficients arbitrarily close to a
-unit root.
+The bounded \(v_j\) prior and proper coefficient priors imply finite
+posterior-predictive moments at every finite horizon; the appendix gives
+the argument. This establishes existence of the covariance used in DSS,
+not realistic uncertainty or calibration. Nor does it imply finite
+unconditional stationary factor variance when mixing over coefficients
+arbitrarily close to a unit root.
 
 Posterior-predictive simulation propagates the factor and log-volatility
 states at each future weekly step and adds the common reconstruction
@@ -798,8 +756,10 @@ Y_{t+h}^{(s)}=\Lambda f_{t+h}^{(s)}+\varepsilon_{t+h}^{(s)},
 
 The two-step method treats extracted factors as observations, so it does
 not fully propagate first-stage factor-extraction or fixed-\(\lambda\)
-uncertainty. Inference uses a Metropolis-corrected mixture sampler
-targeting the exact likelihood, following Omori et al.
+uncertainty. Inference uses a Gaussian-mixture representation for the
+log-squared innovations Kim et al.
+(\citeproc{ref-kim1998stochastic}{1998}), with a Metropolis correction
+that targets the exact likelihood following Omori et al.
 (\citeproc{ref-omori2007stochastic}{2007}).
 
 \section{Conventional forecasting
@@ -892,32 +852,52 @@ covariance. Ensemble simulation propagates each future volatility and
 factor step. This reduces moment-estimation noise without replacing the
 non-Gaussian predictive scenarios used for Energy Score and intervals.
 
-\section{Mean--covariance and Gaussian log
-scores}\label{meancovariance-and-gaussian-log-scores}
+\section{Mean--covariance and Gaussian QLIKE
+scores}\label{meancovariance-and-gaussian-qlike-scores}
 
-For error \(e=Y_{t+h}-\widehat\mu_{t,h}\) the primary score is
+The primary evaluation criterion is the Dawid--Sebastiani Score (DSS),
+which assesses the accuracy of joint predictive means and covariance
+matrices. It can be interpreted as a multivariate Gaussian
+quasi-likelihood (QLIKE-type) loss, extending the familiar Gaussian
+variance-forecasting objective to the eight-dimensional yield curve. For
+forecast error \(e_{t,h}=Y_{t+h}-\widehat{\mu}_{t,h}\) and
+positive-definite predictive covariance \(\widehat{\Sigma}_{t,h}\), the
+score is
 
 \begin{equation}\protect\phantomsection\label{eq-dss}{
-\operatorname{DSS}=\log|\widehat\Sigma|+e'\widehat\Sigma^{-1}e.
+\operatorname{DSS}_{t,h}
+=\log|\widehat{\Sigma}_{t,h}|
++e_{t,h}^{\top}\widehat{\Sigma}_{t,h}^{-1}e_{t,h}.
 }\end{equation}
 
-Smaller is better. Computation uses a Cholesky factor, triangular solves
-and a log determinant rather than a direct inverse. Positive-definite
-covariance is essential. If \(\Sigma\) is nearly singular, small errors
-in maturity contrasts can generate large quadratic terms; a
-low-dimensional fit alone does not guarantee a good DSS.
+The log-determinant term penalizes excessive predictive dispersion,
+while the quadratic term penalizes forecast errors relative to the
+predicted covariance structure. Their combination balances forecast
+uncertainty against realized errors; lower DSS values indicate better
+mean--covariance forecasts. In the univariate case, the expression
+reduces to \(\log\widehat{\sigma}^{2}+e^{2}/\widehat{\sigma}^{2}\), the
+familiar Gaussian QLIKE-type form. Unlike conventional volatility QLIKE
+based on a realized variance proxy, the present score evaluates an
+observed yield vector directly, without requiring an estimated
+covariance target.
 
-For an eight-dimensional Gaussian forecast the negative log density is
+For an eight-dimensional Gaussian forecast, the negative log predictive
+density is related to DSS by
 
 \begin{equation}\protect\phantomsection\label{eq-logscore}{
--\log p(Y)=\tfrac12\{8\log(2\pi)+\operatorname{DSS}\}.
+-\log p(Y_{t+h})
+=\frac12\left[8\log(2\pi)+\operatorname{DSS}_{t,h}\right].
 }\end{equation}
 
-For Gaussian classical forecasts this transformation is a negative log
-density. For Bayesian mixtures it is only a Gaussian moment-based
-quasi-log score, not an exact mixture log predictive density. This paper
-therefore interprets DSS as a mean--covariance score and does not infer
-a full mixture density ranking from it.
+Thus, DSS is equivalent to twice the Gaussian negative log score up to
+an additive constant. For Gaussian classical forecasts, this corresponds
+to the fitted predictive density. For Bayesian posterior-predictive
+mixtures, however, DSS is a Gaussian moment-based quasi-log score, not
+the exact mixture negative log predictive density. It evaluates the
+first two predictive moments without fully distinguishing distributions
+sharing the same mean and covariance. The Energy Score therefore
+provides a complementary assessment of the joint predictive
+distribution.
 
 \section{Ensemble and marginal
 evaluation}\label{ensemble-and-marginal-evaluation}
@@ -997,18 +977,99 @@ diagnostics}\label{forecast-sample-and-diagnostics}
 
 The rolling evaluation contains 130 common origins and 520 Bayesian
 model--horizon forecasts. The maximum rank-normalized \(\widehat R\) is
-1.00760; the minimum bulk and tail effective sample sizes are 1,034.3
-and 1,969.3. The conventional benchmarks use the same origins.
+1.00965; the minimum bulk and tail effective sample sizes are 1,057.6
+and 2,094.5. The conventional benchmarks use the same origins.
+
+\section{Posterior parameter
+behavior}\label{posterior-parameter-behavior}
+
+To show how the data update the stochastic-volatility parameters,
+Table~\ref{tbl-posterior-parameters} reports the final fit at the 28
+November 2025 origin. The table summarizes the 24,000 retained M4 draws
+(the internal saved-chain label is M5; four chains of 6,000 draws),
+pooled across chains. The intervals are equal-tailed 90\% posterior
+intervals; this is the latest rolling fit, not a pooling of parameters
+across forecast origins.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1304}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1739}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1739}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1739}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1739}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1739}}@{}}
+\caption{Posterior medians and equal-tailed 90\% intervals for the
+accepted revised-prior stochastic-volatility fit at 2025-11-28; four
+chains pooled.}\label{tbl-posterior-parameters}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Factor
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(b_j\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Long-run mean \(\mu_j\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(m_j\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(\phi_j\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(v_j\)
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Factor
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(b_j\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Long-run mean \(\mu_j\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(m_j\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(\phi_j\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(v_j\)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Level & 0.997 {[}0.994, 0.999{]} & 2.724 {[}0.974, 3.832{]} & -4.713
+{[}-4.908, -4.473{]} & 0.958 {[}0.916, 0.982{]} & 0.362 {[}0.238,
+0.570{]} \\
+Slope & 0.995 {[}0.992, 0.998{]} & -0.113 {[}-1.147, 1.804{]} & -4.192
+{[}-4.348, -4.014{]} & 0.864 {[}0.779, 0.927{]} & 0.610 {[}0.460,
+0.797{]} \\
+Curvature & 0.983 {[}0.975, 0.991{]} & -1.645 {[}-2.332, -0.885{]} &
+-2.006 {[}-2.445, -1.414{]} & 0.983 {[}0.969, 0.992{]} & 0.924 {[}0.603,
+1.623{]} \\
+\end{longtable}
+
+The truncated persistence-prior medians are 0.979, 0.978 and 0.968 for
+level, slope and curvature, respectively; the posterior medians are
+higher and their intervals narrower. The corresponding long-run-mean
+prior centers are 4.330, −2.175 and −1.110, compared with posterior
+medians of 2.724, −0.113 and −1.645. The slope mean remains uncertain,
+consistent with persistence close to one. The prior medians (5th--95th
+percentiles) are 0.886 {[}0.649, 0.983{]} for \(\phi_j\) and 0.675
+{[}0.050, 2.697{]} for \(v_j\). Posterior \(v_j\) is more concentrated
+than its prior for each factor, while posterior \(\phi_j\) remains in
+the persistent range favored by its prior. The posterior \(m_j\) medians
+remain near their training-calibrated centers. These comparisons show
+parameter-specific updating alongside prior regularization, not proof
+that every estimate is insensitive to the prior.
 
 \section{Primary four-week
 comparison}\label{primary-four-week-comparison}
 
-\begin{longtable}[]{@{}llllll@{}}
-\caption{Four-week forecasts at 130 common origins. M3 is Bayesian DNS
-with constant factor volatility; M4 adds stochastic factor volatility.
-Lower DSS, Energy Score and RMSE are better; marginal coverage targets
-90\%. Width is mean central-90\% marginal interval width. One basis
-point equals 0.01 percentage points.}\label{tbl-joint-h4}\tabularnewline
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{Four-week forecasts at 130 common origins under the revised
+training-calibrated priors. M3 is Bayesian DNS with constant factor
+volatility; M4 adds stochastic factor volatility. Lower DSS, Energy
+Score and RMSE are better; marginal coverage targets 90\%. Width is mean
+central-90\% marginal interval width. One basis point equals 0.01
+percentage points.}\label{tbl-joint-h4}\tabularnewline
 \toprule\noalign{}
 Model & DSS & Energy & RMSE (bp) & Cover (\%) & Width (bp) \\
 \midrule\noalign{}
@@ -1022,17 +1083,17 @@ Model & DSS & Energy & RMSE (bp) & Cover (\%) & Width (bp) \\
 M0 & -36.006 & 0.351 & 21.318 & 87.115 & 63.372 \\
 M1 & -24.394 & 0.370 & 21.966 & 86.635 & 61.934 \\
 M2 & -21.453 & 0.418 & 23.563 & 93.173 & 91.777 \\
-M3 & -21.450 & 0.418 & 23.577 & 93.077 & 92.143 \\
-M4 & -21.840 & 0.407 & 23.415 & 94.327 & 92.719 \\
+M3 & -21.454 & 0.417 & 23.514 & 93.269 & 92.199 \\
+M4 & -21.835 & 0.407 & 23.384 & 94.423 & 92.679 \\
 \end{longtable}
 
-At four weeks, stochastic-volatility M4 improves mean DSS from −21.450
-to −21.840 and Energy Score from 0.4178 to 0.4073 relative to
-constant-volatility M3. The paired M4-minus-M3 differences are −0.3899
-for DSS and −0.01053 for Energy Score; the latter is a 2.52\% reduction
+At four weeks, stochastic-volatility M4 improves mean DSS from −21.454
+to −21.835 and Energy Score from 0.4171 to 0.4066 relative to
+constant-volatility M3. The paired M4-minus-M3 differences are −0.3805
+for DSS and −0.01048 for Energy Score; the latter is a 2.51\% reduction
 from M3's mean score. The point-forecast change is smaller: pooled RMSE
-falls from 23.577 to 23.415 basis points, a difference of −0.162 with a
-95\% interval of {[}−0.464, 0.151{]}. Thus the main gain is in
+falls from 23.514 to 23.384 basis points, a difference of −0.130 with a
+95\% interval of {[}−0.407, 0.145{]}. Thus the main gain is in
 distributional scores rather than clearly improved point accuracy.
 
 The volatility estimates in Figure~\ref{fig-factor-volatility}
@@ -1040,15 +1101,15 @@ illustrate the time-varying uncertainty represented by M4. The figure
 reports posterior estimates of terminal weekly factor innovation
 standard deviations at each forecast origin, not direct observations of
 volatility. The curvature-factor median rises sharply in 2022, reaches
-60.6 basis points on 25 March 2022 and remains near that level in early
-2023 before declining. Level and slope volatility also rise around 2022,
-but less markedly.
+60.5 basis points on 25 March 2022 and remains elevated in early 2023
+before declining. Level and slope volatility also rise around 2022, but
+less markedly.
 
 \begin{figure}
 
 \centering{
 
-\includegraphics[width=0.95\linewidth,height=\textheight,keepaspectratio]{../figures/finite/presentation/estimated_factor_volatility.png}
+\includegraphics[width=0.95\linewidth,height=\textheight,keepaspectratio]{../figures/finite/revised_prior/estimated_factor_volatility.png}
 
 }
 
@@ -1061,12 +1122,13 @@ line is the M3 posterior median, constant within each rolling fit.}
 
 \section{One-week comparison}\label{one-week-comparison}
 
-\begin{longtable}[]{@{}llllll@{}}
-\caption{One-week forecasts at 130 common origins. M3 is Bayesian DNS
-with constant factor volatility; M4 adds stochastic factor volatility.
-Lower DSS, Energy Score and RMSE are better; marginal coverage targets
-90\%. Width is mean central-90\% marginal interval width. One basis
-point equals 0.01 percentage points.}\label{tbl-joint-h1}\tabularnewline
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{One-week forecasts at 130 common origins under the revised
+training-calibrated priors. M3 is Bayesian DNS with constant factor
+volatility; M4 adds stochastic factor volatility. Lower DSS, Energy
+Score and RMSE are better; marginal coverage targets 90\%. Width is mean
+central-90\% marginal interval width. One basis point equals 0.01
+percentage points.}\label{tbl-joint-h1}\tabularnewline
 \toprule\noalign{}
 Model & DSS & Energy & RMSE (bp) & Cover (\%) & Width (bp) \\
 \midrule\noalign{}
@@ -1080,27 +1142,26 @@ Model & DSS & Energy & RMSE (bp) & Cover (\%) & Width (bp) \\
 M0 & -41.223 & 0.163 & 9.972 & 90.481 & 30.811 \\
 M1 & -29.095 & 0.205 & 11.722 & 90.481 & 34.218 \\
 M2 & -25.370 & 0.255 & 13.858 & 94.423 & 52.482 \\
-M3 & -25.357 & 0.256 & 13.876 & 94.423 & 52.580 \\
-M4 & -25.648 & 0.252 & 13.883 & 94.712 & 52.709 \\
+M3 & -25.357 & 0.256 & 13.878 & 94.327 & 52.586 \\
+M4 & -25.636 & 0.252 & 13.893 & 94.327 & 52.672 \\
 \end{longtable}
 
-At one week, M4 reduces DSS by 0.291 and Energy Score by 0.00331, about
-1.29\% of M3's mean Energy Score. The RMSE difference is +0.0064 basis
-points and is not distinguishable from zero. The within-pair score
-changes therefore have the same direction at both horizons, with a
-larger Energy Score gain at four weeks.
+At one week, M4 reduces DSS by 0.279 and Energy Score by 0.00329, about
+1.29\% of M3's mean Energy Score. The RMSE difference is +0.0154 basis
+points and its interval includes zero. The within-pair score changes
+therefore have the same direction at both horizons, with a larger Energy
+Score gain at four weeks.
 
 \clearpage
 
 \section{Paired uncertainty, calibration and maturity
 patterns}\label{paired-uncertainty-calibration-and-maturity-patterns}
 
-\begin{longtable}[]{@{}llll@{}}
+\begin{longtable}[]{@{}llrl@{}}
 \caption{Paired M4-minus-M3 stationary-bootstrap 95\% percentile
-intervals: expected length eight origins, 9,999 replicates, seed 271026.
-M3 has constant factor volatility; M4 has stochastic factor volatility.
-Coverage differences are percentage points
-(pp).}\label{tbl-finite-paired}\tabularnewline
+intervals under the revised priors: expected block length eight origins,
+9,999 replicates, seed 271026. Coverage differences are percentage
+points (pp).}\label{tbl-finite-paired}\tabularnewline
 \toprule\noalign{}
 Horizon & Metric & M4 minus M3 & 95\% interval \\
 \midrule\noalign{}
@@ -1111,14 +1172,14 @@ Horizon & Metric & M4 minus M3 & 95\% interval \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-1 & DSS & -0.291 & {[}-0.639, -0.011{]} \\
-1 & Energy & -0.0033 & {[}-0.0053, -0.0013{]} \\
-1 & RMSE (bp) & 0.006 & {[}-0.021, 0.038{]} \\
-1 & Coverage (pp) & 0.29 & {[}-1.92, 2.69{]} \\
-4 & DSS & -0.390 & {[}-0.762, -0.051{]} \\
-4 & Energy & -0.0105 & {[}-0.0185, -0.0023{]} \\
-4 & RMSE (bp) & -0.162 & {[}-0.464, 0.151{]} \\
-4 & Coverage (pp) & 1.25 & {[}-1.06, 4.33{]} \\
+1 & DSS & -0.2790 & {[}-0.6191, -0.0033{]} \\
+1 & Energy & -0.0033 & {[}-0.0052, -0.0014{]} \\
+1 & RMSE (bp) & 0.0154 & {[}-0.0112, 0.0414{]} \\
+1 & Coverage (pp) & 0.0000 & {[}-1.9231, 2.0192{]} \\
+4 & DSS & -0.3805 & {[}-0.7323, -0.0564{]} \\
+4 & Energy & -0.0105 & {[}-0.0176, -0.0031{]} \\
+4 & RMSE (bp) & -0.1297 & {[}-0.4069, 0.1453{]} \\
+4 & Coverage (pp) & 1.1538 & {[}-1.3462, 4.4231{]} \\
 \end{longtable}
 
 The paired DSS and Energy Score intervals exclude zero in favor of M4 at
@@ -1126,14 +1187,14 @@ both horizons for the primary expected block length of eight origins.
 RMSE and coverage-difference intervals contain zero. These are paired
 time-series comparisons, not tests treating the 1,040 maturity--origin
 cells as independent observations. At four weeks, the DSS interval is
-{[}−0.762, −0.051{]} and the Energy Score interval is {[}−0.0185,
-−0.0023{]}.
+{[}−0.732, −0.056{]} and the Energy Score interval is {[}−0.0176,
+−0.0031{]}.
 
 \begin{figure}
 
 \centering{
 
-\includegraphics[width=0.95\linewidth,height=\textheight,keepaspectratio]{../figures/finite/presentation/paired_scores.png}
+\includegraphics[width=0.95\linewidth,height=\textheight,keepaspectratio]{../figures/finite/revised_prior/paired_scores.png}
 
 }
 
@@ -1151,8 +1212,8 @@ line is no difference. Each score has its own scale.}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
 \caption{Dependence sensitivity: paired M4-minus-M3 score intervals
-under expected stationary-bootstrap lengths 4, 8 and 12 origins, not
-alternative prior bounds.}\label{tbl-finite-blocks}\tabularnewline
+under expected stationary-bootstrap lengths 4, 8 and 12
+origins.}\label{tbl-finite-blocks}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Horizon
@@ -1183,14 +1244,14 @@ L=12
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-1 & DSS & {[}-0.6307, -0.0288{]} & {[}-0.6388, -0.0112{]} & {[}-0.6241,
--0.0097{]} \\
-1 & Energy & {[}-0.0053, -0.0013{]} & {[}-0.0053, -0.0013{]} &
-{[}-0.0052, -0.0013{]} \\
-4 & DSS & {[}-0.7677, -0.0471{]} & {[}-0.7619, -0.0506{]} & {[}-0.7256,
--0.0586{]} \\
-4 & Energy & {[}-0.0178, -0.0034{]} & {[}-0.0185, -0.0023{]} &
-{[}-0.0183, -0.0025{]} \\
+1 & DSS & {[}-0.6120, -0.0213{]} & {[}-0.6191, -0.0033{]} & {[}-0.6035,
+-0.0022{]} \\
+1 & Energy & {[}-0.0052, -0.0014{]} & {[}-0.0052, -0.0014{]} &
+{[}-0.0052, -0.0014{]} \\
+4 & DSS & {[}-0.7428, -0.0510{]} & {[}-0.7323, -0.0564{]} & {[}-0.7006,
+-0.0613{]} \\
+4 & Energy & {[}-0.0170, -0.0040{]} & {[}-0.0176, -0.0031{]} &
+{[}-0.0174, -0.0032{]} \\
 \end{longtable}
 
 The score intervals remain below zero at expected block lengths four and
@@ -1200,20 +1261,20 @@ structural breaks, finite-sample bootstrap accuracy or multiple
 comparisons. The one-week DSS upper endpoint is close to zero and should
 not be overstated.
 
-At four weeks, M3's pooled marginal 90\% coverage is 93.08\% and M4's is
-94.33\%. M4 therefore moves farther above the nominal rate, not closer
-to it. The coverage difference of 1.25 percentage points has a 95\%
+At four weeks, M3's pooled marginal 90\% coverage is 93.27\% and M4's is
+94.42\%. M4 therefore moves farther above the nominal rate, not closer
+to it. The coverage difference of 1.15 percentage points has a 95\%
 interval containing zero. Mean interval width rises slightly, from
-92.143 to 92.719 basis points. At one week, coverage is 94.42\% for M3
-and 94.71\% for M4, with widths of 52.580 and 52.709 basis points. Both
-models overcover in this pooled sense; improved proper scores do not
-imply better marginal calibration or narrower forecasts.
+92.199 to 92.679 basis points. At one week, coverage is 94.33\% for both
+models, with widths of 52.586 and 52.672 basis points. Both models
+overcover in this pooled sense; improved proper scores do not imply
+better marginal calibration or narrower forecasts.
 
 \begin{figure}
 
 \centering{
 
-\includegraphics[width=0.95\linewidth,height=\textheight,keepaspectratio]{../figures/finite/presentation/maturity_h4.png}
+\includegraphics[width=0.95\linewidth,height=\textheight,keepaspectratio]{../figures/finite/revised_prior/maturity_h4.png}
 
 }
 
@@ -1223,11 +1284,11 @@ reference is 90\%; maturities are not independent replications.}
 
 \end{figure}%
 
-At four weeks, one-year coverage rises from 87.69\% under M3 to 90.00\%
-under M4, while 30-year coverage is 87.69\% for both. RMSE changes
-unevenly across maturities: M4 improves the one-year component but
-worsens the three-month component. The pooled result is therefore not a
-uniform maturity-by-maturity improvement.
+At four weeks, one-year coverage rises from 87.69\% under M3 to 89.23\%
+under M4, while 30-year coverage rises from 87.69\% to 88.46\%. RMSE
+changes unevenly across maturities: M4 improves the one-year component
+but worsens the three-month component. The pooled result is therefore
+not a uniform maturity-by-maturity improvement.
 
 \section{External benchmark
 comparison}\label{external-benchmark-comparison}
@@ -1235,123 +1296,37 @@ comparison}\label{external-benchmark-comparison}
 The random walk M0 remains stronger than both Bayesian DNS models on
 reported aggregate DSS, Energy Score and RMSE at both horizons. At four
 weeks it has DSS −36.006, Energy Score 0.351 and RMSE 21.318 basis
-points, compared with M4's 0.407 and 23.415 basis points for the latter
+points, compared with M4's 0.407 and 23.384 basis points for the latter
 two measures. Its marginal coverage is lower (87.12\%) and its average
-interval is narrower (63.37 versus 92.72 basis points), so lower scores
+interval is narrower (63.37 versus 92.68 basis points), so lower scores
 do not imply uniformly better calibration. PCA--VAR M1 also has lower
 four-week DSS, Energy Score and RMSE than the Bayesian pair; M2 is the
 conventional DNS reference. These external rankings are descriptive;
 paired inference is conducted for M3 versus M4, not for all five
 specifications.
 
-\section{Prior-bound sensitivity}\label{prior-bound-sensitivity}
-
-We evaluated \(U=2\) and \(U=8\) at the initial (8 January 2016), stress
-(27 March 2020) and late (28 November 2025) origins. Constant-volatility
-M3 is unchanged in these comparisons. This sensitivity analysis is
-distinct from the block-length checks and covers three representative
-origins, not all 130.
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}@{}}
-\caption{Four-week representative prior-bound sensitivity. Differences
-are M4 minus the unchanged cached M3 at the same origin. U=4 rows reuse
-main forecasts; U=2/8 are the six accepted new cases. Single-origin
-losses are descriptive, not full-sample
-inference.}\label{tbl-finite-sensitivity}\tabularnewline
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Window
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-U
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-M4 DSS
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-M4 Energy
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-DSS diff. (M4 - M3)
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Energy diff. (M4 - M3)
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Window
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-U
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-M4 DSS
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-M4 Energy
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-DSS diff. (M4 - M3)
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Energy diff. (M4 - M3)
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Initial & 2 & -24.582 & 0.3161 & -0.691 & -0.0227 \\
-Initial & 4 & -24.581 & 0.3119 & -0.690 & -0.0269 \\
-Initial & 8 & -24.585 & 0.3179 & -0.694 & -0.0209 \\
-Stress & 2 & -21.063 & 0.3734 & 0.553 & 0.0402 \\
-Stress & 4 & -21.055 & 0.3743 & 0.561 & 0.0412 \\
-Stress & 8 & -21.053 & 0.3736 & 0.563 & 0.0404 \\
-Late & 2 & -27.281 & 0.3310 & 0.651 & -0.0123 \\
-Late & 4 & -27.276 & 0.3444 & 0.656 & 0.0010 \\
-Late & 8 & -27.278 & 0.3360 & 0.655 & -0.0074 \\
-\end{longtable}
-
-At four weeks, changing the bound moves DSS by at most 0.00812 relative
-to the main \(U=4\) forecasts. M4 has lower DSS initially but loses to
-M3 at the stress and late origins. At one week, M3 has lower DSS at all
-three representative dates under both alternative bounds. The positive
-full-sample average result is therefore not a uniform improvement.
-
-Energy Score rankings also change with the bound. At the late four-week
-origin, the M4-minus-M3 difference is +0.0010 for \(U=4\), −0.0123 for
-\(U=2\) and −0.0074 for \(U=8\). These representative cases support
-local DSS stability, not uniform Energy Score improvement or full-period
-prior robustness. No 130-origin comparison under alternative bounds was
-performed, and the bound was not retuned.
-
 \chapter{Discussion and limitations}\label{sec-discussion}
 
 \section{What stochastic volatility
 adds}\label{what-stochastic-volatility-adds}
 
-The evidence answers a narrow but useful question. Conditional on the
-shared two-step DNS representation, coefficient priors, long-run
-expected-variance interpretation and reconstruction model, M4 improves
-both covariance-sensitive DSS and ensemble-based Energy Score relative
-to M3. Agreement between these criteria is more informative than DSS
-alone because Energy Score uses simulated curve distances, while DSS
-depends only on first and second moments. It does not establish that all
-aspects of joint tail dependence are well represented.
-
-At the primary four-week horizon, a 2.52\% Energy Score reduction is a
-modest distributional improvement, not a large change in point accuracy.
-Time-varying uncertainty can adapt forecasts while mean dynamics remain
-nearly unchanged. This mechanism is consistent with the score and RMSE
-pattern, but the experiment does not isolate a causal contribution from
-particular episodes or factors.
+Conditional on the shared two-step DNS representation and reconstruction
+model, M4 improves DSS and Energy Score relative to M3. Their agreement
+is useful because DSS depends on the first two moments whereas Energy
+Score uses simulated curve distances; neither establishes that all
+aspects of tail dependence are represented. The 2.51\% four-week Energy
+Score reduction is modest, and the experiment does not isolate which
+episodes or factors drive it.
 
 \section{Why the random walk remains
 competitive}\label{why-the-random-walk-remains-competitive}
 
 At both horizons, the random walk has lower aggregate DSS, Energy Score
 and RMSE than stochastic-volatility M4. Its RMSE is 9.972 basis points
-at one week and 21.318 at four weeks, versus 13.883 and 23.415 for M4;
+at one week and 21.318 at four weeks, versus 13.893 and 23.384 for M4;
 its four-week Energy Score is 0.351 versus 0.407. Its four-week marginal
-90\% coverage is lower (87.12\% versus 94.33\%), however, and its mean
-interval is narrower (63.37 versus 92.72 basis points). The lower scores
+90\% coverage is lower (87.12\% versus 94.42\%), however, and its mean
+interval is narrower (63.37 versus 92.68 basis points). The lower scores
 therefore do not imply uniformly better calibration.
 
 Several design features could contribute, though the experiment does not
@@ -1374,50 +1349,31 @@ random walk.
 
 \section{Model and prior limitations}\label{model-and-prior-limitations}
 
-Factors are extracted in a first stage and treated as observations
-thereafter; uncertainty in extraction and in the fixed training-selected
-decay rate is omitted. Independent factor innovations and diagonal
-reconstruction noise restrict the predictive dependence structure.
-Although forecasts are joint, these restrictions do not provide a fully
-flexible eight-dimensional distribution. They can matter especially for
-DSS in low-variance curve directions.
+Extracted factors are treated as observations, so factor-extraction and
+fixed-\(\lambda\) uncertainty are omitted. Independent factor
+innovations and diagonal reconstruction noise also restrict
+cross-maturity dependence. The finite-moment prior is substantive:
+matching \(m\) aligns long-run expected innovation variance, not higher
+moments. The empirical-Bayes calibration uses training data also present
+in the likelihood. Sensitivity to alternative volatility bounds and to
+the revised coefficient and log-variance priors remains unassessed.
 
-The finite-moment prior is an explicit change from an unrestricted
-innovation-variance prior, not a purely numerical repair. Its bound is
-required for the stated moment argument and must be part of the
-scientific specification. Matching \(m\) aligns stationary
-expected-variance priors, but does not match all higher moments. The
-broad empirical-Bayes prior and its use of training data in both
-hyperparameter calibration and the likelihood remain limitations.
-Because the alternative-bound analysis covers only three selected
-origins, it provides local rather than full-period sensitivity evidence.
-
-Finite-horizon posterior-predictive moments do not establish finite
-unconditional stationary factor variance under a coefficient-prior
-mixture approaching \(|b|=1\). In the synthetic exercise, the 95\%
-interval for the intercept did not contain its generating value. This
-single replication is a computational diagnostic, not an assessment of
-repeated-sampling coverage. Convergence diagnostics also establish
-neither model truth nor the absence of all Monte Carlo error.
+Finite-horizon predictive moments do not establish finite unconditional
+stationary factor variance when the coefficient prior allows \(|b|\)
+arbitrarily close to one. The single synthetic recovery exercise is a
+computational diagnostic, not repeated-sampling evidence. Convergence
+diagnostics assess sampling behavior, not model truth.
 
 \section{Data, inference and practical
 implications}\label{data-inference-and-practical-implications}
 
-The observation-time experiment does not reconstruct real-time public
-information. Publication delays and possible historical revisions
-preclude an executable trading-performance interpretation. The existing
-assumed-delay classical robustness exercise supports only the limited
-historical-vintage conclusions reported in the appendix. A release-time
-Bayesian comparison is not performed.
-
-There are only 130 forecast origins across changing interest-rate
-regimes. Stationary-bootstrap intervals are conditional descriptive
-evidence under the declared dependence design, without multiplicity
-correction or a model-confidence-set claim for the Bayesian pair. They
-do not include uncertainty from choosing the representation or priors,
-nor do they fully propagate numerical simulation uncertainty. Coverage
-is marginal and descriptive; no formal joint-calibration or tail-risk
-backtest is established.
+The historical vintage and publication delays prevent a real-time or
+executable-trading interpretation; the assumed-delay robustness exercise
+is classical only. With 130 origins, stationary-bootstrap intervals are
+conditional and descriptive, without multiplicity correction or a
+model-confidence-set claim for the Bayesian pair. They do not capture
+representation or prior choice, and coverage remains marginal rather
+than a formal joint-calibration test.
 
 For a researcher choosing between the two specified Bayesian DNS models,
 M4 offers a small probabilistic-score improvement over M3. For an
@@ -1428,28 +1384,16 @@ by a favorable within-family score.
 
 \chapter{Conclusions}\label{sec-conclusions}
 
-A comparison at 130 common Canadian yield-curve forecast origins finds
-modest distributional value in finite-moment Bayesian stochastic
-volatility. M4 improves DSS and Energy Score over matched
-constant-volatility M3 at one and four weeks. At four weeks, the paired
-DSS difference is −0.390 and Energy Score difference −0.0105; their
-stationary-bootstrap intervals exclude zero, including under the
-block-length sensitivity checks.
-
-The economic and statistical qualifications matter. The four-week RMSE
-gain is only 0.162 basis points and its interval includes zero. Both
-Bayesian models overcover pooled marginal 90\% intervals, and M4 does
-not beat the random walk on the reported aggregate scores. The main
-finding is therefore a modest within-DNS probabilistic improvement, not
-general model dominance or evidence of deployable trading gains.
-
-Future work should prioritize genuinely release-time data, extraction
-uncertainty and richer dependence or representation choices before
-optional risk applications. Broader prior robustness and inference
-across additional samples would assess how far the within-pair finding
-generalizes. The contribution is a bounded finite-moment comparison
-whose scope is deliberately limited to the matched Bayesian DNS pair;
-the random-walk result remains the stronger external benchmark.
+Across 130 common origins, finite-moment Bayesian stochastic volatility
+modestly improves DSS and Energy Score over matched constant-volatility
+DNS at one and four weeks. At four weeks the paired differences are
+−0.381 and −0.0105, with bootstrap intervals excluding zero. The RMSE
+gain is only 0.130 basis points and its interval includes zero; both
+Bayesian models overcover marginal 90\% intervals, and the random walk
+has stronger aggregate scores. The result is a within-DNS probabilistic
+improvement, not general dominance or evidence of deployable trading
+gains. Future work should prioritize release-time data, extraction
+uncertainty, richer dependence and broader prior robustness.
 
 \appendix
 
@@ -1542,15 +1486,15 @@ likelihood satisfies
 L(x\mid a,b,h)\leq(2\pi)^{-n/2}\exp\!\left(-\frac12\sum_{t=1}^n h_t\right).
 }\end{equation}
 
-After integrating \(m\sim N(\mu_0,25)\), the log-volatility vector is
+After integrating \(m\sim N(\mu_0,1)\), the log-volatility vector is
 Gaussian conditional on \(v,\phi\), with mean \((\mu_0-v/2)\mathbf1\)
-and covariance \(25\mathbf1\mathbf1'+vR_\phi\), where
+and covariance \(\mathbf1\mathbf1'+vR_\phi\), where
 \((R_\phi)_{ij}=\phi^{|i-j|}\). Every entry is bounded in absolute value
-by \(25+U\). The logarithm of the expectation of the likelihood bound is
+by \(1+U\). The logarithm of the expectation of the likelihood bound is
 therefore bounded above by
 
 \begin{equation}\protect\phantomsection\label{eq-normalizer-bound}{
--\frac{n\mu_0}{2}+\frac{nU}{4}+\frac{n^2(25+U)}8,
+-\frac{n\mu_0}{2}+\frac{nU}{4}+\frac{n^2(1+U)}8,
 }\end{equation}
 
 apart from the finite \((2\pi)^{-n/2}\) constant. Proper coefficient
@@ -1562,13 +1506,14 @@ bound by any finite exponential linear functional of this extended
 Gaussian path still has a uniformly finite moment-generating function,
 because \(v<U\). Hence future innovation variances have finite posterior
 moments of all finite orders. At finite horizon \(H\), the factor mean
-is bounded by \(|x_T|+H|a|\) since \(|b|<1\). The Gaussian intercept
-prior has all polynomial moments. Gaussian innovation moments,
-finite-sum inequalities and the exponential-moment bound then imply
-finite-order posterior-predictive factor moments. Fixed linear loadings
-and finite Gaussian reconstruction noise preserve this property for
-yields. This finite-horizon statement does not integrate an
-infinite-horizon factor variance proportional to \((1-b^2)^{-1}\).
+is bounded by \(|x_T|+H|a|\) since \(|b|<1\). The induced intercept
+satisfies \(|a|\leq2|\mu|\) and has all polynomial moments under the
+Gaussian long-run-mean prior. Gaussian innovation moments, finite-sum
+inequalities and the exponential-moment bound then imply finite-order
+posterior-predictive factor moments. Fixed linear loadings and finite
+Gaussian reconstruction noise preserve this property for yields. This
+finite-horizon statement does not integrate an infinite-horizon factor
+variance proportional to \((1-b^2)^{-1}\).
 
 \section{Conditional stochastic-volatility forecast
 moments}\label{conditional-stochastic-volatility-forecast-moments}
@@ -1592,11 +1537,12 @@ factor posteriors yield a diagonal factor covariance; projection through
 DSS.
 
 Synthetic validation used a finite-moment generating specification and
-independent chains. The true intercept, 0.04, lies just below the
-retained interval {[}0.040314, 0.132335{]}. This interval miss is
-reported rather than removed through tuning or repeated simulation.
-Computational diagnostics do not imply that every realized credible
-interval contains its generating value.
+independent chains. The 95\% intervals contained the generating values
+for \(b\), \(m\), \(\phi\) and \(v\), but missed the intercept (truth
+0.04; interval {[}0.0510, 0.1235{]}) and long-run mean (truth 0.2667;
+interval {[}0.3163, 0.6284{]}). These misses are reported rather than
+removed through tuning or repeated simulation. One synthetic series is a
+computational diagnostic, not repeated-sampling validation.
 
 \section{Score reconstruction and data
 integrity}\label{score-reconstruction-and-data-integrity}
@@ -1712,6 +1658,12 @@ Hautsch, N., \& Yang, F. (2012). Bayesian inference in a stochastic
 volatility nelson--siegel model. \emph{Computational Statistics \& Data
 Analysis}, \emph{56}(11), 3774--3792.
 \url{https://doi.org/10.1016/j.csda.2010.07.003}
+
+\bibitem[\citeproctext]{ref-kim1998stochastic}
+Kim, S., Shephard, N., \& Chib, S. (1998). Stochastic volatility:
+Likelihood inference and comparison with ARCH models. \emph{The Review
+of Economic Studies}, \emph{65}(3), 361--393.
+\url{https://doi.org/10.1111/1467-937X.00050}
 
 \bibitem[\citeproctext]{ref-omori2007stochastic}
 Omori, Y., Chib, S., Shephard, N., \& Nakajima, J. (2007). Stochastic

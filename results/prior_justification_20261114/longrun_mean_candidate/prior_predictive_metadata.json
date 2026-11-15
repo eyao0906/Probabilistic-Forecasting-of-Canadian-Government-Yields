@@ -1,0 +1,123 @@
+{
+  "status": "completed",
+  "prior_set": "training-calibrated direct long-run factor mean",
+  "seed": 20261115,
+  "n_draws_per_model": 100000,
+  "models": [
+    "M3",
+    "M4"
+  ],
+  "presentation_model_mapping": {
+    "M3": "internal M4 constant volatility",
+    "M4": "internal M5 stochastic volatility"
+  },
+  "training_period": [
+    "2000-01-01",
+    "2015-12-31"
+  ],
+  "training_observations": 835,
+  "conditioning_date": "2015-12-31",
+  "fixed_lambda_per_year": 0.5160377358490565,
+  "factor_prior": {
+    "long_run_mean": "Normal(training factor mean, (2 * training factor sd)^2)",
+    "persistence": "Normal(training OLS AR coefficient, 0.03^2) truncated to (-1,1)",
+    "intercept": "a = (1-b) * long_run_factor_mean"
+  },
+  "innovation_priors": {
+    "m": "Normal(training OLS log-MSE, 1)",
+    "phi": "2*Beta(20,1.5)-1",
+    "v": "rate-one exponential truncated to (0,4); M4 only"
+  },
+  "factor_prior_centers": [
+    4.329854738972304,
+    -2.174504619293203,
+    -1.109835998452534
+  ],
+  "factor_prior_standard_deviations": [
+    2.111853996671302,
+    2.8121889413857546,
+    3.6496592298910504
+  ],
+  "training_ols_coefficients": [
+    [
+      0.00815365906869716,
+      0.9972229659736745
+    ],
+    [
+      -0.010790725614299071,
+      0.9955122684604066
+    ],
+    [
+      -0.03350217374956987,
+      0.9768145226369132
+    ]
+  ],
+  "measurement_error_variances": [
+    0.009971697249056768,
+    0.0005276916038855889,
+    0.009484962820655642,
+    0.006856838480060837,
+    0.0024481508272917213,
+    0.005719841984039622,
+    0.013308188265948108,
+    0.010193776563378202
+  ],
+  "input_sha256": "0b2af5c3c7bb261973ea4ec04c151eedbf7cf1428f22d0e08eaae87a212bfd77",
+  "source_sha256": {
+    "data\\processed\\canada_weekly.csv": "0b2af5c3c7bb261973ea4ec04c151eedbf7cf1428f22d0e08eaae87a212bfd77",
+    "results\\bayesian_revised_pilot\\extended\\metadata.json": "b5be9549e05edb542cb048ccb3eb1a9b1c7b568c06f0cabb87c493547111ddf9",
+    "src\\bayesian_stage_a.py": "7c418152731c0516f7a205e726daa924660f49295718f4f86525011d4c4a8d2b",
+    "src\\prior_predictive_bayesian_dns.py": "72821cbd142ebf5c3cb0d0e8ed8cfcba8e6eb227ad4e2b06ad4c9e9e5c6e7718",
+    "src\\prior_predictive_longrun_mean.py": "eb4b77f67b57d3d8c74c4f6220b859c5935509e80a2cce7f24025385aada6a8c"
+  },
+  "numerical_failures": {
+    "overflow_by_quantity": {
+      "M3_innovation_sd_week_1": 0,
+      "M3_innovation_sd_week_2": 0,
+      "M3_innovation_sd_week_3": 0,
+      "M3_innovation_sd_week_4": 0,
+      "M3_level_innovation_variance": 0,
+      "M3_slope_innovation_variance": 0,
+      "M3_curvature_innovation_variance": 0,
+      "M4_innovation_sd_week_1": 0,
+      "M4_innovation_sd_week_2": 0,
+      "M4_innovation_sd_week_3": 0,
+      "M4_innovation_sd_week_4": 0,
+      "M4_level_innovation_variance": 0,
+      "M4_slope_innovation_variance": 0,
+      "M4_curvature_innovation_variance": 0
+    },
+    "underflow_by_quantity": {
+      "M3_innovation_sd_week_1": 0,
+      "M3_innovation_sd_week_2": 0,
+      "M3_innovation_sd_week_3": 0,
+      "M3_innovation_sd_week_4": 0,
+      "M3_level_innovation_variance": 0,
+      "M3_slope_innovation_variance": 0,
+      "M3_curvature_innovation_variance": 0,
+      "M4_innovation_sd_week_1": 0,
+      "M4_innovation_sd_week_2": 0,
+      "M4_innovation_sd_week_3": 0,
+      "M4_innovation_sd_week_4": 0,
+      "M4_level_innovation_variance": 0,
+      "M4_slope_innovation_variance": 0,
+      "M4_curvature_innovation_variance": 0
+    },
+    "nonfinite_by_quantity": {
+      "M3_factor_state_week_1": 0,
+      "M3_factor_state_week_2": 0,
+      "M3_factor_state_week_3": 0,
+      "M3_factor_state_week_4": 0,
+      "M3_yield_forecast_h1": 0,
+      "M3_yield_forecast_h4": 0,
+      "M4_factor_state_week_1": 0,
+      "M4_factor_state_week_2": 0,
+      "M4_factor_state_week_3": 0,
+      "M4_factor_state_week_4": 0,
+      "M4_yield_forecast_h1": 0,
+      "M4_yield_forecast_h4": 0
+    }
+  },
+  "all_draws_retained": true,
+  "forecast_scores_used_to_choose_priors": false
+}
