@@ -105,7 +105,7 @@ The DNS framework separates cross-sectional yield loadings from factor dynamics.
 
 ## Bayesian inference for DNS
 
-Bayesian DNS integrates over factor-dynamic parameter uncertainty. Diebold, Li, and Yue use OLS-extracted factors as observed data in a Bayesian second stage, which still includes latent global factors [@diebold2007global]; Hautsch and Yang instead estimate factors and volatility jointly by state-space MCMC [@hautsch2010svns; @hautsch2012bayesian]. Here, fixed loadings and extracted factors are conditioned on, so their uncertainty is not propagated.
+Bayesian DNS integrates over factor-dynamic parameter uncertainty. Diebold, Li, and Yue provide a related two-step precedent: they use OLS-extracted country factors as observed data in a Bayesian second stage while retaining latent global factors [@diebold2007global]. In contrast, Hautsch and Yang jointly estimate yield factors and volatility in a state-space MCMC model [@hautsch2010svns; @hautsch2012bayesian]. This study adopts the two-step design because the expanding-window evaluation requires repeated MCMC at 130 forecast origins: conditioning on the fixed loadings and cross-sectionally extracted factors reduces each fit to three separate, low-dimensional factor regressions rather than repeated joint latent-state estimation. This makes the matched rolling comparison computationally feasible while still integrating over factor-dynamic parameter uncertainty. It is a deliberate conditional analysis: uncertainty in extracted factors and the selected decay parameter is not propagated.
 
 ## Stochastic factor volatility
 
@@ -189,7 +189,7 @@ $$
 \widehat f_t=(\Lambda'\Lambda)^{-1}\Lambda'Y_t.
 $$ {#eq-extraction}
 
-The estimator is computed by least squares without explicitly forming the inverse. At each origin, $R_t$ is diagonal with maturity-specific mean squared reconstruction errors, floored at $10^{-6}$ squared percentage points. This Gaussian working model assumes independent maturity errors; $R_t$ enters forecasts, not the factor likelihood or MCMC. Initial-window residual correlations challenge that assumption (mean absolute pairwise correlation 0.660; maximum 0.989 for 3-month and 1-year yields). Separately, $B=\operatorname{diag}(b_L,b_S,b_C)$ and $Q=\operatorname{diag}(e^{m_j})$ in M3 or $Q_t=\operatorname{diag}(e^{h_{j,t}})$ in M4. Extracted factors are observed inputs; only their dynamics and volatility change.
+The estimator is computed by least squares without explicitly forming the inverse. By the OLS normal equations, each maturity-residual vector is orthogonal to the loading columns, $\Lambda'\widehat\varepsilon_t=0$, and lies in their five-dimensional orthogonal complement. This cross-sectional projection condition does not imply zero correlation over time between residual series at different maturities: in the initial 835-observation window, their mean absolute pairwise correlation is 0.659611, reaching 0.988809 for the 3-month and 1-year yields. We retain diagonal $R_t$, with maturity-specific expanding-window residual mean squares floored at $10^{-6}$ squared percentage points, to preserve the common plug-in forecast construction across M2–M4 and avoid adding a separately regularized cross-maturity covariance estimator to the accepted comparison. This is a practical consistency choice, not an assumption supported by the residual correlations. $R_t$ enters forecasts, not the factor likelihood or MCMC. Separately, $B=\operatorname{diag}(b_L,b_S,b_C)$ and $Q=\operatorname{diag}(e^{m_j})$ in M3 or $Q_t=\operatorname{diag}(e^{h_{j,t}})$ in M4. Extracted factors are observed inputs; only their dynamics and volatility change.
 
 ## Conventional two-step DNS
 
@@ -246,7 +246,7 @@ $$
 $$
 For level, slope and curvature, $\mu_{0j}$ is $-4.888703$, $-4.122200$ and $-1.969807$, corresponding to innovation-variance medians $0.007531$, $0.016209$ and $0.139484$ squared percentage points. The centers are fixed across windows.
 
-The Gaussian prior on log variance keeps the innovation variance positive after exponentiation. SD one gives a prior mean of 0.0124, 0.0267 and 0.2300, and a central 90% range of 0.19–5.18 times the median. Under the former SD of five, prior means were 162,755 times larger. In the 100,000-draw training-only audit, revised median curve-change RMS was 0.167–0.174 at one week and 0.357–0.365 at four weeks, near training 95th-percentile thresholds 0.1845 and 0.3849; original-prior medians were 4.63–4.70 and 10.32–10.44, with over 99.9% above threshold. These simulations changed several priors jointly, so they do not establish SD one as optimal. Since the initial training data set the hyperparameters and enter the likelihood, these are empirical-Bayes choices. The revised values followed evaluation of the original specification but were chosen using training-only evidence, not evaluation-period scores. With SD one, the prior mean of $\exp(m_j)$ is 0.0124, 0.0267 and 0.2300; its central 90% interval spans 0.19–5.18 times the median. Under the former SD five, the means would be 2,021, 4,349 and 37,429, or $\exp(12)\approx162{,}755$ times larger. The 100,000-draw training-only audit gives revised median curve-change RMS 0.167–0.174 at one week and 0.357–0.365 at four weeks, near training 95th-percentile thresholds 0.1845 and 0.3849; original-prior medians were 4.63–4.70 and 10.32–10.44, with over 99.9% above threshold. These joint simulations do not isolate SD one from other prior changes. Because the same training data set hyperparameters and enter the likelihood, this is empirical Bayes. The revisions followed evaluation of the original specification but used training-only diagnostics, not evaluation-period scores.
+The Gaussian prior on log variance keeps the innovation variance positive after exponentiation. SD one gives prior mean innovation variances of 0.0124, 0.0267 and 0.2300, with a central 90% range of 0.19–5.18 times each median; the former SD of five gave means 162,755 times larger. The 100,000-draw training-only audit gives revised median curve-change RMS of 0.167–0.174 at one week and 0.357–0.365 at four weeks, near training 95th-percentile thresholds 0.1845 and 0.3849. Original-prior medians were 4.63–4.70 and 10.32–10.44, with over 99.9% above threshold. Because several priors changed jointly, the audit does not establish SD one as optimal. These empirical-Bayes choices followed evaluation of the original specification but used training-only evidence, not evaluation-period scores.
 
 ## Bayesian DNS with stochastic factor volatility
 
@@ -269,7 +269,7 @@ $$
 \qquad E[\phi_j]=2\frac{20}{21.5}-1\approx0.86.
 $$ {#eq-volatility-persistence-prior}
 
-Kim, Shephard, and Chib motivate the Beta family by stationarity and near-unit-root concerns; their univariate SV illustration uses daily Sterling/US-dollar returns. Omori et al. attribute its high mean to persistence in earlier SV evidence and apply it to daily TOPIX returns in a leveraged SV model [@kim1998stochastic; @omori2007stochastic]. Here, $\mathrm{Beta}(20,1.5)$ gives mean 0.8605 and central 90% interval 0.649–0.983, implying weekly half-lives of 4.61 weeks at the mean and 1.60–39.71 weeks over the interval. These daily univariate applications do not calibrate a weekly DNS prior; no alternative Beta hyperparameters were tested.
+Kim, Shephard, and Chib motivate the Beta family by stationarity and near-unit-root concerns [@kim1998stochastic]. Omori et al. explain the high-persistence rationale for these numerical parameters and apply them to daily TOPIX returns in a leveraged SV model [@omori2007stochastic]. Here, $\mathrm{Beta}(20,1.5)$ gives mean 0.8605 and central 90% interval 0.649–0.983, implying weekly half-lives of 4.61 weeks at the mean and 1.60–39.71 weeks over the interval. The daily univariate source applications do not calibrate a weekly DNS prior; no alternative Beta hyperparameters were tested.
 
 To retain the same interpretation of $m_j$ as in M3, let $v_j$ be the stationary variance of log volatility and set
 
@@ -290,7 +290,7 @@ p_U(v_j)=\frac{e^{-v_j}}{1-e^{-U}}\,1_{(0,U)}(v_j),
 \qquad U=4.
 $$ {#eq-finite-prior}
 
-The exponential family favors smaller stationary log-volatility variances; rate one and $U=4$ are project-specific regularization choices. The truncated prior has mean 0.925, median 0.675 and 95th percentile 2.697; rates 0.5 and 2 would change the mean to 1.374 and 0.499. The rate-one scale is comparable to noisy training-only auxiliary estimates of $v_j$ (0, 0.65 and 0.95), not a precise empirical calibration. At the bound, $\operatorname{SD}(\log\sigma_{j,t})=1$, so the stationary 95% volatility range is 0.141–7.10 times its conditional median; this is a boundary scenario, not a typical range. Training-only prior-predictive RMS movement has median/95th percentiles 0.168/0.423 at one week and 0.357/1.063 at four weeks, versus empirical 95th percentiles 0.1845/0.3849; about 46% of four-week draws exceed the training threshold. Raising $U$ from four to eight changes the four-week 99th percentile by about 0.1%, but the tails remain broad. No yield-movement simulation varied the rate, and the saved posterior cannot establish behavior above $U=4$ [@gelman2017prior].
+The exponential family favors smaller stationary log-volatility variances; rate one and $U=4$ are project-specific regularization choices. The truncated prior has mean 0.925, median 0.675 and 95th percentile 2.697; rates 0.5 and 2 would change the mean to 1.374 and 0.499. The rate-one scale is comparable to noisy training-only auxiliary estimates of $v_j$ (0, 0.65 and 0.95), not a precise empirical calibration. At the bound, $\operatorname{SD}(\log\sigma_{j,t})=1$, giving a stationary 95% volatility range 0.141–7.10 times its conditional median; this is a boundary scenario, not a typical range. The prior-predictive assessment follows the principle of checking implied observations against training data [@gelman2017prior]: the RMS movement medians/95th percentiles are 0.168/0.423 at one week and 0.357/1.063 at four weeks, versus training 95th percentiles 0.1845/0.3849, with about 46% of four-week draws above that threshold. Raising $U$ from four to eight changes the four-week 99th percentile by about 0.1%, but tails remain broad. No yield-movement simulation varied the rate, and the saved posterior cannot establish behavior above $U=4$.
 
 Bounded $v_j$ and proper coefficient priors imply finite posterior-predictive moments at finite horizons. Stationarity gives an untruncated rate-one exponential prior finite prior-predictive second moments but an infinite innovation fourth moment. Thus $U=4$ is sufficient for the posterior-moment proof, not shown necessary for prior moments; unbounded posterior tails are unproved. This does not imply finite infinite-horizon factor variance as $b_j$ approaches one.
 
@@ -496,7 +496,8 @@ Estimating an eight-dimensional covariance from a small ensemble can add noise i
 
 ## Bayesian posterior targets and transformations
 
-For one factor, condition on $x_1$, let $n=T-1$, and define $r_t=(x_t-(1-b_j)\mu_j-b_jx_{t-1})$. The exact targets are
+For factor $j$, condition on $x_1$, let $n=T-1$, and define its innovation as
+$r_{j,t}=x_t-(1-b_j)\mu_j-b_jx_{t-1}$. The exact targets are
 
 $$
 \begin{aligned}
@@ -510,7 +511,7 @@ p(h_{j,1:n}\mid m_j,\phi_j,v_j).
 \end{aligned}
 $$ {#eq-bayesian-targets}
 
-Here $p(\mu_j)$, $p(b_j)$, $p(m_j)$, $p(\phi_j)$ and $p_U(v_j)$ are the specified normal, truncated-normal, normal, transformed-Beta and truncated-exponential priors. The \(n\) states \(h_{j,1:n}\) align with transitions from \(x_1\) through \(x_T\). Neither target contains a yield-level likelihood, \(R_t\), or an estimated \(\lambda\); factor posteriors are fitted separately.
+Here $p(\mu_j)$, $p(b_j)$, $p(m_j)$, $p(\phi_j)$ and $p_U(v_j)$ are the specified normal, truncated-normal, normal, transformed-Beta and truncated-exponential priors. The $n$ states $h_{j,1:n}$ align with the transitions from $x_1$ through $x_T$. Neither target contains a yield-level likelihood, $R_t$, or an estimated $\lambda$; factor posteriors are fitted separately.
 
 ## Finite-moment prior and transformed target
 
