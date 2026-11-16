@@ -1,0 +1,208 @@
+{
+  "status": "completed",
+  "seed_per_bound_common_random_numbers": 20261115,
+  "draws_per_bound": 100000,
+  "upper_bounds": [
+    2.0,
+    4.0,
+    8.0
+  ],
+  "exponential_rate": 1.0,
+  "training_period": [
+    "2000-01-01",
+    "2015-12-31"
+  ],
+  "training_observations": 835,
+  "conditioning_date": "2015-12-31",
+  "conditioning_factor_state": [
+    2.5351274982818266,
+    -1.879554613587308,
+    -3.569288472469892
+  ],
+  "fixed_lambda_per_year": 0.5160377358490565,
+  "maturities_years": [
+    0.25,
+    0.5,
+    1.0,
+    2.0,
+    5.0,
+    7.0,
+    10.0,
+    30.0
+  ],
+  "factor_prior": {
+    "long_run_mean": "Normal(training mean, (2 * training sample SD)^2)",
+    "persistence": "Normal(initial-training OLS AR(1) coefficient, 0.03^2), truncated to (-1,1)",
+    "m": "Normal(initial-training OLS log residual MSE, 1)",
+    "phi": "2*Beta(20,1.5)-1",
+    "v": "rate-one exponential truncated to (0,U)",
+    "h_initial": "stationary Normal(m-v/2,v); simulated state h is stored separately from v"
+  },
+  "reconstruction_error": "training-window maturity-specific mean squared residual, diagonal, floored at 1e-6 percentage-points squared",
+  "movement_reference": "2000-2015 observed 1- and 4-week yield changes only",
+  "posterior_archive": {
+    "path": "results\\bayesian_prior_revised_20261114",
+    "accepted_run_summary_sha256": "e3d76e3fcce05df39e81549722b50ddb1ab730f040027d4fd5405a2ac3574ba2",
+    "accepted_plan_sha256": "6378aa02f5e69a9b57dd64854c6cf3e4b9884d86003ec5909e19054cc3515eaf",
+    "origin_count": 130,
+    "chain_count": 1560,
+    "posterior_draw_count": 9360000,
+    "parameter_name": "v",
+    "not_h_or_q": true,
+    "all_chain_sha256_verified": true,
+    "upper_bound": 4.0
+  },
+  "numerical_checks": [
+    {
+      "upper_bound": 2.0,
+      "seed": 20261115,
+      "draws": 100000,
+      "finite_stationary_v": true,
+      "finite_stationary_sigma": true,
+      "finite_yield_changes": {
+        "1": true,
+        "4": true
+      },
+      "numeric_events": {
+        "U2_stationary_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        },
+        "U2_week1_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        },
+        "U2_week2_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        },
+        "U2_week3_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        },
+        "U2_week4_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        }
+      },
+      "max_stationary_v": 1.9999977480669486,
+      "max_stationary_innovation_sd": 8.73185123227106,
+      "max_abs_yield_change": {
+        "1": 4.8325601132654645,
+        "4": 5.164276967089874
+      }
+    },
+    {
+      "upper_bound": 4.0,
+      "seed": 20261115,
+      "draws": 100000,
+      "finite_stationary_v": true,
+      "finite_stationary_sigma": true,
+      "finite_yield_changes": {
+        "1": true,
+        "4": true
+      },
+      "numeric_events": {
+        "U4_stationary_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        },
+        "U4_week1_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        },
+        "U4_week2_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        },
+        "U4_week3_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        },
+        "U4_week4_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        }
+      },
+      "max_stationary_v": 3.999981108564471,
+      "max_stationary_innovation_sd": 12.375325924701109,
+      "max_abs_yield_change": {
+        "1": 5.653476396683241,
+        "4": 5.962060168945418
+      }
+    },
+    {
+      "upper_bound": 8.0,
+      "seed": 20261115,
+      "draws": 100000,
+      "finite_stationary_v": true,
+      "finite_stationary_sigma": true,
+      "finite_yield_changes": {
+        "1": true,
+        "4": true
+      },
+      "numeric_events": {
+        "U8_stationary_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        },
+        "U8_week1_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        },
+        "U8_week2_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        },
+        "U8_week3_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        },
+        "U8_week4_innovation_sd": {
+          "overflow": 0,
+          "underflow": 0,
+          "nonfinite": 0
+        }
+      },
+      "max_stationary_v": 7.998950212431911,
+      "max_stationary_innovation_sd": 13.441835469061886,
+      "max_abs_yield_change": {
+        "1": 5.80869875894428,
+        "4": 6.134156367365865
+      }
+    }
+  ],
+  "all_prior_predictive_draws_saved": true,
+  "source_sha256": {
+    "data\\processed\\canada_weekly.csv": "0b2af5c3c7bb261973ea4ec04c151eedbf7cf1428f22d0e08eaae87a212bfd77",
+    "results\\bayesian_revised_pilot\\extended\\metadata.json": "b5be9549e05edb542cb048ccb3eb1a9b1c7b568c06f0cabb87c493547111ddf9",
+    "results\\bayesian_prior_revised_20261114\\summary.json": "e3d76e3fcce05df39e81549722b50ddb1ab730f040027d4fd5405a2ac3574ba2",
+    "results\\bayesian_prior_revised_20261114\\plan.json": "6378aa02f5e69a9b57dd64854c6cf3e4b9884d86003ec5909e19054cc3515eaf",
+    "src\\bayesian_stage_a.py": "7c418152731c0516f7a205e726daa924660f49295718f4f86525011d4c4a8d2b",
+    "src\\experiment.py": "06943e59d48ddb08f2ce2bf1f25327a692c9c0ab057067a9ba19dbb0f4b35e8e",
+    "src\\bayesian_revised.py": "3bf5fd44aebf3212fca550cb6752323c74ff050a872a4ab4533fbfd29ea7aa5a",
+    "src\\bayesian_finite.py": "aad902cbff0a5ce54965f82c8e881dc8f91b5448dc3ae72c7c87f1847a5a6597",
+    "src\\prior_predictive_bayesian_dns.py": "72821cbd142ebf5c3cb0d0e8ed8cfcba8e6eb227ad4e2b06ad4c9e9e5c6e7718",
+    "src\\bayesian_prior_longrun.py": "94444b75eb7b4c6b9a85b8b9caba8e47e8a0e3f1080bdcede3bc85d93f99d132",
+    "src\\models.py": "a6cf98254fffdd3e07b5ff7df2dbb123c5a5ed94a38c74814936db5f16d44b64",
+    "src\\audit_sv_variance_bound.py": "70e41cce207c95f08bc8701dfeee956f4df145792bc76f9518017b1fef9de400"
+  },
+  "forecast_scores_used": false,
+  "mcmc_refit": false,
+  "simulation_script_sha256_at_run": "0c9c4768b11dd377a792ed4aafec6f3c116a18aecdea6466b39cb736fc2c986a",
+  "postprocessing_note": "Figures were regenerated from saved prior-predictive draws and posterior summaries after a plotting-only palette update; simulation draws and posterior calculations were not rerun."
+}
