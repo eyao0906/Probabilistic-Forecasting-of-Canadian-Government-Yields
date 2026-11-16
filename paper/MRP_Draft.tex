@@ -264,9 +264,7 @@ paired interval including zero. However, a random-walk benchmark
 outperforms both Bayesian models on aggregate DSS, Energy Score, and
 RMSE. These findings suggest modest improvements in probabilistic
 forecasting within the DNS framework, rather than general forecasting
-superiority. Given historical data-vintage uncertainty and publication
-delays, the results represent retrospective observation-time comparisons
-rather than real-time forecasting performance.
+superiority.
 
 \clearpage
 \chapter*{Acknowledgements}
@@ -302,7 +300,7 @@ curvature---for forecasting the curve (Diebold \& Li
 
 Conventional DNS specifications often assume constant factor-innovation
 variances. This paper asks whether a Bayesian stochastic-volatility
-extension, motivated by work such as Hautsch \& Yang
+extension, motivated by Hautsch \& Yang
 (\citeproc{ref-hautsch2012bayesian}{2012}), improves out-of-sample
 probabilistic forecasts of Canadian government yields. The two-step
 factor extraction is retained, and the extension allows uncertainty in
@@ -325,7 +323,7 @@ and stochastic factor volatility. The models share factors, coefficient
 priors, forecast origins and reconstruction-error treatment; the
 stochastic-volatility prior also retains the constant model's
 interpretation of long-run expected innovation variance. The evaluation
-uses 130 common one- and four-week origins and includes the random walk,
+uses 130 common one and four-week origins and includes the random walk,
 PCA--VAR and classical DNS as external benchmarks. The study does not
 claim general dominance; joint state-space estimation and longer
 horizons remain outside its scope.
@@ -346,10 +344,15 @@ effect of stochastic volatility.
 
 \section{Bayesian inference for DNS}\label{bayesian-inference-for-dns}
 
-Bayesian DNS integrates over factor-dynamic parameter uncertainty,
-unlike classical plug-in forecasts. Here, extracted factors are treated
-as observations, so the two-step analysis does not propagate uncertainty
-in factor extraction or the fixed decay parameter.
+Bayesian DNS integrates over factor-dynamic parameter uncertainty.
+Diebold, Li, and Yue use OLS-extracted factors as observed data in a
+Bayesian second stage, which still includes latent global factors
+(\citeproc{ref-diebold2007global}{Diebold et al., 2007}); Hautsch and
+Yang instead estimate factors and volatility jointly by state-space MCMC
+(\citeproc{ref-hautsch2010svns}{Hautsch \& Yang, 2010},
+\citeproc{ref-hautsch2012bayesian}{2012}). Here, fixed loadings and
+extracted factors are conditioned on, so their uncertainty is not
+propagated.
 
 \section{Stochastic factor
 volatility}\label{stochastic-factor-volatility}
@@ -480,8 +483,7 @@ Maturity & Mean & SD & Min & Max \\
 }
 
 \caption{\label{fig-history}Selected Canadian yield histories. The
-vertical line marks the start of the evaluation period; observations are
-not assumed publicly available contemporaneously.}
+vertical line marks the start of the evaluation period}
 
 \end{figure}%
 
@@ -565,14 +567,16 @@ cross-sectional least squares:
 }\end{equation}
 
 The estimator is computed by least squares without explicitly forming
-the inverse. The diagonal elements of \(R_t\) are maturity-specific mean
-squared reconstruction errors at each forecast origin, floored at
-\(10^{-6}\) squared percentage points. This common diagonal covariance
-does not assert independent residual errors. Extracted factors are
-observed inputs to second-stage dynamics: M2 uses conventional
-autoregressions, M3 Bayesian constant volatility, and M4 Bayesian
-stochastic volatility. M3 and M4 change factor dynamics and innovation
-volatility, not the Nelson--Siegel loadings.
+the inverse. At each origin, \(R_t\) is diagonal with maturity-specific
+mean squared reconstruction errors, floored at \(10^{-6}\) squared
+percentage points. This Gaussian working model assumes independent
+maturity errors; \(R_t\) enters forecasts, not the factor likelihood or
+MCMC. Initial-window residual correlations challenge that assumption
+(mean absolute pairwise correlation 0.660; maximum 0.989 for 3-month and
+1-year yields). Separately, \(B=\operatorname{diag}(b_L,b_S,b_C)\) and
+\(Q=\operatorname{diag}(e^{m_j})\) in M3 or
+\(Q_t=\operatorname{diag}(e^{h_{j,t}})\) in M4. Extracted factors are
+observed inputs; only their dynamics and volatility change.
 
 \section{Conventional two-step DNS}\label{conventional-two-step-dns}
 
@@ -618,37 +622,32 @@ persistence and derive the intercept:
 }\end{equation}
 
 Here \(\bar f_{j,\mathrm{train}}\) and \(s_{j,\mathrm{train}}\) are the
-mean and sample standard deviation of the initial extracted factors, and
-\(\hat b_{j,\mathrm{OLS}}\) is the auxiliary initial-sample AR(1) slope.
-For level, slope and curvature, the respective training means are
-4.329855, −2.174505 and −1.109836; the standard deviations are 1.055927,
-1.406094 and 1.824830; and the OLS persistence centers are 0.997223,
-0.995512 and 0.976815. The long-run mean prior is broad on the observed
-factor scale, with a standard deviation of twice the training standard
-deviation. The persistence prior reflects the highly persistent initial
-estimates while the truncation enforces stationarity for each draw.
-These training-calibrated choices are held fixed across expanding
-windows and used in both Bayesian models; they are not selected using
-evaluation-period scores.
+initial-factor mean and sample SD, and \(\hat b_{j,\mathrm{OLS}}\) is
+the auxiliary AR(1) slope. For level, slope and curvature, their means
+are 4.329855, −2.174505 and −1.109836; SDs are 1.055927, 1.406094 and
+1.824830; OLS persistence centers are 0.997223, 0.995512 and 0.976815.
+These hyperparameters are fixed across expanding windows.
 
-The direct prior gives the long-run mean finite moments even when
-persistence is close to one. In contrast, an independent broad intercept
-prior combined with persistence support arbitrarily close to one would
-give \(a_j/(1-b_j)\) heavy tails. The induced intercept and persistence
-are dependent under the present specification.
+The normal prior is placed directly on the long-run mean, which has
+finite moments even when persistence approaches one; an independent
+diffuse intercept prior would make \(a_j/(1-b_j)\) heavy-tailed. Its
+multiplier 2 is a deliberately broad, project-specific scale: the
+central 90\% interval spans \(\pm3.29\) training SDs (multipliers 1 and
+3 give \(\pm1.65\) and \(\pm4.93\)). In 100,000 training-only draws, the
+revised joint prior put the mean outside the observed range in 23--34\%
+of draws, versus 72--89\% under the original prior. Because both the
+mean parameterization and persistence prior changed, this supports the
+joint revision, not multiplier 2 alone.
 
-With SD 0.03, central 90\% prior intervals are 0.939--0.998 (level),
-0.938--0.998 (slope) and 0.924--0.996 (curvature). In 100,000
-training-only draws, the implied mean lies outside the observed range in
-33.9\% of level draws, 32.1--32.3\% of slope draws and 23.4--23.9\% of
-curvature draws, compared with 88.9\%, 83.8\% and 71.9\% under the
-original priors. Because the direct-mean parameterization also changed,
-these figures support the joint revision, not SD 0.03 in isolation.
-
-We introduced these priors after evaluating the original specification,
-but selected values using initial-sample diagnostics and
-prior-predictive checks, not 2016--2025 scores. Results assess the
-revised specification.
+The truncated-normal persistence family uses the initial-sample OLS
+centers and restricts draws to the stationary region; its SD of 0.03 is
+a project-specific choice, not a literature-calibrated value. It yields
+central 90\% intervals of 0.939--0.998 (level), 0.938--0.998 (slope) and
+0.924--0.996 (curvature), with median half-lives of 21.6--32.2 weeks.
+Prior-only SDs of 0.015 and 0.06 widen the cross-factor 5th--95th
+half-life envelope to 14--635 and 4.8--177 weeks. The training-only
+audit changed the mean prior jointly, so it does not validate SD 0.03 in
+isolation.
 
 The constant innovation variance has the prior
 
@@ -669,27 +668,37 @@ OLS AR(1), \[
 -\hat\beta_j^{\mathrm{OLS}}\tilde f_{j,t-1},
 \] and set \[
 \mu_{0j}=\log\!\left(\frac{1}{834}\sum_{t=2}^{835}\hat e_{j,t}^{\,2}\right).
-\] For level, slope and curvature, respectively, the resulting centers
-are \(-4.888703\), \(-4.122200\) and \(-1.969807\), corresponding to
-innovation-variance medians of \(0.007531\), \(0.016209\) and
-\(0.139484\) squared percentage points. These centers are fixed across
-windows. With log-scale SD one, the prior median of \(\exp(m_j)\)
-remains \(\exp(\mu_{0j})\) and its mean is \(\exp(\mu_{0j}+1/2)\):
-0.0124, 0.0267 and 0.2300. A 90\% interval spans 0.19--5.18 times the
-median. Under the former SD of five, the prior means would be about
-2,021, 4,349 and 37,429; thus SD one lowers them by
-\(\exp(12)\approx162{,}755\). In 100,000 training-only draws from the
-revised joint specification, median curve-change RMS is 0.167--0.174
-percentage points at one week and 0.357--0.365 at four weeks, close to
-training 95th-percentile thresholds 0.1845 and 0.3849. Under the
-original prior, medians were 4.63--4.70 and 10.32--10.44, with over
-99.9\% above those thresholds. These simulations change several prior
-components jointly; the lognormal mean comparison isolates the effect of
-the \(m_j\) scale. Since training data set the hyperparameters and enter
-the likelihood, this is empirical Bayes, not independent prior
-elicitation. Posterior simulation also propagates factor innovations and
-adds the common reconstruction error, incorporating second-stage
-parameter uncertainty omitted by classical M2.
+\] For level, slope and curvature, \(\mu_{0j}\) is \(-4.888703\),
+\(-4.122200\) and \(-1.969807\), corresponding to innovation-variance
+medians \(0.007531\), \(0.016209\) and \(0.139484\) squared percentage
+points. The centers are fixed across windows.
+
+The Gaussian prior on log variance keeps the innovation variance
+positive after exponentiation. SD one gives a prior mean of 0.0124,
+0.0267 and 0.2300, and a central 90\% range of 0.19--5.18 times the
+median. Under the former SD of five, prior means were 162,755 times
+larger. In the 100,000-draw training-only audit, revised median
+curve-change RMS was 0.167--0.174 at one week and 0.357--0.365 at four
+weeks, near training 95th-percentile thresholds 0.1845 and 0.3849;
+original-prior medians were 4.63--4.70 and 10.32--10.44, with over
+99.9\% above threshold. These simulations changed several priors
+jointly, so they do not establish SD one as optimal. Since the initial
+training data set the hyperparameters and enter the likelihood, these
+are empirical-Bayes choices. The revised values followed evaluation of
+the original specification but were chosen using training-only evidence,
+not evaluation-period scores. With SD one, the prior mean of
+\(\exp(m_j)\) is 0.0124, 0.0267 and 0.2300; its central 90\% interval
+spans 0.19--5.18 times the median. Under the former SD five, the means
+would be 2,021, 4,349 and 37,429, or \(\exp(12)\approx162{,}755\) times
+larger. The 100,000-draw training-only audit gives revised median
+curve-change RMS 0.167--0.174 at one week and 0.357--0.365 at four
+weeks, near training 95th-percentile thresholds 0.1845 and 0.3849;
+original-prior medians were 4.63--4.70 and 10.32--10.44, with over
+99.9\% above threshold. These joint simulations do not isolate SD one
+from other prior changes. Because the same training data set
+hyperparameters and enter the likelihood, this is empirical Bayes. The
+revisions followed evaluation of the original specification but used
+training-only diagnostics, not evaluation-period scores.
 
 \section{Bayesian DNS with stochastic factor
 volatility}\label{bayesian-dns-with-stochastic-factor-volatility}
@@ -723,14 +732,17 @@ The persistence parameter \(\phi_j\) has the transformed prior
 \qquad E[\phi_j]=2\frac{20}{21.5}-1\approx0.86.
 }\end{equation}
 
-Following Kim et al. (\citeproc{ref-kim1998stochastic}{1998}), we use
-the transformed Beta(20, 1.5) prior for log-volatility persistence. Kim
-et al.~adopt these hyperparameters to favor persistent but stationary
-volatility dynamics and address identification concerns near unit
-persistence. Although this provides an established statistical basis for
-the choice, its suitability for weekly Canadian DNS factors is assessed
-through the posterior estimates rather than assumed from the original
-application.
+Kim, Shephard, and Chib motivate the Beta family by stationarity and
+near-unit-root concerns; their univariate SV illustration uses daily
+Sterling/US-dollar returns. Omori et al.~attribute its high mean to
+persistence in earlier SV evidence and apply it to daily TOPIX returns
+in a leveraged SV model (\citeproc{ref-kim1998stochastic}{Kim et al.,
+1998}; \citeproc{ref-omori2007stochastic}{Omori et al., 2007}). Here,
+\(\mathrm{Beta}(20,1.5)\) gives mean 0.8605 and central 90\% interval
+0.649--0.983, implying weekly half-lives of 4.61 weeks at the mean and
+1.60--39.71 weeks over the interval. These daily univariate applications
+do not calibrate a weekly DNS prior; no alternative Beta hyperparameters
+were tested.
 
 To retain the same interpretation of \(m_j\) as in M3, let \(v_j\) be
 the stationary variance of log volatility and set
@@ -758,33 +770,31 @@ p_U(v_j)=\frac{e^{-v_j}}{1-e^{-U}}\,1_{(0,U)}(v_j),
 \qquad U=4.
 }\end{equation}
 
-The rate-one truncated prior favors smaller \(v_j\); without truncation,
-1.83\% of its mass lies above four. A finite bound supports
-finite-horizon predictive moments, but does not bound realized
-volatility or yield changes. Since \(\sigma_{j,t}=\exp(h_{j,t}/2)\),
-\(\operatorname{SD}(\log\sigma_{j,t})=\sqrt{v_j}/2\); at \(v_j=4\), the
-central 95\% stationary range is 0.141--7.10 times its conditional
-median. This describes the boundary, not a typical range.
+The exponential family favors smaller stationary log-volatility
+variances; rate one and \(U=4\) are project-specific regularization
+choices. The truncated prior has mean 0.925, median 0.675 and 95th
+percentile 2.697; rates 0.5 and 2 would change the mean to 1.374 and
+0.499. The rate-one scale is comparable to noisy training-only auxiliary
+estimates of \(v_j\) (0, 0.65 and 0.95), not a precise empirical
+calibration. At the bound, \(\operatorname{SD}(\log\sigma_{j,t})=1\), so
+the stationary 95\% volatility range is 0.141--7.10 times its
+conditional median; this is a boundary scenario, not a typical range.
+Training-only prior-predictive RMS movement has median/95th percentiles
+0.168/0.423 at one week and 0.357/1.063 at four weeks, versus empirical
+95th percentiles 0.1845/0.3849; about 46\% of four-week draws exceed the
+training threshold. Raising \(U\) from four to eight changes the
+four-week 99th percentile by about 0.1\%, but the tails remain broad. No
+yield-movement simulation varied the rate, and the saved posterior
+cannot establish behavior above \(U=4\)
+(\citeproc{ref-gelman2017prior}{Gelman et al., 2017}).
 
-Following Gelman et al. (\citeproc{ref-gelman2017prior}{2017}), we
-assess the prior through its implications for training-sample yield
-changes. With \(U=4\), the prior-predictive median, 95th and 99th
-percentiles of eight-maturity RMS movement are 0.168, 0.423 and 0.628
-percentage points at one week, and 0.357, 1.063 and 1.533 at four weeks.
-Increasing \(U\) to eight changes the four-week 99th percentile by less
-than 0.2\%; however, the prior remains broad, with 46\% of four-week
-draws exceeding the training 95th-percentile movement. Training-only
-auxiliary estimates of \(v_j\) are 0, 0.65 and 0.95 for level, slope and
-curvature. They are noisy scale checks, not fitted volatility estimates
-or an upper confidence bound, and neither they nor the prior-predictive
-comparison establish an optimal value of \(U\).
-
-The bounded \(v_j\) prior and proper coefficient priors imply finite
-posterior-predictive moments at every finite horizon; the appendix gives
-the argument. This establishes existence of the covariance used in DSS,
-not realistic uncertainty or calibration. Nor does it imply finite
-unconditional stationary factor variance when mixing over coefficients
-arbitrarily close to a unit root.
+Bounded \(v_j\) and proper coefficient priors imply finite
+posterior-predictive moments at finite horizons. Stationarity gives an
+untruncated rate-one exponential prior finite prior-predictive second
+moments but an infinite innovation fourth moment. Thus \(U=4\) is
+sufficient for the posterior-moment proof, not shown necessary for prior
+moments; unbounded posterior tails are unproved. This does not imply
+finite infinite-horizon factor variance as \(b_j\) approaches one.
 
 Posterior-predictive simulation propagates the factor and log-volatility
 states at each future weekly step and adds the common reconstruction
@@ -795,13 +805,10 @@ Y_{t+h}^{(s)}=\Lambda f_{t+h}^{(s)}+\varepsilon_{t+h}^{(s)},
 \qquad \varepsilon_{t+h}^{(s)}\sim N(0,\widehat R_t).
 }\end{equation}
 
-The two-step method treats extracted factors as observations, so it does
-not fully propagate first-stage factor-extraction or fixed-\(\lambda\)
-uncertainty. Inference uses a Gaussian-mixture representation for the
-log-squared innovations Kim et al.
-(\citeproc{ref-kim1998stochastic}{1998}), with a Metropolis correction
-that targets the exact likelihood following Omori et al.
-(\citeproc{ref-omori2007stochastic}{2007}).
+Inference uses a Gaussian-mixture representation for log-squared
+innovations, with an in-chain Metropolis correction targeting the exact
+likelihood (\citeproc{ref-kim1998stochastic}{Kim et al., 1998};
+\citeproc{ref-omori2007stochastic}{Omori et al., 2007}).
 
 \section{Conventional forecasting
 benchmarks}\label{conventional-forecasting-benchmarks}
@@ -1027,10 +1034,9 @@ behavior}\label{posterior-parameter-behavior}
 To show how the data update the stochastic-volatility parameters,
 Table~\ref{tbl-posterior-parameters} reports the final fit at the 28
 November 2025 origin. The table summarizes the 24,000 retained M4 draws
-(the internal saved-chain label is M5; four chains of 6,000 draws),
-pooled across chains. The intervals are equal-tailed 90\% posterior
-intervals; this is the latest rolling fit, not a pooling of parameters
-across forecast origins.
+(four chains of 6,000 draws), pooled across chains. The intervals are
+equal-tailed 90\% posterior intervals; this is the latest rolling fit,
+not a pooling of parameters across forecast origins.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1304}}
@@ -1101,7 +1107,7 @@ remain near their training-calibrated centers. These comparisons show
 parameter-specific updating alongside prior regularization, not proof
 that every estimate is insensitive to the prior.
 
-Across all 130 accepted M5 fits, the largest factor-specific posterior
+Across all 130 accepted M4 fits, the largest factor-specific posterior
 99th percentile of \(v_j\) is 2.87 (curvature); the largest posterior
 probability above 3.5 is 0.24\%. Four curvature fits assign more than
 5\% probability to \(v_j>2\), but none assigns more than 0.8\% to
@@ -1499,6 +1505,31 @@ factor-level posterior covariance is a useful stability check, but
 changing the estimator must be documented consistently. The classical
 forecasts avoid this issue through exact fitted moments.
 
+\section{Bayesian posterior targets and
+transformations}\label{bayesian-posterior-targets-and-transformations}
+
+For one factor, condition on \(x_1\), let \(n=T-1\), and define
+\(r_t=(x_t-(1-b_j)\mu_j-b_jx_{t-1})\). The exact targets are
+
+\begin{equation}\protect\phantomsection\label{eq-bayesian-targets}{
+\begin{aligned}
+\pi_{3j}(\mu_j,b_j,m_j\mid x)&\propto
+\prod_{t=2}^{T}\mathcal N\!\left(x_t;(1-b_j)\mu_j+b_jx_{t-1},e^{m_j}\right)
+p(\mu_j)p(b_j)p(m_j),\\
+\pi_{4j}(\mu_j,b_j,m_j,\phi_j,v_j,h_{j,1:n}\mid x)&\propto
+\prod_{s=1}^{n}\mathcal N\!\left(x_{s+1};(1-b_j)\mu_j+b_jx_s,e^{h_{j,s}}\right)\\
+&\qquad{}\times p(\mu_j)p(b_j)p(m_j)p(\phi_j)p_U(v_j)
+p(h_{j,1:n}\mid m_j,\phi_j,v_j).
+\end{aligned}
+}\end{equation}
+
+Here \(p(\mu_j)\), \(p(b_j)\), \(p(m_j)\), \(p(\phi_j)\) and
+\(p_U(v_j)\) are the specified normal, truncated-normal, normal,
+transformed-Beta and truncated-exponential priors. The (n) states
+(h\_\{j,1:n\}) align with transitions from (x\_1) through (x\_T).
+Neither target contains a yield-level likelihood, (R\_t), or an
+estimated (\lambda); factor posteriors are fitted separately.
+
 \section{Finite-moment prior and transformed
 target}\label{finite-moment-prior-and-transformed-target}
 
@@ -1519,8 +1550,10 @@ works in \(\theta=(m,u,s)\) with \(u=\operatorname{atanh}(\phi)\) and
 \(s=\log v\). The independent-prior density gains Jacobian
 \(\log(1-\phi^2)+s\). Equivalently, the determinant from these
 coordinates to \((\omega,\phi,q)\) is \(v(1-\phi^2)^2\). The induced
-physical-coordinate prior is not a product of the old independent priors
-for \(\omega\) and \(q\).
+physical-coordinate prior is not a product of independent priors for
+\(\omega\) and \(q\). The coefficient prior is defined directly on
+\((\mu,b)\), so no Jacobian is needed there; if written in \((a,b)\), it
+includes the factor \(1/|1-b|\).
 
 At fixed \(m,\phi,h\), the \(v\) target contains
 \(p_U(v)v^{-n/2}\exp[-A(v)/(2v)]\), where \(A(v)\) is the bracketed term
@@ -1528,6 +1561,13 @@ in Equation~\ref{eq-finite-path} and itself depends on \(v\). Thus it is
 not the old inverse-gamma full conditional. Exact-target correction of
 the reversible mixture proposal retains both the transformed prior and
 this stationary density.
+
+The constant-volatility chain updates \((\mu,b)\) by
+Gaussian/truncated-normal full conditionals and \(m\) by an exact slice
+step. In the stochastic-volatility chain, mixture-based FFBS proposes
+the path with an exact log-\(\chi^2\) Metropolis correction; \(m\) has a
+Gaussian conditional, \(u\) a Metropolis update, and \(s\) a non-centred
+slice update. The mixture is a proposal, not the posterior target.
 
 \section{Propriety and finite-horizon
 moments}\label{propriety-and-finite-horizon-moments}
@@ -1541,10 +1581,12 @@ L(x\mid a,b,h)\leq(2\pi)^{-n/2}\exp\!\left(-\frac12\sum_{t=1}^n h_t\right).
 
 After integrating \(m\sim N(\mu_0,1)\), the log-volatility vector is
 Gaussian conditional on \(v,\phi\), with mean \((\mu_0-v/2)\mathbf1\)
-and covariance \(\mathbf1\mathbf1'+vR_\phi\), where
-\((R_\phi)_{ij}=\phi^{|i-j|}\). Every entry is bounded in absolute value
-by \(1+U\). The logarithm of the expectation of the likelihood bound is
-therefore bounded above by
+and covariance \(\mathbf1\mathbf1'+vC_\phi\), where
+\((C_\phi)_{ij}=\phi^{|i-j|}\). The symbol \(C_\phi\) denotes the
+log-volatility correlation matrix and is distinct from the yield-curve
+covariance \(R_t\). Every entry is bounded in absolute value by \(1+U\).
+The logarithm of the expectation of the likelihood bound is therefore
+bounded above by
 
 \begin{equation}\protect\phantomsection\label{eq-normalizer-bound}{
 -\frac{n\mu_0}{2}+\frac{nU}{4}+\frac{n^2(1+U)}8,
@@ -1589,33 +1631,23 @@ factor posteriors yield a diagonal factor covariance; projection through
 \(\Lambda\) and addition of \(R_t\) give the yield covariance used in
 DSS.
 
-Synthetic validation used a finite-moment generating specification and
-independent chains. The 95\% intervals contained the generating values
-for \(b\), \(m\), \(\phi\) and \(v\), but missed the intercept (truth
-0.04; interval {[}0.0510, 0.1235{]}) and long-run mean (truth 0.2667;
-interval {[}0.3163, 0.6284{]}). These misses are reported rather than
-removed through tuning or repeated simulation. One synthetic series is a
-computational diagnostic, not repeated-sampling validation.
+In one synthetic run, 95\% intervals covered \(b,m,\phi,v\) but missed
+\(a\) (0.04; {[}0.0510, 0.1235{]}) and \(\mu\) (0.2667; {[}0.3163,
+0.6284{]}). This checks computation, not repeated-sampling coverage.
 
 \section{Score reconstruction and data
 integrity}\label{score-reconstruction-and-data-integrity}
 
-The saved results comprise 780 classical and 520 Bayesian
-model--horizon--origin records. Targets, posterior parameters, analytic
-moments, scenario arrays and interval endpoints permit reconstruction
-without refitting. Across the 130 origins, checks cover common keys,
-covariance definiteness, interval reconstruction and DSS consistency;
-independent Energy Score reconstruction is also performed at
-representative origins. These checks establish consistency of the saved
-calculations, not the truth of the modeling assumptions.
+Across 130 origins, 780 classical and 520 Bayesian records were checked
+for common keys, covariance definiteness, interval and DSS
+reconstruction; representative Energy Scores were independently
+reproduced. These checks verify saved calculations, not model
+assumptions.
 
-\section{Existing classical
-robustness}\label{existing-classical-robustness}
-
-The restricted M0--M2 90\% Model Confidence Set retains M0 at both
-horizons for both reported losses. It does not compare the Bayesian pair
-or all five specifications. Zero exceedances in a finite bootstrap
-should not be read as a population probability of zero.
+\textbf{Existing classical robustness.} The restricted M0--M2 90\% Model
+Confidence Set retains M0 for both losses and horizons, excluding the
+Bayesian pair; zero finite-bootstrap exceedances do not imply zero
+population probability.
 
 \begin{longtable}[]{@{}lll@{}}
 \caption{Restricted 90\% Model Confidence Sets, range statistic,
@@ -1637,13 +1669,10 @@ Horizon & Loss & Retained models \\
 4 & energy\_score & M0 \\
 \end{longtable}
 
-A separate classical exercise excludes curves dated within 14 calendar
-days of each origin and forecasts across the resulting bridge to the
-original target. At four weeks, M0 remains the strongest classical
-benchmark, with DSS −30.628 and pooled RMSE 0.275 percentage points.
-This assumed-delay historical-vintage exercise is not a reconstruction
-of exact historical publication dates or revisions, and it is not a
-release-time M3--M4 comparison.
+A separate exercise assumes a 14-day delay and bridges to each four-week
+target. M0 remains strongest (DSS −30.628; RMSE 0.275 percentage
+points); this is not an exact release-history reconstruction or an
+M3--M4 release-time comparison.
 
 \begin{longtable}[]{@{}lllll@{}}
 \caption{Four-week forecasts with an assumed 14-calendar-day
@@ -1666,6 +1695,8 @@ M2 & -20.182 & 0.511 & 0.293 & 0.930 \\
 
 \chapter*{Bibliography}\label{bibliography}
 \addcontentsline{toc}{chapter}{Bibliography}
+
+\small
 
 \protect\phantomsection\label{refs}
 \begin{CSLReferences}{1}{0}
@@ -1695,6 +1726,12 @@ Diebold, F. X., \& Li, C. (2006). Forecasting the term structure of
 government bond yields. \emph{Journal of Econometrics}, \emph{130}(2),
 337--364. \url{https://doi.org/10.1016/j.jeconom.2005.03.005}
 
+\bibitem[\citeproctext]{ref-diebold2007global}
+Diebold, F. X., Li, C., \& Yue, V. Z. (2007). \emph{Global yield curve
+dynamics and interactions: A dynamic nelson-siegel approach} (NBER
+Working Paper No. 13588). National Bureau of Economic Research.
+\url{https://www.nber.org/papers/w13588}
+
 \bibitem[\citeproctext]{ref-gelman2017prior}
 Gelman, A., Simpson, D., \& Betancourt, M. (2017). The prior can often
 only be understood in the context of the likelihood. \emph{Entropy},
@@ -1710,6 +1747,13 @@ Association}, \emph{102}(477), 359--378.
 Hansen, P. R., Lunde, A., \& Nason, J. M. (2011). The model confidence
 set. \emph{Econometrica}, \emph{79}(2), 453--497.
 \url{https://doi.org/10.3982/ecta5771}
+
+\bibitem[\citeproctext]{ref-hautsch2010svns}
+Hautsch, N., \& Yang, F. (2010). \emph{Bayesian inference in a
+stochastic volatility nelson-siegel model} (SFB 649 Discussion Paper
+Nos. 2010-004). Humboldt-Universität zu Berlin, Collaborative Research
+Center 649.
+\url{https://edoc.hu-berlin.de/items/fe62a2c3-7511-4af4-b0ca-73716db68be5}
 
 \bibitem[\citeproctext]{ref-hautsch2012bayesian}
 Hautsch, N., \& Yang, F. (2012). Bayesian inference in a stochastic
