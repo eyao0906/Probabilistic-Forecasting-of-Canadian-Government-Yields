@@ -1,5 +1,28 @@
 # Hautsch–Yang state-space DNS: methodology specification
 
+## Revised research objective
+
+The proposed study asks how joint Bayesian latent-factor estimation changes
+factor and parameter inference, volatility estimates, model fit and predictive
+uncertainty relative to the existing two-step Bayesian DNS models. Its four
+questions concern inference, stochastic volatility, posterior predictive fit,
+and predictive uncertainty across regimes. Neither superior scores nor full
+eight-dimensional calibration is assumed.
+
+The two-step constant- and stochastic-volatility models are referred to here
+as B3 and B4, respectively; SS_M3 and SS_M4 denote the joint models. Their
+posteriors condition on different information, so raw posterior standard
+deviations are not directly comparable as if the likelihoods were the same.
+Forecasts must use common observed-yield targets and scoring conventions; no
+Bayes factor is calculated across differently conditioned likelihoods.
+
+Synthetic posterior recovery and the declared convergence gates precede
+Canadian inference. If only SS_M3 is validated, an SS_M3-only study may be
+considered; unconverged SS_M4 draws must not be interpreted. After validation,
+the five-dimensional non-DNS residual subspace is an adequacy diagnostic, not
+a requirement that all residual dependence disappear. Temporally independent
+measurement noise cannot itself model dynamics in that complement.
+
 ## Source version and scope
 
 The source inspected for this implementation is the January 2010 SFB 649
@@ -95,6 +118,11 @@ Gaussian convention only where specified and tested. The volatility path uses
 its stationary initial distribution. Any departure from these choices will be
 reported with the corresponding likelihood and predictive sensitivity.
 
+The factor initial state is explicitly \(f_0\sim N(\mu,10^6I)\), followed by
+the first transition into \(f_1\); the synthetic generator can now draw
+from this same proper distribution. Starting at \(\mu\) instead is a
+different initial-state experiment and must be identified as such.
+
 ## Decay parameter and priors
 
 Appendix A of the working paper uses a uniform decay prior between 0.055 and
@@ -157,6 +185,13 @@ the working paper's seven-component proposal and posterior reweighting; no
 mixture approximation enters the implemented posterior. Mixture draws without
 correction will not be reported as exact posterior draws. The implementation
 audit records the transition, target density, and independent checks.
+
+The decay proposal integrates out the factor path using the Kalman likelihood,
+with all other parameters and the SV path held fixed. Its logit proposal
+includes the bounded-uniform prior's transformation Jacobian. The factor path
+is then resampled conditional on the accepted decay before any update that
+conditions on that path; this ordering is essential to the partially collapsed
+transition. See `SAMPLER_RECOVERY_AUDIT.md` for checks and limitations.
 
 Section 3.2 of the working paper checks posterior predictive skewness and
 kurtosis using replicated yield residuals (equations (14)–(18)). Section 4

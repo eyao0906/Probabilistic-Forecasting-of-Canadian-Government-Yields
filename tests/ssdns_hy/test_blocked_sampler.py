@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import numpy as np
 
@@ -12,6 +14,7 @@ from src.ssdns_hy import (
     run_chain,
     summarize_chain_diagnostics,
 )
+from src.ssdns_hy.synthetic_pilot import _load_chain, _save_chain
 
 
 def _synthetic_panel(seed=211, n_time=48):
@@ -33,6 +36,24 @@ def _synthetic_panel(seed=211, n_time=48):
 
 
 class BlockedSamplerTests(unittest.TestCase):
+    def test_checkpoint_round_trip_and_integrity(self):
+        yields, maturities = _synthetic_panel()
+        priors, _ = calibrate_training_priors(yields, maturities)
+        chain = run_chain(yields, maturities, priors, "SS_M3", np.random.default_rng(128), 2, 4)
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "chain.npz"
+            _save_chain(path, chain, "design-hash", 2.5)
+            restored, elapsed = _load_chain(path, "design-hash")
+            np.testing.assert_array_equal(restored.decay_per_year, chain.decay_per_year)
+            self.assertEqual(restored.acceptance, chain.acceptance)
+            self.assertEqual(elapsed, 2.5)
+            with self.assertRaises(ValueError):
+                _load_chain(path, "different-design")
+            with path.open("ab") as stream:
+                stream.write(b"corruption")
+            with self.assertRaisesRegex(ValueError, "checksum"):
+                _load_chain(path, "design-hash")
+
     def test_both_models_produce_finite_joint_posterior_predictive_draws(self):
         yields, maturities = _synthetic_panel()
         priors, _ = calibrate_training_priors(yields, maturities)

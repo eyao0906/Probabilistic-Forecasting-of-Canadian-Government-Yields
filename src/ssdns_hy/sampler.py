@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 
 import numpy as np
@@ -75,7 +76,7 @@ def _draw_initial_factor(
     total_variance = persistence**2 * prior_variance + first_process_variance
     cross = persistence * prior_variance
     conditional_mean = mean + cross / total_variance * (first_factor - mean)
-    conditional_variance = prior_variance - cross**2 / total_variance
+    conditional_variance = prior_variance * first_process_variance / total_variance
     return conditional_mean + np.sqrt(conditional_variance) * rng.standard_normal(3)
 
 
@@ -250,38 +251,38 @@ def _update_decay_marginal(
     return current, False, current_filter
 
 
-def _sample_volatility_path(
-    current: np.ndarray,
-    factor_innovations: np.ndarray,
-    mean: float,
+def _draw_stationary_ar1(
+    n: int,
     persistence: float,
     variance: float,
     rng: np.random.Generator,
+) -> np.ndarray:
+    if n < 1 or not np.isfinite(persistence) or abs(persistence) >= 1:
+        raise ValueError("AR(1) requires a positive length and stationary persistence")
+    if not np.isfinite(variance) or variance <= 0:
+        raise ValueError("AR(1) stationary variance must be finite and positive")
+    noise = rng.standard_normal(n)
+    direction = np.empty(n)
+    direction[0] = np.sqrt(variance) * noise[0]
+    innovation_sd = np.sqrt(variance * (1.0 - persistence**2))
+    for t in range(1, n):
+        direction[t] = persistence * direction[t - 1] + innovation_sd * noise[t]
+    return direction
+
+
+def _elliptical_slice(
+    current: np.ndarray,
+    direction: np.ndarray,
+    center: float,
+    log_likelihood: Callable[[np.ndarray], float],
+    rng: np.random.Generator,
     max_shrinks: int = 1000,
 ) -> np.ndarray:
-    """Elliptical slice update under the exact Gaussian innovation likelihood."""
-    n = len(current)
-    innovation_variance = variance * (1.0 - persistence**2)
-    direction = np.empty(n)
-    direction[0] = np.sqrt(variance) * rng.standard_normal()
-    if n > 1:
-        direction[1:] = (
-            persistence * direction[:-1]
-            + np.sqrt(innovation_variance) * rng.standard_normal(n - 1)
-        )
-    center = mean - variance / 2.0
     centered = current - center
-
-    def log_likelihood(path: np.ndarray) -> float:
-        if not np.isfinite(path).all() or np.max(np.abs(path)) > 700:
-            return -np.inf
-        with np.errstate(over="ignore", under="ignore", invalid="ignore"):
-            score = -0.5 * np.sum(
-                path + factor_innovations**2 * np.exp(-path)
-            )
-        return float(score) if np.isfinite(score) else -np.inf
-
-    threshold = log_likelihood(current) + np.log(rng.uniform())
+    current_likelihood = log_likelihood(current)
+    if not np.isfinite(current_likelihood):
+        raise ValueError("current elliptical-slice likelihood must be finite")
+    threshold = current_likelihood + np.log(rng.uniform())
     angle = rng.uniform(0.0, 2.0 * np.pi)
     lower, upper = angle - 2.0 * np.pi, angle
     for _ in range(max_shrinks):
@@ -296,10 +297,36 @@ def _sample_volatility_path(
     raise RuntimeError("elliptical slice sampler exceeded its shrink limit")
 
 
+def _sample_volatility_path(
+    current: np.ndarray,
+    factor_innovations: np.ndarray,
+    mean: float,
+    persistence: float,
+    variance: float,
+    rng: np.random.Generator,
+    max_shrinks: int = 1000,
+) -> np.ndarray:
+    """Elliptical slice update under the exact Gaussian innovation likelihood."""
+    direction = _draw_stationary_ar1(len(current), persistence, variance, rng)
+
+    def log_likelihood(path: np.ndarray) -> float:
+        if not np.isfinite(path).all() or np.max(np.abs(path)) > 700:
+            return -np.inf
+        with np.errstate(over="ignore", under="ignore", invalid="ignore"):
+            score = -0.5 * np.sum(
+                path + factor_innovations**2 * np.exp(-path)
+            )
+        return float(score) if np.isfinite(score) else -np.inf
+
+    return _elliptical_slice(
+        current, direction, mean - variance / 2.0, log_likelihood, rng, max_shrinks
+    )
+
+
 def _volatility_log_likelihood(
     h: np.ndarray, mean: float, persistence: float, variance: float
 ) -> float:
-    if not -1.0 < persistence < 1.0 or not 0.0 < variance < 4.0:
+    if not -1.0 < persistence < 1.0 or not 0.0 < variance:
         return -np.inf
     innovation_variance = variance * (1.0 - persistence**2)
     center = mean - variance / 2.0

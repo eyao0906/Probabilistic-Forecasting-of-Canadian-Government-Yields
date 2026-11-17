@@ -51,14 +51,16 @@ def summarize_chain_diagnostics(chains: list[ChainDraws]) -> dict:
         posterior_dataset = dataset.to_dataset()
         for variable in posterior_dataset.data_vars:
             values = np.asarray(posterior_dataset[variable].values)
+            if not np.isfinite(values).all():
+                raise ValueError(f"{label} is non-finite for {variable}")
             output[label][variable] = values.tolist()
     output["maximum_rank_rhat"] = float(
-        max(np.nanmax(np.asarray(value)) for value in output["rank_rhat"].values())
+        max(np.max(np.asarray(value)) for value in output["rank_rhat"].values())
     )
     output["minimum_bulk_ess"] = float(
-        min(np.nanmin(np.asarray(value)) for value in output["bulk_ess"].values())
+        min(np.min(np.asarray(value)) for value in output["bulk_ess"].values())
     )
     output["minimum_tail_ess"] = float(
-        min(np.nanmin(np.asarray(value)) for value in output["tail_ess"].values())
+        min(np.min(np.asarray(value)) for value in output["tail_ess"].values())
     )
     return output

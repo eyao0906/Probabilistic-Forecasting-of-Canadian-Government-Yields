@@ -20,6 +20,7 @@ def simulate_yields(
     volatility_persistence: np.ndarray | None = None,
     volatility_variance: np.ndarray | None = None,
     initial_factor: np.ndarray | None = None,
+    initial_factor_variance: float | None = None,
 ) -> dict[str, np.ndarray]:
     """Simulate yields, latent factors, and optional factor log-volatility."""
     if model not in {"SS_M3", "SS_M4"}:
@@ -35,7 +36,7 @@ def simulate_yields(
         raise ValueError("maturities must be a vector and factor parameters must have length 3")
     if r.shape != tau.shape or np.any(r <= 0):
         raise ValueError("measurement_variance must be positive with one entry per maturity")
-    if not np.isfinite(tau).all() or not np.isfinite(mean).all() or not np.isfinite(r).all():
+    if not all(np.isfinite(value).all() for value in (tau, mean, persistence, r, m)):
         raise ValueError("synthetic model parameters must be finite")
     if np.any(np.abs(persistence) >= 1):
         raise ValueError("factor persistence must lie strictly inside (-1, 1)")
@@ -46,7 +47,7 @@ def simulate_yields(
         v = np.asarray(volatility_variance, dtype=float)
         if phi.shape != (3,) or v.shape != (3,):
             raise ValueError("SV parameter vectors must have length 3")
-        if np.any(np.abs(phi) >= 1) or np.any(v <= 0):
+        if not np.isfinite(phi).all() or not np.isfinite(v).all() or np.any(np.abs(phi) >= 1) or np.any(v <= 0):
             raise ValueError("SV persistence must be stationary and variance positive")
     else:
         phi = np.zeros(3)
@@ -55,9 +56,17 @@ def simulate_yields(
     loadings = dns_loadings(tau, decay_per_year)
     factors = np.empty((n_observations, 3))
     log_volatility = np.empty_like(factors)
-    state = mean.copy() if initial_factor is None else np.asarray(initial_factor, dtype=float)
+    if initial_factor is not None and initial_factor_variance is not None:
+        raise ValueError("specify either initial_factor or initial_factor_variance")
+    if initial_factor_variance is not None:
+        if not np.isfinite(initial_factor_variance) or initial_factor_variance <= 0:
+            raise ValueError("initial_factor_variance must be finite and positive")
+        state = mean + np.sqrt(initial_factor_variance) * rng.standard_normal(3)
+    else:
+        state = mean.copy() if initial_factor is None else np.asarray(initial_factor, dtype=float)
     if state.shape != (3,) or not np.isfinite(state).all():
         raise ValueError("initial_factor must be a finite vector of length 3")
+    initial_state = state.copy()
     if model == "SS_M4":
         omega = m - v / 2.0
         h = omega + np.sqrt(v) * rng.standard_normal(3)
@@ -83,4 +92,5 @@ def simulate_yields(
         "yields": yields,
         "factors": factors,
         "log_volatility": log_volatility,
+        "initial_factor": initial_state,
     }
