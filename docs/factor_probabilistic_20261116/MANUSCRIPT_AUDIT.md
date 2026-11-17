@@ -72,10 +72,22 @@ sensitivities, and output hashes are recorded in
 `FACTOR_EVALUATION_REPORT.md` and
 `FACTOR_EVALUATION_AMENDMENT_20261116.md`.
 
+## Current manuscript revision
+
+The narrative now presents factor-level score differences as a descriptive
+pattern, reports the relative curvature CRPS reductions (3.4% and 4.9%), and
+states that no formal cross-factor heterogeneity test was conducted. It
+distinguishes simulation MCSE for the 130-origin mean from origin-level
+bootstrap uncertainty and model/specification uncertainty. The text also
+notes that the four-observation curvature CRPS reduction does not correspond
+to a lower RMSE. These are presentation and interpretation changes only:
+accepted scores, tables, forecasts, priors, samplers, and evaluation
+protocols were not changed.
+
 ## Build and software checks
 
 Rendered with `quarto render paper\MRP_Draft.qmd --to pdf`. The updated PDF
-has 35 pages and a 191-word abstract. The no-write paper verifier passed:
+has 35 pages and a 195-word abstract. The no-write paper verifier passed:
 there are no unresolved citations or cross-references, duplicate labels,
 missing includes, unresolved PDF reference markers, or blank pages; the
 12-point main-text configuration and first-page title checks also pass.

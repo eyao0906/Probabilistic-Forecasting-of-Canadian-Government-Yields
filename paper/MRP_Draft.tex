@@ -237,28 +237,37 @@ University of Waterloo\par
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
-This study evaluates marginal probabilistic forecasts of the level,
-slope, and curvature factors extracted from eight Canadian government
-zero-coupon yields using fixed Nelson--Siegel loadings. It compares a
-factor random walk, an unrestricted factor AR(1), and two Bayesian
-Dynamic Nelson--Siegel specifications: constant-volatility M3 and
-stochastic-volatility M4. The Bayesian forecasts use the accepted
-posterior draws; no sampler, prior, or accepted yield forecast is
-changed. The 130 common rolling origins span 2016--2025, with one- and
-four-observation-ahead targets.
+This study investigates whether incorporating stochastic volatility into
+the Dynamic Nelson--Siegel (DNS) framework improves probabilistic
+forecasts of Canadian government yield-curve risk factors. Using weekly
+government yields at eight maturities from 2000 to 2025, the yield curve
+is represented by three interpretable factors---level, slope, and
+curvature---capturing parallel shifts, changes in steepness, and
+movements in the curve's shape. The analysis compares conventional
+random-walk and autoregressive benchmarks with Bayesian DNS models
+featuring constant and time-varying factor volatility. Forecasts are
+evaluated at one- and four-week horizons across 130 common
+expanding-window forecast origins during 2016--2025. The primary
+evaluation uses the continuous ranked probability score (CRPS) to assess
+marginal predictive distributions, supplemented by the Dawid--Sebastiani
+score (DSS), point-forecast accuracy, and probabilistic calibration
+diagnostics.
 
-The primary score is the continuous ranked probability score (CRPS),
-supplemented by a moment-based Dawid--Sebastiani score, point accuracy,
-probability integral transforms, and marginal interval coverage.
-Stochastic volatility has lower mean CRPS than constant volatility in
-all six factor-by-horizon comparisons, with the largest differences for
-curvature. However, none of the six paired comparisons is significant
-after Holm adjustment. Level and slope scores are close across all four
-models, and point-forecast differences are small. A duration-based
-five-year yield illustration translates each factor marginal separately;
-it is not a joint portfolio-risk forecast. Results are conditional on
-fixed loadings and OLS-extracted factor proxies and do not establish
-calibration of the full yield curve or general model superiority.
+The empirical findings suggest that the value of stochastic volatility
+varies across yield-curve factors. Improvements in probabilistic
+forecasting are most pronounced for curvature, particularly at the
+longer forecast horizon, while the corresponding effects for level and
+slope are comparatively limited. These results highlight the importance
+of examining individual yield-curve risk factors rather than relying
+exclusively on aggregate forecasting performance. By allowing
+factor-specific uncertainty to evolve over time, Bayesian
+stochastic-volatility DNS provides a flexible framework for
+characterizing interest-rate dynamics beyond conventional point
+forecasts. From a practical fixed-income perspective, the resulting
+factor-level predictive distributions offer interpretable inputs for
+yield-curve scenario analysis, interest-rate exposure assessment, and
+risk management applications sensitive to changes in the shape of the
+term structure.
 
 \clearpage
 \chapter*{Acknowledgements}
@@ -284,46 +293,82 @@ of the Canadian zero-coupon yield-curve data.
 \section{Motivation and research
 problem}\label{motivation-and-research-problem}
 
-Government-bond yield movements are often summarized by level, slope,
-and curvature factors. These labels describe maturity-loading shapes,
-not formal economic identification. The Nelson--Siegel representation
-provides a parsimonious fixed-loading basis for extracting those factors
-from the eight-maturity Canadian yield curve (Diebold \& Li
-(\citeproc{ref-diebold2006forecasting}{2006})). The factors are useful
-summaries for fixed-income analysis, but a factor model is not by itself
-a calibrated joint model of every yield movement.
+Movements in government yield curves can be represented by a small
+number of common factors, conventionally interpreted as level, slope,
+and curvature (\citeproc{ref-diebold2006forecasting}{Diebold \& Li,
+2006}; \citeproc{ref-litterman1991common}{Litterman \& Scheinkman,
+1991}). These factors capture distinct patterns of interest-rate
+movements: broadly parallel shifts across maturities, changes in the
+steepness of the curve, and changes in its intermediate-maturity shape.
+For fixed-income institutions, understanding these movements is
+essential because bond valuations, hedging effectiveness, and
+interest-rate exposures depend on how yields evolve across different
+maturities. Regulatory risk-management frameworks similarly recognize
+the importance of both parallel and non-parallel yield-curve shocks
+(\citeproc{ref-bcbs2016irrbb}{\textbf{bcbs2016irrbb?}}). Accurate point
+forecasts alone are therefore insufficient; probabilistic forecasts that
+characterize the magnitude and uncertainty of different yield-curve
+movements can provide additional information for scenario analysis and
+risk assessment.
 
-The original project evaluated joint forecasts across eight maturities.
-A subsequent residual-subspace sensitivity experiment improved
-yield-level DSS but left substantial residual dependence and joint
-undercoverage; it remains a sensitivity analysis, not the primary result
-of this paper (see the
-\href{../docs/residual_subspace_experiment/STRUCTURAL_RECOVERY_REPORT.md}{structural-recovery
-report}). This revision instead asks whether the accepted Bayesian DNS
-specifications forecast the three extracted factor distributions well
-relative to a random walk and a conventional AR(1), and whether
-stochastic factor volatility adds predictive value over constant
-volatility. The financial discussion is limited to factor-isolated yield
-and duration sensitivities.
+The Dynamic Nelson--Siegel (DNS) framework offers a parsimonious
+representation of the yield curve through three interpretable factors
+(\citeproc{ref-diebold2006forecasting}{Diebold \& Li, 2006}).
+Conventional factor-forecasting models typically assume constant
+innovation variances, although uncertainty surrounding interest-rate
+movements may evolve with market conditions. Bayesian
+stochastic-volatility models extend this framework by allowing factor
+innovation variances to change over time
+(\citeproc{ref-hautsch2012bayesian}{Hautsch \& Yang, 2012}). However,
+the potential forecasting benefit of this additional flexibility need
+not be uniform across level, slope, and curvature. Given their different
+maturity-loading patterns and underlying dynamics, an improvement in
+modelling volatility may be more informative for certain factors than
+for others. This motivates the central research question: Does
+incorporating Bayesian stochastic volatility improve the marginal
+probabilistic forecasts of yield-curve factors, and how does its
+predictive contribution vary across factors and forecast horizons?
 
-The two-step procedure first extracts factors by cross-sectional least
-squares using fixed loadings, then fits the factor dynamics. The paper
-compares four marginal forecast distributions at 130 common origins and
-two horizons. CRPS is the primary score because it evaluates univariate
-predictive distributions; point errors, interval coverage, PIT
-summaries, and moment-based DSS are complementary. The study does not
-estimate cross-factor dependence or claim a joint yield-curve forecast.
+To investigate this question, the study extracts level, slope, and
+curvature factors from eight Canadian government yields using fixed
+Nelson--Siegel loadings and cross-sectional least squares, followed by
+separate estimation of their time-series dynamics. Bayesian
+specifications with constant and stochastic factor volatility are
+compared with conventional random-walk and autoregressive benchmarks
+using 130 common expanding-window forecast origins over 2016--2025, at
+one- and four-week horizons. Forecast quality is assessed primarily
+through the continuous ranked probability score (CRPS), which evaluates
+the accuracy of each factor's predictive distribution, supplemented by
+the Dawid--Sebastiani score (DSS), point-forecast errors, and
+calibration diagnostics. By examining the distributional forecasting
+performance of each factor individually, the study seeks to identify
+where time-varying volatility contributes useful predictive information
+and to assess its potential relevance for factor-based interest-rate
+scenario analysis and fixed-income risk management.
 
 \section{Contribution and scope}\label{contribution-and-scope}
 
-The contribution is a matched, factor-level comparison of constant- and
-stochastic-volatility Bayesian DNS against M0 and M2. The Bayesian
-specifications retain the same factor extraction, fixed loading
-representation, AR mean equation, and previously accepted priors and
-posterior draws. The paper reports marginal factor scores and
-one-at-a-time five-year risk sensitivities. It does not claim full-curve
-calibration, portfolio VaR, economic identification of the factor
-labels, or general forecast dominance.
+This study contributes a controlled Bayesian Dynamic Nelson--Siegel
+(DNS) comparison examining how stochastic volatility affects the
+marginal probabilistic forecasting performance of level, slope, and
+curvature factors. The constant and stochastic-volatility specifications
+share the same factor extraction, fixed Nelson--Siegel loadings,
+autoregressive mean dynamics, prior design, and forecast origins,
+allowing the incremental contribution of time-varying factor volatility
+to be assessed. Conventional random-walk and autoregressive models
+provide additional benchmarks. By evaluating predictive distributions
+separately across factors and forecast horizons, the study identifies
+where stochastic volatility offers potential improvements in forecasting
+uncertainty and explores their relevance to fixed-income risk
+management.
+
+The analysis focuses on marginal factor distributions rather than
+jointly forecasting the full eight-maturity yield curve, as
+independently estimated factor dynamics do not explicitly capture
+cross-factor dependence. Practical implications are illustrated through
+individual factor sensitivities of the five-year yield, providing an
+interpretable link between factor uncertainty and interest-rate exposure
+without extending to portfolio-level risk measurement.
 
 \chapter{Methodology and conceptual framework}\label{sec-literature}
 
@@ -340,61 +385,97 @@ factors; it does not include a separate PCA--VAR forecast.
 
 \section{Bayesian inference for DNS}\label{bayesian-inference-for-dns}
 
-Bayesian DNS integrates over factor-dynamic parameter uncertainty.
-Diebold, Li, and Yue provide a related two-step precedent: they use
-OLS-extracted country factors as observed data in a Bayesian second
-stage while retaining latent global factors
-(\citeproc{ref-diebold2007global}{Diebold et al., 2007}). In contrast,
-Hautsch and Yang jointly estimate yield factors and volatility in a
-state-space MCMC model (\citeproc{ref-hautsch2010svns}{Hautsch \& Yang,
-2010}, \citeproc{ref-hautsch2012bayesian}{2012}). This study adopts the
-two-step design because the original expanding-window estimation
-required fits at 130 forecast origins: conditioning on fixed loadings
-and cross-sectionally extracted factors reduces each fit to three
-separate, low-dimensional factor regressions rather than repeated joint
-latent-state estimation. It is a deliberate conditional analysis:
-uncertainty in extracted factors and the selected decay parameter is not
-propagated. The present factor evaluation reuses the accepted posterior
-draws rather than rerunning those fits.
+Bayesian estimation of Dynamic Nelson--Siegel (DNS) models incorporates
+uncertainty in factor-dynamic parameters into posterior-predictive
+distributions, providing a probabilistic alternative to conventional
+plug-in forecasts. A related two-step approach is developed by Diebold
+et al. (\citeproc{ref-diebold2007global}{2007}), who treat
+country-specific factors extracted by ordinary least squares (OLS) as
+observed inputs in a Bayesian second stage while retaining latent global
+factors. In contrast, Hautsch \& Yang
+(\citeproc{ref-hautsch2010svns}{2010}) and Hautsch \& Yang
+(\citeproc{ref-hautsch2012bayesian}{2012}) jointly estimate yield-curve
+factors and stochastic volatility within a Bayesian state-space
+framework.
+
+This study adopts a two-step Bayesian specification to balance
+statistical flexibility with computational tractability. Given the
+expanding-window design with 130 forecast origins, fixing the
+Nelson--Siegel maturity loadings and extracting factors
+cross-sectionally reduces estimation to three separate, low-dimensional
+factor models, avoiding repeated joint latent-state inference. Bayesian
+posterior simulation then accounts for uncertainty in the factor-dynamic
+parameters and, where applicable, latent volatility states. The analysis
+remains conditional on the extracted factors and the initially selected
+decay parameter, whose estimation uncertainty is not propagated.
+Factor-level forecast evaluation uses the posterior draws obtained from
+the completed expanding-window estimation.
 
 \section{Stochastic factor
 volatility}\label{stochastic-factor-volatility}
 
-Stochastic-volatility DNS allows factor log innovation variances to
-evolve. Hautsch \& Yang (\citeproc{ref-hautsch2012bayesian}{2012}) and
-Caldeira et al. (\citeproc{ref-caldeira2010bayesian}{2010}) motivate
-this flexibility in yield applications, while Omori et al.
-(\citeproc{ref-omori2007stochastic}{2007}) provides a mixture-based
-inference method. The present no-leverage model changes constant to
-stochastic factor variance while holding extraction, mean dynamics and
-forecast design fixed. The resulting comparison is conditional on the
-specified models and priors, not a causal effect isolated from every
-distributional difference.
+Conventional DNS factor dynamics often assume constant innovation
+variances, whereas stochastic-volatility specifications allow
+uncertainty surrounding factor movements to evolve over time. Bayesian
+stochastic-volatility extensions have been investigated in
+term-structure applications by Hautsch \& Yang
+(\citeproc{ref-hautsch2012bayesian}{2012}) and Caldeira et al.
+(\citeproc{ref-caldeira2010bayesian}{2010}), with Omori et al.
+(\citeproc{ref-omori2007stochastic}{2007}) providing a computational
+foundation for mixture-based posterior inference.
+
+The present specification introduces factor-specific latent
+log-volatility processes into otherwise matched Bayesian DNS
+autoregressions, without incorporating a leverage effect. The constant-
+and stochastic-volatility models share the same factor extraction,
+autoregressive mean structure, priors for common parameters, and
+forecast design. This controlled comparison isolates the incremental
+forecasting contribution of time-varying factor volatility within the
+specified modelling framework. By permitting volatility dynamics to
+differ across level, slope, and curvature, the approach also allows
+their marginal predictive distributions to respond differently to
+changing interest-rate uncertainty.
 
 \section{Probabilistic forecast
 evaluation}\label{probabilistic-forecast-evaluation}
 
-Proper scoring rules evaluate predictive distributions rather than point
-forecasts alone (\citeproc{ref-gneiting2007strictly}{Gneiting \&
-Raftery, 2007}). This study uses the univariate CRPS as its primary
-score for each extracted factor and horizon. The Dawid--Sebastiani
-score, introduced by Dawid and Sebastiani
-(\citeproc{ref-dawid1999coherent}{Dawid \& Sebastiani, 1999}), is
-computed from predictive means and variances as a complementary
-Gaussian-moment diagnostic; for non-Gaussian posterior mixtures it is
-not the exact negative log predictive density. RMSE, PIT summaries, and
-central interval coverage describe point accuracy and marginal
-calibration. No Energy Score or yield-curve coverage is computed for the
-new factor evaluation because the three factors are forecast separately
-and their joint dependence is not identified.
+Proper scoring rules provide a principled framework for assessing
+predictive distributions rather than relying exclusively on
+point-forecast accuracy (\citeproc{ref-gneiting2007strictly}{Gneiting \&
+Raftery, 2007}). The primary evaluation criterion is the continuous
+ranked probability score (CRPS), applied separately to each extracted
+factor at one- and four-week horizons. CRPS assesses the agreement
+between a forecast's cumulative distribution and its subsequently
+observed realization, incorporating both predictive concentration and
+calibration.
 
-The confirmatory comparison is the paired M4-minus-M3 CRPS difference
-for each factor and horizon. A stationary bootstrap
-(\citeproc{ref-politis1994stationary}{Politis \& Romano, 1994})
-preserves local dependence across rolling origins; the six raw p-values
-are adjusted by Holm's procedure. Comparisons with M0 and M2 are
-descriptive. Neither the bootstrap nor the scores establish universal
-model superiority.
+The Dawid--Sebastiani score (DSS)
+(\citeproc{ref-dawid1999coherent}{Dawid \& Sebastiani, 1999}) provides a
+complementary assessment of predictive means and variances. In its
+univariate form, DSS corresponds to a Gaussian quasi-likelihood
+(QLIKE-type) loss, although it does not represent the exact negative log
+predictive density for non-Gaussian posterior mixtures. Root mean
+squared error (RMSE), probability integral transform (PIT) diagnostics,
+and central prediction-interval coverage provide additional evidence on
+point accuracy and marginal calibration. Because factor dynamics are
+estimated independently, the present evaluation focuses on marginal
+distributions rather than jointly modelling cross-factor dependence.
+Accordingly, no multivariate Energy Score or joint yield-curve coverage
+assessment is reported.
+
+The primary statistical comparison examines paired CRPS differences
+between Bayesian DNS with stochastic volatility (M3) and its
+constant-volatility counterpart (M2), separately for each factor and
+forecast horizon. A stationary bootstrap
+(\citeproc{ref-politis1994stationary}{Politis \& Romano, 1994}) accounts
+for temporal dependence across common forecast origins, while Holm
+adjustment controls the family-wise error rate across the six
+factor--horizon comparisons. Conventional factor random-walk and
+autoregressive benchmarks provide additional descriptive context.
+Together, these evaluations assess the extent to which stochastic
+volatility contributes to marginal predictive performance and whether
+the observed improvements differ across yield-curve factors and
+forecasting horizons.
 
 \chapter{Data and information sets}\label{sec-data}
 
@@ -586,14 +667,14 @@ squared percentage points, preserve the accepted plug-in construction
 but impose an imperfect cross-maturity independence approximation. It is
 not required for this factor-level experiment. Separately,
 \(B=\operatorname{diag}(b_L,b_S,b_C)\) and
-\(Q=\operatorname{diag}(e^{m_j})\) in M3 or
-\(Q_t=\operatorname{diag}(e^{h_{j,t}})\) in M4. The factor models are
+\(Q=\operatorname{diag}(e^{m_j})\) in M2 or
+\(Q_t=\operatorname{diag}(e^{h_{j,t}})\) in M3. The factor models are
 estimated separately, so neither cross-factor dynamics nor dependence
 uncertainty is propagated.
 
 \section{Conventional two-step DNS}\label{conventional-two-step-dns}
 
-M2 fits a separate Gaussian AR(1) mean equation to each extracted
+M1 fits a separate Gaussian AR(1) mean equation to each extracted
 factor:
 
 \begin{equation}\protect\phantomsection\label{eq-ar}{
@@ -621,7 +702,7 @@ part of the present forecast evaluation.
 \section{Bayesian constant-volatility
 DNS}\label{bayesian-constant-volatility-dns}
 
-M3 is the primary control. Conditional on the fixed extracted factors,
+M2 is the primary control. Conditional on the fixed extracted factors,
 each factor follows a Gaussian AR(1) with constant innovation variance:
 
 \begin{equation}\protect\phantomsection\label{eq-m3-factor}{
@@ -712,9 +793,9 @@ training-only evidence, not evaluation-period scores.
 \section{Bayesian DNS with stochastic factor
 volatility}\label{bayesian-dns-with-stochastic-factor-volatility}
 
-The main extension, M4, changes the factor innovation variance while
+The main extension, M3, changes the factor innovation variance while
 retaining the same factor extraction, maturity loadings, AR(1) mean
-structure and coefficient priors as M3:
+structure and coefficient priors as M2:
 
 \begin{equation}\protect\phantomsection\label{eq-sv-factor}{
 f_{j,t}=a_j+b_j f_{j,t-1}+\eta_{j,t},
@@ -756,7 +837,7 @@ the mean and 1.60--39.71 weeks over the interval. The daily univariate
 source applications do not calibrate a weekly DNS prior; no alternative
 Beta hyperparameters were tested.
 
-To retain the same interpretation of \(m_j\) as in M3, let \(v_j\) be
+To retain the same interpretation of \(m_j\) as in M2, let \(v_j\) be
 the stationary variance of log volatility and set
 
 \begin{equation}\protect\phantomsection\label{eq-finite-reparam}{
@@ -767,7 +848,7 @@ h_{j,1}\sim N(\omega_j,v_j).
 Then, under the stationary log-volatility process,
 \(E[\exp(h_{j,t})\mid m_j,\phi_j,v_j]=\exp(m_j)\). The models share a
 prior interpretation for long-run expected innovation variance, but not
-their full predictive distributions: M4 additionally allows volatility
+their full predictive distributions: M3 additionally allows volatility
 to vary over time.
 
 The symbols \(\mu^{\mathrm{fc}}_{j,h}\) and \(V^{\mathrm{fc}}_{j,h}\)
@@ -835,12 +916,12 @@ f_{j,t+h}\mid\mathcal F_t\sim
 N\!\left(f_{j,t},h\widehat\sigma_{\Delta f_j}^{\,2}\right).
 }\end{equation}
 
-M2 is the unrestricted OLS AR(1) in Equation~\ref{eq-ar}. Its forecast
+M1 is the unrestricted OLS AR(1) in Equation~\ref{eq-ar}. Its forecast
 moments are given in Equation~\ref{eq-ar-moments}; the persistence
-estimate is not clipped. M3 and M4 use the accepted Bayesian constant-
+estimate is not clipped. M2 and M3 use the accepted Bayesian constant-
 and stochastic-volatility models, respectively. All four models produce
-one marginal predictive distribution per factor and horizon. M0 and M2
-have Gaussian predictive distributions; Bayesian M3/M4 distributions
+one marginal predictive distribution per factor and horizon. M0 and M1
+have Gaussian predictive distributions; Bayesian M2/M3 distributions
 integrate over posterior parameter draws and future factor innovations.
 
 \begin{longtable}[]{@{}
@@ -873,11 +954,11 @@ Role in evaluation
 \endlastfoot
 M0 & Factor random walk; training-only change variance & Random-walk
 benchmark \\
-M2 & Two-step DNS; unrestricted OLS AR(1) by factor & Conventional DNS
+M1 & Two-step DNS; unrestricted OLS AR(1) by factor & Conventional DNS
 benchmark \\
-M3 & Bayesian two-step DNS; constant factor volatility & Bayesian
+M2 & Bayesian two-step DNS; constant factor volatility & Bayesian
 control \\
-M4 & Bayesian two-step DNS; finite-moment stochastic factor volatility &
+M3 & Bayesian two-step DNS; finite-moment stochastic factor volatility &
 Bayesian extension \\
 \end{longtable}
 
@@ -901,7 +982,7 @@ each factor and model at each origin. No MCMC is rerun, and the original
 posterior and yield-level forecast archives remain unchanged.
 
 For M0, the random-walk variance is the sample variance of training-only
-factor changes multiplied by the horizon. For M2, the AR(1) is fit by
+factor changes multiplied by the horizon. For M1, the AR(1) is fit by
 unrestricted OLS and its innovation variance is the mean squared
 training residual. Bayesian predictive means and variances are computed
 draw by draw and averaged using the law of total variance. Factor-only
@@ -921,8 +1002,8 @@ E_F|X-y|-\frac12E_F|X-X'|,
 \qquad X,X'\stackrel{\mathrm{iid}}{\sim}F.
 }\end{equation}
 
-M0 and M2 have Gaussian predictive distributions, so their CRPS is
-computed analytically. For M3/M4, the two expectations are estimated
+M0 and M1 have Gaussian predictive distributions, so their CRPS is
+computed analytically. For M2/M3, the two expectations are estimated
 from two independent sets of 8,192 factor scenarios per origin, factor
 and horizon. Eight batches of 1,024 paired scenarios provide a Monte
 Carlo standard-error diagnostic. The factor percentage-point unit is
@@ -957,15 +1038,15 @@ primary distributional comparison.
 \section{Ensemble and marginal
 evaluation}\label{ensemble-and-marginal-evaluation}
 
-The PIT is \(F(y)\). For M3 it is the average draw-specific Gaussian
-CDF. For M4, future log-volatility paths are simulated from the accepted
+The PIT is \(F(y)\). For M2 it is the average draw-specific Gaussian
+CDF. For M3, future log-volatility paths are simulated from the accepted
 posterior state and the conditional Gaussian factor CDF is averaged
 using the variance along each sampled path; this integrates over random
 future volatility instead of substituting its expected variance. The PIT
 simulation uses an independent deterministic stream, with its Monte
 Carlo error recorded. Central 50\%, 80\%, and 90\% interval endpoints
-are analytic for M0/M2 and empirical quantiles of the 8,192 Bayesian
-factor scenarios for M3/M4. We report coverage and mean width by factor
+are analytic for M0/M1 and empirical quantiles of the 8,192 Bayesian
+factor scenarios for M2/M3. We report coverage and mean width by factor
 and horizon. PIT histograms and coverage are descriptive with 130
 origins and do not imply joint factor or yield-curve calibration. Point
 accuracy is summarized by RMSE and MAE of the predictive mean.
@@ -980,7 +1061,7 @@ model--factor--horizon group; MAE is the mean absolute factor error.
 \section{Inference and computational
 diagnostics}\label{inference-and-computational-diagnostics}
 
-The confirmatory comparison is the paired M4-minus-M3 CRPS difference
+The confirmatory comparison is the paired M3-minus-M2 CRPS difference
 for each of the three factors and two horizons. We use the stationary
 bootstrap (\citeproc{ref-politis1994stationary}{Politis \& Romano,
 1994}) with 9,999 replicates, an expected block length of four forecast
@@ -989,11 +1070,13 @@ is used across the six comparisons. The six two-sided p-values are
 adjusted by Holm's procedure. As a predeclared protocol amendment, block
 lengths of eight and twelve origins are also reported as sensitivity
 checks; the original four-origin analysis remains primary. Comparisons
-with M0 or M2 are descriptive. The bootstrap uncertainty is conditional
-on the observed origins and includes realized simulation noise; a
-separate independence-based MCSE is reported for the mean paired
-difference and does not capture time-series sampling uncertainty.
-Neither captures model, prior, data-vintage or factor-extraction
+with M0 or M1 are descriptive. The bootstrap estimates origin-level
+sampling uncertainty conditional on the observed period and resamples
+the realized score differences, including their simulation error. A
+separate independence-based MCSE for the mean paired difference
+quantifies only finite scenario-simulation error; it is not origin-level
+sampling uncertainty and does not determine statistical significance.
+Neither measure captures model, prior, data-vintage or factor-extraction
 uncertainty.
 
 The accepted four-chain diagnostics use rank-normalized split
@@ -1002,10 +1085,10 @@ The accepted four-chain diagnostics use rank-normalized split
 posterior files are hash-checked and the saved factor predictive moments
 are reconstructed before the new evaluation. Convergence and
 archive-integrity checks assess numerical reproducibility, not forecast
-calibration or model adequacy. Because the M3 and M4 CRPS simulation
+calibration or model adequacy. Because the M2 and M3 CRPS simulation
 streams are independently seeded across models and origins, an
 independence-based Monte Carlo standard error for their average paired
-difference is computed as \(\sqrt{\sum_t(s_{M3,t}^2+s_{M4,t}^2)}/N\),
+difference is computed as \(\sqrt{\sum_t(s_{M2,t}^2+s_{M3,t}^2)}/N\),
 where \(s_{m,t}\) is the origin-specific CRPS Monte Carlo standard
 error. This quantifies simulation noise only; it is not time-series
 sampling uncertainty.
@@ -1036,7 +1119,7 @@ behavior}\label{posterior-parameter-behavior}
 To show how the data update the stochastic-volatility parameters,
 Table~\ref{tbl-posterior-parameters} reports the final fit at the 28
 November 2025 origin. The table summarizes the 24,000 retained draws for
-M4, the stochastic-volatility specification (four chains of 6,000
+M3, the stochastic-volatility specification (four chains of 6,000
 draws), pooled across chains. The intervals are equal-tailed 90\%
 posterior intervals; this is the latest rolling fit, not a pooling of
 parameters across forecast origins.
@@ -1110,7 +1193,7 @@ remain near their training-calibrated centers. These comparisons show
 parameter-specific updating alongside prior regularization, not proof
 that every estimate is insensitive to the prior.
 
-Across all 130 accepted M4 fits, the largest factor-specific posterior
+Across all 130 accepted M3 fits, the largest factor-specific posterior
 99th percentile of \(v_j\) is 2.87 (curvature); the largest posterior
 probability above 3.5 is 0.24\%. Four curvature fits assign more than
 5\% probability to \(v_j>2\), but none assigns more than 0.8\% to
@@ -1122,21 +1205,23 @@ would arise above four.
 
 \section{Primary factor scores}\label{primary-factor-scores}
 
-Table~\ref{tbl-factor-crps} reports the mean CRPS by factor and horizon.
-M4 has lower CRPS than M3 in all six groups, but the differences are
-small for level and slope. The largest differences are for curvature:
-0.00536 factor percentage points at one observation and 0.01549 at four
-observations.
+Table~\ref{tbl-factor-crps} reports mean CRPS by factor and horizon.
+Estimated M3--M2 changes are negligible for level and small for slope,
+whereas curvature has the largest reductions: 0.00536 factor percentage
+points (3.4\% relative to M2) at one observation and 0.01549 (4.9\%) at
+four. The larger four-observation reduction is descriptive; two horizons
+do not establish a general horizon effect, and these percentages are not
+separate hypothesis tests.
 
 \begin{longtable}[]{@{}lrrrrr@{}}
 \caption{Mean factor CRPS across 130 origins; lower is better. Units are
 factor percentage points.}\label{tbl-factor-crps}\tabularnewline
 \toprule\noalign{}
-Factor & Horizon & M0 & M2 & M3 & M4 \\
+Factor & Horizon & M0 & M1 & M2 & M3 \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-Factor & Horizon & M0 & M2 & M3 & M4 \\
+Factor & Horizon & M0 & M1 & M2 & M3 \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
@@ -1153,7 +1238,7 @@ Curvature & 4 & 0.32748 & 0.31702 & 0.31744 & 0.30195 \\
 
 \centering{
 
-\includegraphics[width=0.95\linewidth,height=\textheight,keepaspectratio]{../results/factor_probabilistic_20261116/figures/factor_crps.png}
+\includegraphics[width=0.95\linewidth,height=\textheight,keepaspectratio]{generated/figures/factor_crps.png}
 
 }
 
@@ -1162,11 +1247,10 @@ factor, and horizon.}
 
 \end{figure}%
 
-M0 and M2 are close to the Bayesian models for level and slope. M4's
-curvature CRPS is lower than M0, M2, and M3 at both horizons, but
-comparisons with M0/M2 are descriptive. Mean DSS is also lower for M4
-than M3 in all six factor--horizon groups; no confirmatory inference is
-made on DSS.
+M0 and M1 remain close to the Bayesian models for level and slope.
+Curvature's lower M3 CRPS relative to M0 and M1 is descriptive; only the
+M2--M3 pair is tested confirmatorily. Mean DSS also favors M3 in all six
+groups, but no confirmatory DSS inference is made.
 
 \section{Point accuracy and marginal
 calibration}\label{point-accuracy-and-marginal-calibration}
@@ -1178,11 +1262,11 @@ match CRPS:
 \caption{RMSE of factor predictive means across 130 origins. Units are
 factor percentage points.}\label{tbl-factor-rmse}\tabularnewline
 \toprule\noalign{}
-Factor & Horizon & M0 & M2 & M3 & M4 \\
+Factor & Horizon & M0 & M1 & M2 & M3 \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-Factor & Horizon & M0 & M2 & M3 & M4 \\
+Factor & Horizon & M0 & M1 & M2 & M3 \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
@@ -1195,6 +1279,13 @@ Curvature & 1 & 0.2837 & 0.2783 & 0.2786 & 0.2798 \\
 Curvature & 4 & 0.6032 & 0.5887 & 0.5890 & 0.5918 \\
 \end{longtable}
 
+The distributional and point-score rankings are not identical. At four
+observations, the 4.9\% curvature CRPS reduction under M3 does not
+translate into a lower RMSE: M3's RMSE is 0.5918, compared with 0.5890
+for M2 and 0.5887 for M1. This illustrates why the comparison evaluates
+predictive uncertainty as well as conditional-mean accuracy; a lower
+distributional score does not imply a better point forecast.
+
 Marginal 90\% interval coverage is descriptive; the nominal rate is
 0.90:
 
@@ -1202,11 +1293,11 @@ Marginal 90\% interval coverage is descriptive; the nominal rate is
 \caption{Empirical marginal coverage of central 90\% factor
 intervals.}\label{tbl-factor-coverage}\tabularnewline
 \toprule\noalign{}
-Factor & Horizon & M0 & M2 & M3 & M4 \\
+Factor & Horizon & M0 & M1 & M2 & M3 \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-Factor & Horizon & M0 & M2 & M3 & M4 \\
+Factor & Horizon & M0 & M1 & M2 & M3 \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
@@ -1221,7 +1312,7 @@ Curvature & 4 & 0.938 & 0.954 & 0.954 & 0.931 \\
 
 Coverage varies by factor and horizon: level intervals undercover at the
 reported nominal levels, while curvature intervals generally overcover,
-especially at four observations. M4 slope intervals also undercover at
+especially at four observations. M3 slope intervals also undercover at
 four observations. Mean PIT values are near 0.5, but the PIT histograms
 in Figure~\ref{fig-factor-pit} show why a mean alone cannot establish
 calibration. Neither these diagnostics nor the separate factor intervals
@@ -1231,7 +1322,7 @@ establish joint factor or yield-curve coverage.
 
 \centering{
 
-\includegraphics[width=0.95\linewidth,height=\textheight,keepaspectratio]{../results/factor_probabilistic_20261116/figures/factor_pit.png}
+\includegraphics[width=0.95\linewidth,height=\textheight,keepaspectratio]{generated/figures/factor_pit.png}
 
 }
 
@@ -1245,7 +1336,7 @@ the uniform reference density.}
 
 \section{Paired Bayesian comparison}\label{paired-bayesian-comparison}
 
-Table~\ref{tbl-factor-paired} reports M4-minus-M3 CRPS differences;
+Table~\ref{tbl-factor-paired} reports M3-minus-M2 CRPS differences;
 negative values favor stochastic volatility. The 95\% intervals are
 unadjusted, while p-values are adjusted by Holm across the six
 confirmatory comparisons.
@@ -1271,21 +1362,27 @@ Curvature & 1 & −0.00536 & {[}−0.01053, −0.00016{]} & 0.042 & 0.210 \\
 Curvature & 4 & −0.01549 & {[}−0.02807, −0.00263{]} & 0.018 & 0.106 \\
 \end{longtable}
 
-Both curvature point differences favor M4, and their unadjusted
-intervals exclude zero. Neither survives Holm adjustment at 5\%
-(adjusted \(p=0.210\) and \(0.106\)). Mean paired Monte Carlo standard
-errors range from 0.0011 to 0.0069 factor percentage points and are not
-negligible relative to several of the differences. Thus, the results
-suggest a curvature-specific pattern, not statistically established
-overall superiority of stochastic volatility.
+The estimated changes are near zero for level, small for slope, and
+largest for curvature, particularly at four observations. Curvature's
+unadjusted intervals exclude zero, but neither comparison survives Holm
+adjustment (adjusted \(p=0.210\) and \(0.106\)). Independence-based
+Monte Carlo standard errors of the 130-origin mean paired differences
+range from approximately 0.00010 to 0.00064 factor percentage points.
+The curvature reductions of 0.00536 and 0.01549 are substantially larger
+than their corresponding simulation errors of 0.000324 and 0.000640, so
+Monte Carlo noise is unlikely to explain those point estimates.
+Origin-level bootstrap uncertainty and multiplicity adjustment
+nevertheless preclude a confirmatory superiority claim. No formal test
+compares the improvements across factors; the observed pattern is
+descriptive, not statistically established heterogeneity.
 
 \section{Factor-isolated risk
 illustration}\label{factor-isolated-risk-illustration}
 
 At the 28 November 2025 origin, the four-observation level-factor
 forecast maps to a 90\% five-year yield-contribution interval of
-{[}−31.8, 30.5{]} basis points under M3 and {[}−25.5, 23.0{]} basis
-points under M4. For a stylized \$1,000,000 portfolio with five-year
+{[}−31.8, 30.5{]} basis points under M2 and {[}−25.5, 23.0{]} basis
+points under M3. For a stylized \$1,000,000 portfolio with five-year
 modified duration, the corresponding first-order P\&L intervals are
 approximately {[}−\$15,300, \$15,900{]} and {[}−\$11,500, \$12,800{]}.
 This varies level alone; slope and curvature are held fixed. The full
@@ -1307,26 +1404,26 @@ described as portfolio VaR or expected shortfall.
 \section{What stochastic volatility
 adds}\label{what-stochastic-volatility-adds}
 
-Conditional on the fixed loadings, extracted factor histories, and
-accepted priors, M4 has lower CRPS than M3 in all six factor--horizon
-groups. The largest differences occur for curvature, while level and
-slope are nearly tied. The curvature differences do not remain
-significant after multiplicity adjustment. Their mean score differences
-are much larger than the independence-based Monte Carlo standard errors
-of the 130-origin averages, although several of the smaller differences
-remain closer to simulation noise. These results are consistent with a
-possible benefit for curvature uncertainty, but do not establish that
-stochastic volatility improves factor forecasting generally.
+The estimated incremental value of stochastic volatility is not uniform
+in magnitude across the factors: it is negligible for level, small for
+slope, and largest for curvature, especially at the longer horizon. This
+pattern is consistent with the possibility that time-varying innovation
+uncertainty matters more for some yield-curve movements than others. The
+curvature estimates are larger than their Monte Carlo errors, but the
+paired-bootstrap comparisons do not survive multiplicity adjustment.
+Because no formal cross-factor heterogeneity test was conducted, the
+pattern is suggestive rather than confirmatory; it does not establish
+general superiority of stochastic volatility.
 
 \section{Why the random walk remains
 competitive}\label{why-the-random-walk-remains-competitive}
 
-M0 and M2 remain competitive on level and slope CRPS. For curvature, M4
-has lower CRPS than either benchmark at both horizons, but its curvature
-RMSE is not uniformly lower: at four observations, M4's RMSE is 0.592
-compared with 0.589 for M3 and M2. Model rankings therefore depend on
-the target factor and whether the score evaluates the full marginal
-distribution or only its mean.
+M0 and M1 remain competitive on level and slope CRPS. Although M3 has
+the lowest curvature CRPS among the four models, its four-observation
+curvature RMSE is slightly higher than M2's and M1's. This contrast
+reinforces that improved scores for a predictive distribution need not
+improve its conditional mean or imply better decisions in a particular
+application.
 
 \section{Model and prior limitations}\label{model-and-prior-limitations}
 
@@ -1349,7 +1446,7 @@ each factor (\(p<1.4\times10^{-39}\)); five-lag ARCH LM tests also
 reject constant variance (\(p=6.0\times10^{-7}\), \(5.1\times10^{-21}\)
 and \(3.4\times10^{-5}\), respectively). These tests apply to the
 auxiliary training-sample OLS residuals, not the posterior-standardized
-M4 innovations, and are not a validation sample. They indicate that
+M3 innovations, and are not a validation sample. They indicate that
 Gaussian innovations, independent factor fits, and no-leverage dynamics
 remain restrictive assumptions; stochastic volatility addresses changing
 variance but does not model skewed or heavy-tailed innovations. They
@@ -1374,32 +1471,39 @@ diagnostics assess sampling behavior, not model truth.
 implications}\label{data-inference-and-practical-implications}
 
 The historical vintage and publication delays prevent a real-time or
-executable-trading interpretation. With 130 origins, bootstrap intervals
-are conditional on this sample and expected block length. They do not
-capture representation, prior, data-vintage, or extraction uncertainty.
-Coverage is marginal; the duration illustration is a one-factor
-sensitivity rather than a joint portfolio-risk forecast.
+executable-trading interpretation. Three uncertainty sources should be
+distinguished: Monte Carlo standard errors quantify numerical
+scenario-simulation error; the paired stationary bootstrap describes
+origin-level sampling uncertainty conditional on this evaluation period
+and its block-length choice; neither captures model-specification
+uncertainty from priors, innovation distributions, fixed loadings, data
+vintage, or factor extraction. With 130 origins, the bootstrap intervals
+remain sample-conditional. Coverage is marginal, and the duration
+illustration is a one-factor sensitivity rather than a joint
+portfolio-risk forecast.
 
-The present evidence supports a narrower conclusion than the earlier
-eight-yield study: M4's marginal CRPS is most favorable for curvature,
-but multiplicity-adjusted inference does not establish a difference from
-M3. M0 and M2 are similarly competitive for level and slope. Model
-choice should therefore depend on the factor and decision context, not
-on a claim that the stochastic-volatility model dominates.
+The results support a narrower conclusion than a general
+stochastic-volatility improvement: the largest estimated probabilistic
+gains are concentrated in curvature, while the level and slope estimates
+change little. The observed factor pattern is not a statistically
+confirmed difference in effects, and it alone does not justify choosing
+M3 for a risk decision.
 
 \chapter{Conclusions}\label{sec-conclusions}
 
-This study compares marginal forecasts of three OLS-extracted
-Nelson--Siegel factors using accepted Bayesian posterior draws and
-matched M0/M2 benchmarks. M4 has lower CRPS than M3 in all six
-factor--horizon groups, with the largest differences for curvature; none
-is significant after Holm adjustment. Point accuracy and marginal
-coverage vary by factor, and the results do not define a joint
-yield-curve forecast. The five-year duration example is a first-order,
-factor-isolated sensitivity---not portfolio VaR or evidence of trading
-performance. Future work should address real-time data availability,
-extraction uncertainty, and joint factor and residual dependence before
-making full-curve risk claims.
+This controlled comparison does not establish a general improvement from
+stochastic volatility across DNS factors. The largest estimated CRPS
+reductions occur for curvature, particularly at four observations, while
+level and slope change little. These curvature estimates exceed their
+Monte Carlo simulation errors, but none of the six comparisons survives
+Holm adjustment, and no test establishes cross-factor heterogeneity. The
+evidence therefore suggests, but does not confirm, that stochastic
+volatility may add more probabilistic information for particular
+yield-curve movements. Point accuracy and marginal calibration remain
+factor-dependent; the one-factor duration illustration is not a joint
+portfolio-risk forecast. Real-time data, extraction uncertainty, and
+joint factor and residual dependence remain important directions for
+future work.
 
 \appendix
 
