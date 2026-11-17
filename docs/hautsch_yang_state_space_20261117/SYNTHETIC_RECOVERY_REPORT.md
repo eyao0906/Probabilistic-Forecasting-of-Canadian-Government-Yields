@@ -32,9 +32,33 @@ studies. The first screen's per-chain decay acceptance makes proposal scaling
 a testable computational concern, but does not by itself identify the
 posterior's geometry or establish a solution.
 
+After independently checking the collapsed Metropolis ratio, the same two
+SS_M3 datasets and RNG stream seeds were rerun with the decay logit proposal
+SD reduced from 0.05 to 0.005. This is a fixed proposal-scale change only; the
+posterior target is unchanged. The two designs have matching generated-data
+hashes. The shorter step raised decay acceptance from 0.02–0.04 to 0.20–0.26
+in dataset 1, reducing decay R-hat from 1.552 to 1.046 and increasing decay
+bulk ESS from 7.4 to 95.0. In dataset 2, acceptance increased from 0.06–0.14
+to 0.60–0.65 but decay R-hat worsened from 1.176 to 1.220 and bulk ESS fell
+from 19.7 to 15.7. The curvature persistence block also failed.
+
+| Dataset | Tuned maximum R-hat | Tuned minimum bulk ESS | Tuned minimum tail ESS | Status |
+|---|---:|---:|---:|---|
+| 1 | 1.091 | 38.7 | 52.9 | rejected |
+| 2 | 1.243 | 13.7 | 18.6 | rejected |
+
+This bounded proposal change did not establish reliable inference. Acceptance
+alone is not a convergence criterion, and the short runs do not establish
+whether further changes or longer chains would succeed.
+
 Individual posterior intervals, chain means, acceptance rates, parameter-wise
 diagnostics, source hashes and checksummed chain checkpoints are retained in
 `results/hautsch_yang_state_space_20261117/synthetic_screen_20261117/`.
+The fixed-step comparison is in the sibling
+`synthetic_screen_tuned_m3_20261117/` directory; its command is
+`python -m src.ssdns_hy.synthetic_pilot --tuned-m3`. The original screen's
+exact source files are preserved at commit `d731660`; running the newer
+source against its checkpoint intentionally refuses a fingerprint mismatch.
 Because the chains fail convergence gates, their interval coverage and
 parameter summaries are diagnostic only. This screen does not establish
 repeated-coverage rates, latent-volatility recovery, predictive recovery,

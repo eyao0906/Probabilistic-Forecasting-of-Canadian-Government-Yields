@@ -442,6 +442,8 @@ def run_chain(
     rng: np.random.Generator,
     warmup: int,
     draws: int,
+    *,
+    decay_step: float = 0.05,
 ) -> ChainDraws:
     """Run one blocked chain targeting the joint SS_M3 or SS_M4 posterior."""
     if model not in {"SS_M3", "SS_M4"}:
@@ -454,6 +456,8 @@ def run_chain(
         raise ValueError("yields and maturities must be finite")
     if warmup < 0 or draws < 1:
         raise ValueError("warmup must be nonnegative and draws must be positive")
+    if not np.isfinite(decay_step) or decay_step <= 0:
+        raise ValueError("decay_step must be finite and positive")
 
     n_time = len(y)
     initial_mean = priors.factor_mean_center.copy()
@@ -510,6 +514,7 @@ def run_chain(
             persistence,
             priors,
             rng,
+            step=decay_step,
         )
         if iteration >= warmup:
             accepted["decay"] += int(decay_accepted)

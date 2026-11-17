@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -36,6 +37,13 @@ def _synthetic_panel(seed=211, n_time=48):
 
 
 class BlockedSamplerTests(unittest.TestCase):
+    def test_decay_proposal_scale_must_be_positive_and_finite(self):
+        yields, maturities = _synthetic_panel()
+        priors, _ = calibrate_training_priors(yields, maturities)
+        for step in (0., -1., np.nan):
+            with self.subTest(step=step), self.assertRaises(ValueError):
+                run_chain(yields, maturities, priors, "SS_M3", np.random.default_rng(1), 0, 4, decay_step=step)
+
     def test_checkpoint_round_trip_and_integrity(self):
         yields, maturities = _synthetic_panel()
         priors, _ = calibrate_training_priors(yields, maturities)
@@ -53,6 +61,35 @@ class BlockedSamplerTests(unittest.TestCase):
                 stream.write(b"corruption")
             with self.assertRaisesRegex(ValueError, "checksum"):
                 _load_chain(path, "design-hash")
+
+    def test_constant_volatility_predictive_distribution_matches_gaussian_moments(self):
+        yields, maturities = _synthetic_panel()
+        priors, _ = calibrate_training_priors(yields, maturities)
+        posterior = run_chain(yields, maturities, priors, "SS_M3", np.random.default_rng(128), 2, 4)
+        factor_mean = np.array([3., -1., .2])
+        persistence = np.array([.8, .6, .3])
+        variance = np.array([.04, .05, .03])
+        terminal = np.array([3.2, -.8, .1])
+        measurement = np.full(8, .0036)
+        posterior = replace(
+            posterior,
+            factor_mean=np.tile(factor_mean, (4, 1)),
+            persistence=np.tile(persistence, (4, 1)),
+            log_variance=np.tile(np.log(variance), (4, 1)),
+            terminal_factor=np.tile(terminal, (4, 1)),
+            measurement_variance=np.tile(measurement, (4, 1)),
+            decay_per_year=np.full(4, .52),
+        )
+        horizon = 4
+        samples = posterior_predictive_scenarios(
+            posterior, maturities, horizon, np.random.default_rng(88), 30000
+        )
+        loadings = dns_loadings(maturities, .52)
+        expected_mean = loadings @ (factor_mean + persistence**horizon * (terminal - factor_mean))
+        factor_variance = variance * sum(persistence**(2 * k) for k in range(horizon))
+        expected_covariance = loadings @ np.diag(factor_variance) @ loadings.T + np.diag(measurement)
+        np.testing.assert_allclose(samples.mean(axis=0), expected_mean, atol=.008)
+        np.testing.assert_allclose(np.cov(samples, rowvar=False), expected_covariance, atol=.004)
 
     def test_both_models_produce_finite_joint_posterior_predictive_draws(self):
         yields, maturities = _synthetic_panel()

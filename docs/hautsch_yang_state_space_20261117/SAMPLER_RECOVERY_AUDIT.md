@@ -119,3 +119,6 @@ stored externally with a manifest and checksums rather than added to Git.
 The accepted gates remain R-hat at most 1.01, and bulk and tail ESS at least
 400 for every reported parameter. Passing this short screen alone would not
 establish repeated recovery, coverage, or suitability for Canadian inference.
+The original screen is reproducible with its source at commit `d731660`; the
+later targeted M3 scale comparison uses `--tuned-m3` and a separate output
+directory. A different source hash cannot silently resume either run.
