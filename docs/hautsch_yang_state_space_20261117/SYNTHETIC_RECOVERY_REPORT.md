@@ -51,6 +51,43 @@ This bounded proposal change did not establish reliable inference. Acceptance
 alone is not a convergence criterion, and the short runs do not establish
 whether further changes or longer chains would succeed.
 
+## SS_M3 block-release screen
+
+A separate conditional screen uses the first matching synthetic dataset,
+the same 150 warmup and 300 retained draws per chain, and four independent
+streams. It fixes the true mean, persistence, measurement variance and decay
+initially, while sampling the factor states and innovation variances; it then
+releases dynamics, measurement variances, and finally decay. The prior
+hyperparameters are those recalibrated from the simulated panel. Its decay
+proposal SD is 0.005. Each stage has its own streams and is a short screen,
+so differences between stages are not causal estimates of a single block's
+effect.
+
+| Released | Maximum rank R-hat | Minimum bulk ESS | Minimum tail ESS | Status |
+|---|---:|---:|---:|---|
+| Latent factors and innovation variances | 1.025 | 91.1 | 96.2 | rejected |
+| Plus factor means and persistence | 1.164 | 17.9 | 24.1 | rejected |
+| Plus measurement variances | 1.051 | 71.8 | 92.1 | rejected |
+| Plus decay | 1.086 | 44.4 | 78.7 | rejected |
+
+Even the fixed-parameter stage failed, driven by the curvature factor's
+log-variance diagnostic (R-hat 1.025; bulk ESS 91.1). On releasing dynamics,
+that diagnostic was 1.164 and 17.9, while the curvature persistence was 1.042
+and 83.3. In the fully released stage, decay R-hat was 1.029 and bulk ESS
+112.6. This locates multiple short-run mixing bottlenecks; it does not prove
+which would persist with longer chains, or that parameters are unidentified.
+
+`python -m src.ssdns_hy.m3_conditional_screen` saves parameter-wise
+diagnostics, all parameter traces and their checksums in
+`results/hautsch_yang_state_space_20261117/m3_conditional_screen_20261117/`.
+Factor states are summarized by posterior mean and RMSE, rather than retained
+as full state-path draws. Parameter trace plots, per-chain lag-one
+autocorrelations and near-boundary frequencies are stored under
+`results/hautsch_yang_state_space_20261117/trace_diagnostics_20261117/`.
+In the fully released stage, curvature log-variance lag-one autocorrelation
+ranged from 0.80 to 0.89 across chains. The plotted traces are not a
+substitute for the convergence gates.
+
 Individual posterior intervals, chain means, acceptance rates, parameter-wise
 diagnostics, source hashes and checksummed chain checkpoints are retained in
 `results/hautsch_yang_state_space_20261117/synthetic_screen_20261117/`.
@@ -119,3 +156,8 @@ posterior draws.
 Results and selected-state and global-parameter traces are in
 `results/hautsch_yang_state_space_20261117/sv_conditional_interwoven_20261117/`.
 The command is `python -m src.ssdns_hy.sv_conditional_screen --interwoven`.
+The corresponding plots and per-chain lag-one autocorrelations are in the
+shared `trace_diagnostics_20261117/` folder. In the fully released interwoven
+stage, the SV variance lag-one autocorrelation ranged from 0.97 to 0.99.
+About 22.4% of retained draws were within one percent of that variance's
+\((0,4)\) support boundary; this unconverged result is diagnostic only.

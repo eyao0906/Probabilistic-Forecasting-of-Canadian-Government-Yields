@@ -37,6 +37,17 @@ def _synthetic_panel(seed=211, n_time=48):
 
 
 class BlockedSamplerTests(unittest.TestCase):
+    def test_diagnostics_reject_nonfinite_rhat(self):
+        yields, maturities = _synthetic_panel()
+        priors, _ = calibrate_training_priors(yields, maturities)
+        chains = [
+            run_chain(yields, maturities, priors, "SS_M3", np.random.default_rng(seed), 2, 12)
+            for seed in (128, 129)
+        ]
+        chains = [replace(chain, decay_per_year=np.full(12, .5)) for chain in chains]
+        with self.assertRaisesRegex(ValueError, "non-finite"):
+            summarize_chain_diagnostics(chains)
+
     def test_decay_proposal_scale_must_be_positive_and_finite(self):
         yields, maturities = _synthetic_panel()
         priors, _ = calibrate_training_priors(yields, maturities)
