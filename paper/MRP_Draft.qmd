@@ -159,13 +159,7 @@ y_t(\tau)={}&L_t
 \end{aligned}
 $$
 
-The level factor $L_t$ loads equally across maturities; the slope loading declines from the short end toward zero at long maturities; and the curvature loading peaks at intermediate maturities. Thus, the factor labels describe loading shapes, not formal economic identification. The decay parameter $\lambda>0$ controls the slope and curvature loading profiles.
-
-The empirical specification adds a maturity-specific reconstruction error:
-
-$$
-y_t(\tau)=L_t+S_t s(\tau;\lambda)+C_t c(\tau;\lambda)+\varepsilon_t(\tau).
-$$
+The level factor $L_t$ loads equally across maturities; the slope loading declines from the short end toward zero at long maturities; and the curvature loading peaks at intermediate maturities. Thus, the factor labels describe loading shapes, not formal economic identification. The decay parameter $\lambda>0$ controls the slope and curvature loading profiles; the curvature maximum occurs near $\lambda\tau=1.793$, or about 3.48 years at the selected decay.
 
 Define the slope and curvature loadings as
 
@@ -174,22 +168,28 @@ s(\tau;\lambda)=\frac{1-e^{-\lambda\tau}}{\lambda\tau},
 \qquad c(\tau;\lambda)=s(\tau;\lambda)-e^{-\lambda\tau}.
 $$ {#eq-loadings}
 
-Let $Y_t$ be the eight-dimensional yield vector, $f_t=(L_t,S_t,C_t)'$, and $\Lambda(\lambda)$ the loading matrix. The matrix observation equation is
+At each observed maturity $\tau_i$, write the empirical reconstruction with its maturity-specific projection residual as
 
 $$
-Y_t=\Lambda(\lambda)f_t+\varepsilon_t,
-\qquad \varepsilon_t\sim N(0,R_t).
-$$ {#eq-observation}
+y_t(\tau_i)=L_t+S_t s(\tau_i;\lambda)+C_t c(\tau_i;\lambda)+r_{i,t}.
+$$
 
-For maturity $\tau$, a row of $\Lambda(\lambda)$ is $(1,s(\tau;\lambda),c(\tau;\lambda))$. The decay parameter is in inverse years; a 160-value grid from 0.05 to 2.0 minimizes initial-training-window cross-sectional squared error, selecting $\lambda=0.5160377358490565$ for the full forecast exercise.
+Here $r_{i,t}$ is the cross-sectional least-squares reconstruction residual, not a probabilistic measurement-error term in the current factor likelihood. Let $Y_t$ be the eight-dimensional yield vector, $\Lambda(\lambda)$ the $8\times3$ loading matrix with rows $(1,s(\tau_i;\lambda),c(\tau_i;\lambda))$, $\tilde f_t=(L_t,S_t,C_t)'$ the extracted factor vector, and $r_t=(r_{1,t},\ldots,r_{8,t})'$ the residual vector. The matrix decomposition is given below.
 
-At each date, the two-step procedure extracts the factors by cross-sectional least squares:
+The decay parameter is in inverse years; a 160-value grid from 0.05 to 2.0 minimizes initial-training-window cross-sectional squared error, selecting $\lambda=0.5160377358490565$ for the full forecast exercise. Conditional on this fixed, full-column-rank matrix, define the extracted factors by cross-sectional least squares:
 
 $$
-\widehat f_t=(\Lambda'\Lambda)^{-1}\Lambda'Y_t.
+\tilde f_t=(\Lambda'\Lambda)^{-1}\Lambda'Y_t.
 $$ {#eq-extraction}
 
-The estimator is computed by least squares without explicitly forming the inverse. By the OLS normal equations, each maturity-residual vector is orthogonal to the loading columns, $\Lambda'\widehat\varepsilon_t=0$, and lies in their five-dimensional orthogonal complement. This cross-sectional projection condition does not imply zero correlation over time between residual series at different maturities: in the initial 835-observation window, their mean absolute pairwise correlation is 0.659611, reaching 0.988809 for the 3-month and 1-year yields. The legacy yield-level forecast construction retains diagonal $R_t$, with maturity-specific expanding-window residual mean squares floored at $10^{-6}$ squared percentage points. This preserves the accepted plug-in construction without introducing a separately regularized cross-maturity covariance estimator; it is a practical consistency choice, not an assumption supported by the residual correlations. $R_t$ enters yield forecasts, not the factor likelihood or the revised factor scores. Separately, $B=\operatorname{diag}(b_L,b_S,b_C)$ and $Q=\operatorname{diag}(e^{m_j})$ in M3 or $Q_t=\operatorname{diag}(e^{h_{j,t}})$ in M4. Extracted factors are observed inputs; only their dynamics and volatility change.
+The estimator is computed by least squares without explicitly forming the inverse. The exact OLS decomposition and normal equations are
+
+$$
+Y_t=\Lambda(\lambda)\tilde f_t+r_t,
+\qquad \Lambda(\lambda)'r_t=0.
+$$ {#eq-observation}
+
+Thus, given the observed curve and fixed loadings, $\tilde f_t$ is a deterministic factor proxy and $r_t$ lies in the five-dimensional orthogonal complement. Orthogonality within a date does not imply zero correlation over time between residual series at different maturities: in the initial 835-observation window, their mean absolute pairwise correlation is 0.659611, reaching 0.988809 for the 3-month and 1-year yields. The primary Bayesian likelihood conditions on these extracted factor proxies and models their dynamics; it does not assign a probabilistic yield-reconstruction error or use $R_t$. The diagonal $R_t$ belongs only to the legacy joint-yield forecast approximation. Its maturity-specific residual mean squares, floored at $10^{-6}$ squared percentage points, preserve the accepted plug-in construction but impose an imperfect cross-maturity independence approximation. It is not required for this factor-level experiment. Separately, $B=\operatorname{diag}(b_L,b_S,b_C)$ and $Q=\operatorname{diag}(e^{m_j})$ in M3 or $Q_t=\operatorname{diag}(e^{h_{j,t}})$ in M4. The factor models are estimated separately, so neither cross-factor dynamics nor dependence uncertainty is propagated.
 
 ## Conventional two-step DNS
 
@@ -211,7 +211,14 @@ The legacy yield covariance is $\Lambda\operatorname{diag}(V^{\mathrm{fc}}_h)\La
 
 ## Bayesian constant-volatility DNS
 
-M3 is the primary control. It retains the factor AR(1) mean equation and assumes a constant innovation variance $\exp(m_j)$. The intercept $a_j$ determines the drift, while $b_j$ controls persistence. For $|b_j|<1$, their implied long-run factor mean is $\mu_j=a_j/(1-b_j)$. We specify independent priors on this mean and persistence and derive the intercept:
+M3 is the primary control. Conditional on the fixed extracted factors, each factor follows a Gaussian AR(1) with constant innovation variance:
+
+$$
+\tilde f_{j,t}=(1-b_j)\mu_j+b_j\tilde f_{j,t-1}+\eta_{j,t},
+\qquad \eta_{j,t}\sim N(0,e^{m_j}).
+$$ {#eq-m3-factor}
+
+The likelihood conditions on the first observation and uses the subsequent factor transitions. The three regressions are fit separately, imposing no cross-factor lag effects or contemporaneous innovation dependence; Gaussian innovations and the AR(1) form are working distributional assumptions rather than consequences of the OLS projection. For $|b_j|<1$, the long-run mean is $\mu_j=a_j/(1-b_j)$. We put the prior directly on this mean and persistence, deriving the intercept:
 
 $$
 \mu_j\sim N\!\left(\bar f_{j,\mathrm{train}},(2s_{j,\mathrm{train}})^2\right),
@@ -250,7 +257,7 @@ The Gaussian prior on log variance keeps the innovation variance positive after 
 
 ## Bayesian DNS with stochastic factor volatility
 
-The main extension, M4, changes the factor innovation variance while retaining the same factor extraction, maturity loadings, AR(1) mean structure, coefficient priors, long-run expected-variance interpretation and reconstruction-error treatment as M3:
+The main extension, M4, changes the factor innovation variance while retaining the same factor extraction, maturity loadings, AR(1) mean structure and coefficient priors as M3:
 
 $$
 f_{j,t}=a_j+b_j f_{j,t-1}+\eta_{j,t},
@@ -262,7 +269,7 @@ h_{j,t}=\omega_j+\phi_j(h_{j,t-1}-\omega_j)+u_{j,t},
 \qquad u_{j,t}\sim N(0,\sigma_{u,j}^2).
 $$ {#eq-sv-state}
 
-The latent state $h_{j,t}$ allows the factor innovation variance to change over time. Before reparameterization, $\omega_j$ is the unconditional mean of log variance, whereas $m_j=\log E[\exp(h_{j,t})]$ is the log of the long-run expected innovation variance. If the stationary log-volatility variance (denoted $v_j$ below) is $v_j$, then $h_{j,t}\sim N(\omega_j,v_j)$ and $E[\exp(h_{j,t})]=\exp(\omega_j+v_j/2)$; hence $m_j=\omega_j+v_j/2$. The persistence parameter $\phi_j$ has the transformed prior
+Here the Gaussian state innovation is independent of the standardized factor innovation, so the specification has no leverage effect; both Gaussian innovations and the AR(1) log-volatility state are modeling assumptions. Factor equations are again estimated independently, excluding cross-factor dependence. The latent state $h_{j,t}$ allows the factor innovation variance to change over time. Before reparameterization, $\omega_j$ is the unconditional mean of log variance, whereas $m_j=\log E[\exp(h_{j,t})]$ is the log of the long-run expected innovation variance. If the stationary log-volatility variance (denoted $v_j$ below) is $v_j$, then $h_{j,t}\sim N(\omega_j,v_j)$ and $E[\exp(h_{j,t})]=\exp(\omega_j+v_j/2)$; hence $m_j=\omega_j+v_j/2$. The persistence parameter $\phi_j$ has the transformed prior
 
 $$
 \frac{\phi_j+1}{2}\sim\operatorname{Beta}(20,1.5),
@@ -345,7 +352,7 @@ $$ {#eq-crps}
 
 M0 and M2 have Gaussian predictive distributions, so their CRPS is computed analytically. For M3/M4, the two expectations are estimated from two independent sets of 8,192 factor scenarios per origin, factor and horizon. Eight batches of 1,024 paired scenarios provide a Monte Carlo standard-error diagnostic. The factor percentage-point unit is retained in all reported CRPS values; lower scores are better.
 
-The Dawid–Sebastiani score is a complementary moment-based diagnostic. For forecast error $e_{j,t,h}=f_{j,t+h}-\widehat{\mu}_{j,t,h}$ and predictive variance $\widehat V_{j,t,h}$, it is
+The Dawid–Sebastiani score (DSS) is a complementary mean–variance score. For forecast error $e_{j,t,h}=f_{j,t+h}-\widehat{\mu}_{j,t,h}$ and predictive variance $\widehat V_{j,t,h}>0$, it is
 
 $$
 \operatorname{DSS}_{j,t,h}
@@ -353,19 +360,19 @@ $$
 +\frac{e_{j,t,h}^{\,2}}{\widehat V_{j,t,h}}.
 $$ {#eq-dss}
 
-Lower DSS is better. It is a proper score within a Gaussian forecast family, but for the Bayesian posterior mixtures it uses only the predictive mean and variance and is not the exact mixture log score. CRPS remains the primary distributional comparison.
+For a Gaussian forecast, DSS is twice the negative log predictive density after omitting the common $\log(2\pi)$ term. Its log-variance plus squared-error-over-variance form is QLIKE-type, but DSS is not a separate variance-only QLIKE comparison: it jointly scores the mean and variance and, for the Bayesian posterior mixtures, uses only their first two moments rather than the exact mixture log score. Patton's robustness results for imperfect variance proxies require a common variance estimand and proxy with appropriate conditional unbiasedness. Here squared forecast errors depend on each model's forecast mean, while the factors themselves are OLS-extracted proxies with unpropagated extraction uncertainty; thus they do not supply a common, model-independent variance proxy satisfying those conditions. We therefore do not report a separate variance-only QLIKE statistic [@patton2011volatility]. CRPS remains the primary distributional comparison.
 
 ## Ensemble and marginal evaluation
 
-The PIT is $F(y)$; for Bayesian mixtures it is evaluated by averaging the draw-specific Gaussian CDFs. Central 50%, 80%, and 90% interval endpoints are analytic for M0/M2 and empirical quantiles of the 8,192 Bayesian factor scenarios for M3/M4. We report coverage and mean width by factor and horizon. PIT histograms and coverage are descriptive with 130 origins and do not imply joint factor or yield-curve calibration. Point accuracy is summarized by RMSE and MAE of the predictive mean.
+The PIT is $F(y)$. For M3 it is the average draw-specific Gaussian CDF. For M4, future log-volatility paths are simulated from the accepted posterior state and the conditional Gaussian factor CDF is averaged using the variance along each sampled path; this integrates over random future volatility instead of substituting its expected variance. The PIT simulation uses an independent deterministic stream, with its Monte Carlo error recorded. Central 50%, 80%, and 90% interval endpoints are analytic for M0/M2 and empirical quantiles of the 8,192 Bayesian factor scenarios for M3/M4. We report coverage and mean width by factor and horizon. PIT histograms and coverage are descriptive with 130 origins and do not imply joint factor or yield-curve calibration. Point accuracy is summarized by RMSE and MAE of the predictive mean.
 
 The predictive factor distributions are evaluated marginally. We do not compute a multivariate Energy Score or a joint coverage statistic because the factor models are estimated separately and no joint factor predictive distribution is available. RMSE is the square root of the mean squared factor error across origins within each model–factor–horizon group; MAE is the mean absolute factor error.
 
 ## Inference and computational diagnostics
 
-The confirmatory comparison is the paired M4-minus-M3 CRPS difference for each of the three factors and two horizons. We use the stationary bootstrap [@politis1994stationary] with 9,999 replicates, an expected block length of four forecast origins, and 95% percentile intervals. A common resampled index vector is used across the six comparisons. The six two-sided p-values are adjusted by Holm's procedure. Comparisons with M0 or M2 are descriptive. The resampling uncertainty is conditional on the observed origins and includes the realized Monte Carlo score noise; it does not capture model, prior, data-vintage or factor-extraction uncertainty.
+The confirmatory comparison is the paired M4-minus-M3 CRPS difference for each of the three factors and two horizons. We use the stationary bootstrap [@politis1994stationary] with 9,999 replicates, an expected block length of four forecast origins, and 95% percentile intervals. A common resampled index vector is used across the six comparisons. The six two-sided p-values are adjusted by Holm's procedure. As a predeclared protocol amendment, block lengths of eight and twelve origins are also reported as sensitivity checks; the original four-origin analysis remains primary. Comparisons with M0 or M2 are descriptive. The bootstrap uncertainty is conditional on the observed origins and includes realized simulation noise; a separate independence-based MCSE is reported for the mean paired difference and does not capture time-series sampling uncertainty. Neither captures model, prior, data-vintage or factor-extraction uncertainty.
 
-The accepted four-chain diagnostics use rank-normalized split $\widehat R$ and bulk and tail effective sample size [@vehtari2021rank]. All accepted posterior files are hash-checked and the saved factor predictive moments are reconstructed before the new evaluation. Convergence and archive-integrity checks assess numerical reproducibility, not forecast calibration or model adequacy.
+The accepted four-chain diagnostics use rank-normalized split $\widehat R$ and bulk and tail effective sample size [@vehtari2021rank]. All accepted posterior files are hash-checked and the saved factor predictive moments are reconstructed before the new evaluation. Convergence and archive-integrity checks assess numerical reproducibility, not forecast calibration or model adequacy. Because the M3 and M4 CRPS simulation streams are independently seeded across models and origins, an independence-based Monte Carlo standard error for their average paired difference is computed as $\sqrt{\sum_t(s_{M3,t}^2+s_{M4,t}^2)}/N$, where $s_{m,t}$ is the origin-specific CRPS Monte Carlo standard error. This quantifies simulation noise only; it is not time-series sampling uncertainty.
 
 # Empirical results {#sec-results}
 
@@ -465,7 +472,7 @@ Litterman and Scheinkman document common factors in U.S. bond returns, while Ho 
 
 ## What stochastic volatility adds
 
-Conditional on the fixed loadings, extracted factor histories, and accepted priors, M4 has lower CRPS than M3 in all six factor–horizon groups. The largest differences occur for curvature, while level and slope are nearly tied. The curvature differences do not remain significant after multiplicity adjustment, and simulation error is material relative to several paired differences. These results are consistent with a possible benefit for curvature uncertainty, but do not establish that stochastic volatility improves factor forecasting generally.
+Conditional on the fixed loadings, extracted factor histories, and accepted priors, M4 has lower CRPS than M3 in all six factor–horizon groups. The largest differences occur for curvature, while level and slope are nearly tied. The curvature differences do not remain significant after multiplicity adjustment. Their mean score differences are much larger than the independence-based Monte Carlo standard errors of the 130-origin averages, although several of the smaller differences remain closer to simulation noise. These results are consistent with a possible benefit for curvature uncertainty, but do not establish that stochastic volatility improves factor forecasting generally.
 
 ## Why the random walk remains competitive
 
@@ -474,6 +481,8 @@ M0 and M2 remain competitive on level and slope CRPS. For curvature, M4 has lowe
 ## Model and prior limitations
 
 Extracted factors are treated as observations, so factor-extraction and fixed-$\lambda$ uncertainty are omitted. The separate factor fits do not estimate cross-factor dependence. The legacy yield reconstruction covariance remains diagonal despite empirical residual correlation; it is not part of the new marginal factor scores. A prior residual-subspace sensitivity experiment improved yield-level DSS but left five-dimensional residual 90% coverage near 0.72–0.73 and first-order residual correlations near 0.86–0.91. This supports keeping that analysis as a limitation and sensitivity result, not interpreting factor forecasts as calibrated full-curve risk.
+
+As a training-only check, the initial-sample OLS AR residuals have small lag-one correlations (−0.057, 0.017 and −0.009 for level, slope and curvature), but substantial skewness and excess kurtosis (0.33/2.19, −1.35/8.58 and 0.52/3.74). Jarque–Bera tests reject Gaussianity for each factor ($p<1.4\times10^{-39}$); five-lag ARCH LM tests also reject constant variance ($p=6.0\times10^{-7}$, $5.1\times10^{-21}$ and $3.4\times10^{-5}$, respectively). These tests apply to the auxiliary training-sample OLS residuals, not the posterior-standardized M4 innovations, and are not a validation sample. They indicate that Gaussian innovations, independent factor fits, and no-leverage dynamics remain restrictive assumptions; stochastic volatility addresses changing variance but does not model skewed or heavy-tailed innovations. They limit calibration claims but do not invalidate the specified marginal forecasting comparison.
 
 The finite-moment prior is substantive: matching $m$ aligns long-run expected innovation variance, not higher moments. The empirical-Bayes calibration uses training data also present in the likelihood. Training-only prior-predictive and saved-posterior diagnostics suggest that $U=4$ is not obviously binding, but do not establish forecasting-score robustness to alternative bounds or posterior behavior above four.
 
@@ -505,11 +514,11 @@ As $x=\lambda\tau$ approaches zero, $(1-e^{-x})/x$ approaches one. The implement
 
 Repeated substitution gives $f_{t+h}=b^hf_t+a\sum_{k=0}^{h-1}b^k+\sum_{k=0}^{h-1}b^k\eta_{t+h-k}$. Taking expectations yields the mean in @eq-ar-moments. Independent zero-mean innovations eliminate cross terms, giving $q\sum b^{2k}$ for its variance. The finite-sum form remains well defined when a fitted slope is near one.
 
-## Legacy yield predictive covariance
+## Legacy yield predictive covariance (not used in the factor evaluation)
 
-For a fixed loading matrix and independent observation noise, $\operatorname{Var}(Y\mid\mathcal I_t)=\Lambda\operatorname{Var}(f\mid\mathcal I_t)\Lambda'+R_t$. Reconstruction uncertainty is added once at the future observation, not at every transition. In the legacy yield forecast, factor variance includes both conditional innovation uncertainty and dispersion in conditional means across posterior draws. The revised evaluation scores only the marginal factor distributions.
+Earlier joint-yield forecasts used the Gaussian working covariance $\Lambda\operatorname{Var}(f\mid\mathcal I_t)\Lambda'+R_t$, adding the plug-in reconstruction covariance once at the future observation. This approximation is distinct from the exact OLS decomposition in @eq-observation: its realized residual lies in the five-dimensional complement and is not an unrestricted eight-dimensional diagonal Gaussian error. The diagonal $R_t$ remains an accepted legacy assumption with imperfect empirical support; it is neither necessary for the factor likelihood nor used in the current factor DSS.
 
-Estimating an eight-dimensional covariance from a small ensemble can add noise in low-variance directions. Analytic addition of $R_t$ to a factor-level posterior covariance is a useful stability check, but changing the estimator must be documented consistently. The classical forecasts avoid this issue through exact fitted moments.
+The current evaluation scores each observed factor proxy separately using its predictive mean and variance. It computes no yield-level DSS or covariance score. Any future reuse of the legacy covariance must preserve its status as a Gaussian approximation, not identify it with the exact OLS residual distribution.
 
 ## Bayesian posterior targets and transformations
 
@@ -575,7 +584,7 @@ E[e^{h_{T+k}}\mid\theta,h_T]
 =\exp\!\left\{\omega+\phi^k(h_T-\omega)+\frac v2(1-\phi^{2k})\right\}.
 $$ {#eq-sv-forecast-variance}
 
-The factor forecast mean is the AR expression in @eq-ar-moments. Its conditional variance is the sum of @eq-sv-forecast-variance weighted by $b^{2(H-k)}$ for $k=1,\ldots,H$. Innovations at different future dates have zero cross moments conditional on volatility, despite dependent volatility levels. Averaging conditional variances and adding the posterior variance of conditional means gives total factor predictive variance. Independent factor posteriors yield a diagonal factor covariance; projection through $\Lambda$ and addition of $R_t$ give the yield covariance used in DSS.
+The factor forecast mean is the AR expression in @eq-ar-moments. Its conditional variance given future volatility is the sum of $e^{h_{T+k}}$ weighted by $b^{2(H-k)}$ for $k=1,\ldots,H$; integrating each future state gives @eq-sv-forecast-variance. Innovations at different future dates have zero cross moments conditional on volatility, despite dependent volatility levels. Averaging conditional variances and adding the posterior variance of conditional means gives total factor predictive variance. The current DSS is the marginal factor score in @eq-dss; projecting through $\Lambda$ and adding $R_t$ pertains only to the legacy yield-level approximation described above.
 
 In one synthetic run, 95% intervals covered $b,m,\phi,v$ but missed $a$ (0.04; [0.0510, 0.1235]) and $\mu$ (0.2667; [0.3163, 0.6284]). This checks computation, not repeated-sampling coverage.
 

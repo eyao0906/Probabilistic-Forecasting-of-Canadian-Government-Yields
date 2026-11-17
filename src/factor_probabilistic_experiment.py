@@ -221,6 +221,61 @@ def _rng(origin_index: int, model: str, factor_index: int, horizon: int,
         [BASE_SEED, origin_index, model_index, factor_index, horizon, stream]))
 
 
+def stochastic_volatility_pit(values: np.ndarray, names: list[str], factor_value: float,
+                              observed: float, horizon: int,
+                              rng: np.random.Generator, size: int = SCENARIOS,
+                              batches: int = BATCHES) -> tuple[float, float]:
+    """Rao-Blackwellized M4 PIT over posterior draws and future volatility paths."""
+    if horizon not in HORIZONS or size < batches or size % batches:
+        raise ValueError("Invalid stochastic-volatility PIT simulation size")
+    values = np.asarray(values, dtype=float).reshape(-1, len(names))
+    if not np.isfinite(values).all() or not np.isfinite([factor_value, observed]).all():
+        raise ValueError("PIT inputs must be finite")
+    required = ("a", "b", "m", "phi", "v", "h_last")
+    if any(name not in names for name in required):
+        raise ValueError("Stochastic-volatility draws are missing required parameters")
+
+    chosen = values[rng.integers(len(values), size=size)]
+    get = lambda name: chosen[:, names.index(name)]
+    a, b = get("a"), get("b")
+    phi, v, m, h = get("phi"), get("v"), get("m"), get("h_last")
+    omega = m - v / 2
+    innovation_sd = np.sqrt(v * (1 - phi**2))
+    conditional_variance = np.zeros(size)
+    conditional_mean = b**horizon * factor_value + a * sum(
+        b**k for k in range(horizon))
+    with np.errstate(over="raise", invalid="raise"):
+        for step in range(1, horizon + 1):
+            h = omega + phi * (h - omega) + innovation_sd * rng.normal(size=size)
+            conditional_variance += (
+                b ** (2 * (horizon - step)) * np.exp(h))
+        cdf_values = ndtr((observed - conditional_mean)
+                          / np.sqrt(conditional_variance))
+    if (not np.isfinite(cdf_values).all()
+            or np.any((cdf_values < 0) | (cdf_values > 1))):
+        raise ValueError("Invalid stochastic-volatility PIT values")
+    batch_means = cdf_values.reshape(batches, size // batches).mean(axis=1)
+    return float(cdf_values.mean()), float(batch_means.std(ddof=1) / math.sqrt(batches))
+
+
+def gaussian_mixture_pit(conditional_mean: np.ndarray,
+                         conditional_variance: np.ndarray,
+                         observed: float) -> float:
+    """Exact finite-mixture CDF for conditionally Gaussian forecasts."""
+    conditional_mean = np.asarray(conditional_mean, dtype=float).reshape(-1)
+    conditional_variance = np.asarray(conditional_variance, dtype=float).reshape(-1)
+    if (conditional_mean.ndim != 1
+            or conditional_mean.shape != conditional_variance.shape
+            or not len(conditional_mean)
+            or not np.isfinite(conditional_mean).all()
+            or not np.isfinite(conditional_variance).all()
+            or np.any(conditional_variance <= 0)
+            or not np.isfinite(observed)):
+        raise ValueError("Invalid Gaussian-mixture PIT inputs")
+    return float(np.mean(ndtr((observed - conditional_mean)
+                              / np.sqrt(conditional_variance))))
+
+
 def _bayesian_forecast(values: np.ndarray, names: list[str], archive_model: str,
                        factor_value: float, observed: float, horizon: int,
                        model: str, origin_index: int, factor_index: int) -> tuple[dict, np.ndarray]:
@@ -245,8 +300,14 @@ def _bayesian_forecast(values: np.ndarray, names: list[str], archive_model: str,
                                   - 0.5 * np.mean(np.abs(samples[sl] - independent[sl]))))
     crps = float(np.mean(batch_scores))
     mcse = float(np.std(batch_scores, ddof=1) / math.sqrt(BATCHES))
-    pit = float(np.mean(ndtr((observed - conditional_mean)
-                             / np.sqrt(conditional_variance))))
+    if model == "M3":
+        pit = gaussian_mixture_pit(
+            conditional_mean, conditional_variance, observed)
+        pit_mcse = 0.0
+    else:
+        pit, pit_mcse = stochastic_volatility_pit(
+            values, names, factor_value, observed, horizon,
+            _rng(origin_index, model, factor_index, horizon, 2))
     intervals = {}
     for level in INTERVALS:
         low, high = np.quantile(samples, [(1 - level) / 2, 1 - (1 - level) / 2])
@@ -257,6 +318,7 @@ def _bayesian_forecast(values: np.ndarray, names: list[str], archive_model: str,
         "crps": crps,
         "crps_mcse": mcse,
         "pit": pit,
+        "pit_mcse": pit_mcse,
         "intervals": intervals,
     }, samples
 
@@ -274,6 +336,7 @@ def _gaussian_forecast(mean: float, variance: float, observed: float) -> dict:
         "crps": gaussian_crps(observed, mean, variance),
         "crps_mcse": 0.0,
         "pit": float(ndtr(z)),
+        "pit_mcse": 0.0,
         "intervals": intervals,
     }
 
@@ -299,6 +362,7 @@ def _add_forecast_record(records: list, risk_records: list, *, model: str,
         "rmse_component": float((observed - mean) ** 2),
         "mae": float(abs(observed - mean)),
         "pit": forecast["pit"],
+        "pit_mcse": forecast["pit_mcse"],
     }
     for level, (low, high) in forecast["intervals"].items():
         key = int(level * 100)
@@ -345,46 +409,91 @@ def _paired_tests(records: list) -> dict:
             keys.append((factor, horizon))
     matrix = np.column_stack(differences)
     observed = matrix.mean(axis=0)
-    bootstrap = np.empty((9999, matrix.shape[1]), dtype=float)
-    rng = np.random.default_rng(BOOTSTRAP_SEED)
-    for rep in range(len(bootstrap)):
-        indices = stationary_bootstrap_indices(
-            len(matrix), expected_block_length=4, rng=rng)
-        bootstrap[rep] = matrix[indices].mean(axis=0)
-    null_bootstrap = bootstrap - observed
-    raw_p = (1 + np.sum(np.abs(null_bootstrap) >= np.abs(observed), axis=0)) / (len(bootstrap) + 1)
-    order = np.argsort(raw_p)
-    adjusted = np.empty_like(raw_p)
-    running = 0.0
-    for rank, index in enumerate(order):
-        running = max(running, (len(order) - rank) * raw_p[index])
-        adjusted[index] = min(1.0, running)
+    def bootstrap_summary(block_length: int, seed: int) -> dict:
+        bootstrap = np.empty((9999, matrix.shape[1]), dtype=float)
+        rng = np.random.default_rng(seed)
+        for rep in range(len(bootstrap)):
+            indices = stationary_bootstrap_indices(
+                len(matrix), expected_block_length=block_length, rng=rng)
+            bootstrap[rep] = matrix[indices].mean(axis=0)
+        null_bootstrap = bootstrap - observed
+        raw_p = ((1 + np.sum(np.abs(null_bootstrap) >= np.abs(observed), axis=0))
+                 / (len(bootstrap) + 1))
+        order = np.argsort(raw_p)
+        adjusted = np.empty_like(raw_p)
+        running = 0.0
+        for rank, index in enumerate(order):
+            running = max(running, (len(order) - rank) * raw_p[index])
+            adjusted[index] = min(1.0, running)
+        return {
+            "expected_block_length_origins": block_length,
+            "seed": seed,
+            "bootstrap_ci95": [
+                [float(x) for x in np.quantile(bootstrap[:, index], [0.025, 0.975])]
+                for index in range(matrix.shape[1])
+            ],
+            "p_value_two_sided": [float(x) for x in raw_p],
+            "p_value_holm": [float(x) for x in adjusted],
+        }
+
+    bootstrap_results = {
+        4: bootstrap_summary(4, BOOTSTRAP_SEED),
+        8: bootstrap_summary(8, BOOTSTRAP_SEED + 1),
+        12: bootstrap_summary(12, BOOTSTRAP_SEED + 2),
+    }
     tests = []
     for index, (factor, horizon) in enumerate(keys):
+        mc_variances = [
+            by_key[("M4", factor, horizon, origin)]["crps_mcse"] ** 2
+            + by_key[("M3", factor, horizon, origin)]["crps_mcse"] ** 2
+            for origin in sorted({r["origin"] for r in records})
+        ]
         tests.append({
             "comparison": "M4 minus M3",
             "factor": factor,
             "horizon": horizon,
             "n_origins": int(matrix.shape[0]),
             "mean_crps_difference": float(observed[index]),
-            "bootstrap_ci95": [float(x) for x in np.quantile(
-                bootstrap[:, index], [0.025, 0.975])],
-            "p_value_two_sided": float(raw_p[index]),
-            "p_value_holm": float(adjusted[index]),
+            "bootstrap_ci95": bootstrap_results[4]["bootstrap_ci95"][index],
+            "p_value_two_sided": bootstrap_results[4]["p_value_two_sided"][index],
+            "p_value_holm": bootstrap_results[4]["p_value_holm"][index],
             "mean_pair_mcse": float(np.mean([
                 math.hypot(by_key[("M4", factor, horizon, origin)]["crps_mcse"],
                            by_key[("M3", factor, horizon, origin)]["crps_mcse"])
                 for origin in sorted({r["origin"] for r in records})
             ])),
+            "paired_mean_mcse_independence": float(
+                math.sqrt(sum(mc_variances)) / matrix.shape[0]),
         })
     return {
         "bootstrap": {
             "method": "stationary bootstrap of paired origin differences",
-            "repetitions": len(bootstrap),
+            "repetitions": 9999,
             "expected_block_length_origins": 4,
             "seed": BOOTSTRAP_SEED,
             "common_origin_indices_across_tests": True,
             "holm_family_size": len(tests),
+        },
+        "bootstrap_robustness": {
+            "role": "predeclared sensitivity; primary inference remains block length four",
+            "repetitions": 9999,
+            "common_origin_indices_across_tests": True,
+            "results_by_test": [
+                {
+                    "factor": factor,
+                    "horizon": horizon,
+                    "mean_crps_difference": float(observed[index]),
+                    "blocks": {
+                        str(block_length): {
+                            "bootstrap_ci95": result["bootstrap_ci95"][index],
+                            "p_value_two_sided": result["p_value_two_sided"][index],
+                            "p_value_holm": result["p_value_holm"][index],
+                        }
+                        for block_length, result in bootstrap_results.items()
+                    },
+                }
+                for index, (factor, horizon) in enumerate(keys)
+            ],
         },
         "tests": tests,
     }
@@ -409,6 +518,7 @@ def _aggregate(records: list) -> list:
                     "rmse": float(math.sqrt(np.mean([r["rmse_component"] for r in group]))),
                     "mae": float(np.mean([r["mae"] for r in group])),
                     "pit_mean": float(np.mean([r["pit"] for r in group])),
+                    "mean_pit_mcse": float(np.mean([r["pit_mcse"] for r in group])),
                 }
                 for key in ("50", "80", "90"):
                     row[f"coverage{key}"] = float(np.mean([r[f"covered{key}"] for r in group]))
@@ -418,6 +528,48 @@ def _aggregate(records: list) -> list:
                     row[f"pit_bin_{i + 1}"] = int(count)
                 rows.append(row)
     return rows
+
+
+def _calibration_diagnostics(records: list) -> list[dict]:
+    diagnostics = []
+    for model in MODELS:
+        for factor in FACTORS:
+            for horizon in HORIZONS:
+                group = sorted(
+                    (r for r in records if r["model"] == model
+                     and r["factor"] == factor and r["horizon"] == horizon),
+                    key=lambda r: r["origin"])
+                _require(len(group) == 130,
+                         f"Incomplete calibration group: {model}/{factor}/h={horizon}")
+                standardized = np.asarray([
+                    (r["observed"] - r["mean"]) / math.sqrt(r["variance"])
+                    for r in group
+                ])
+                pit = np.asarray([r["pit"] for r in group])
+                _require(np.isfinite(standardized).all()
+                         and np.isfinite(pit).all()
+                         and np.all((pit >= 0) & (pit <= 1)),
+                         "Invalid calibration diagnostic inputs")
+                row = {
+                    "model": model,
+                    "factor": factor,
+                    "horizon": horizon,
+                    "n_origins": len(group),
+                    "standardized_error_mean": float(standardized.mean()),
+                    "standardized_error_variance": float(standardized.var(ddof=1)),
+                    "standardized_error_lag1": float(np.corrcoef(
+                        standardized[:-1], standardized[1:])[0, 1]),
+                    "pit_mean": float(pit.mean()),
+                    "pit_mcse_mean": float(np.mean([r["pit_mcse"] for r in group])),
+                    "pit_lag1": float(np.corrcoef(pit[:-1], pit[1:])[0, 1]),
+                }
+                for level in ("50", "80", "90"):
+                    row[f"coverage{level}"] = float(np.mean(
+                        [r[f"covered{level}"] for r in group]))
+                    row[f"mean_width{level}"] = float(np.mean(
+                        [r[f"width{level}"] for r in group]))
+                diagnostics.append(row)
+    return diagnostics
 
 
 def _write_csv(path: Path, rows: list) -> None:
@@ -510,10 +662,12 @@ def run(output: Path = OUTPUT) -> dict:
     _require(len(records) == 3120 and len(risk_records) == 1560,
              "Unexpected factor forecast or risk-illustration count")
     metrics = _aggregate(records)
+    calibration = _calibration_diagnostics(records)
     paired = _paired_tests(records)
     output.mkdir(parents=True, exist_ok=True)
     _write_csv(output / "factor_forecasts.csv", records)
     _write_csv(output / "factor_metrics.csv", metrics)
+    _write_csv(output / "factor_calibration_diagnostics.csv", calibration)
     _write_csv(output / "factor_risk_illustration.csv", risk_records)
     (output / "paired_tests.json").write_text(
         json.dumps(paired, indent=2, allow_nan=False), encoding="utf-8")
@@ -548,6 +702,7 @@ def run(output: Path = OUTPUT) -> dict:
             "scores": _sha256(ROOT / "src" / "scores.py"),
         },
         "plots": figures,
+        "calibration_diagnostics": "factor_calibration_diagnostics.csv",
     }
     (output / "experiment_manifest.json").write_text(
         json.dumps(manifest, indent=2, allow_nan=False), encoding="utf-8")

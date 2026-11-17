@@ -58,10 +58,29 @@ and are unadjusted; Holm adjustment applies to the six two-sided tests.
 The 9,999-replicate stationary bootstrap uses a four-origin expected block
 length and common resampled origin indices. Curvature has the largest
 estimated stochastic-volatility gains. Neither curvature comparison remains
-significant at 5% after the six-test Holm correction. Mean paired Monte Carlo
-standard errors for the six comparisons range from 0.0011 to 0.0069 factor
-percentage points; these are not negligible relative to several estimated
-differences and further counsel against a strong superiority claim.
+significant at 5% after the six-test Holm correction. The mean per-origin
+paired Monte Carlo standard errors range from 0.0011 to 0.0069 factor
+percentage points, but the independence-based Monte Carlo standard errors of
+the 130-origin average range from 0.000100 to 0.000640. For curvature, the
+mean differences are 16.5 and 24.2 times those average-score MCSEs. Thus
+simulation noise does not explain the curvature point estimates; uncertainty
+across forecast origins and the six-test adjustment remain relevant.
+
+The predeclared expected-block-length sensitivities preserve this conclusion:
+
+| Factor | Horizon | Holm \(p\), length 4 | Holm \(p\), length 8 | Holm \(p\), length 12 |
+|---|---:|---:|---:|---:|
+| Level | 1 | 1.000 | 1.000 | 1.000 |
+| Level | 4 | 1.000 | 1.000 | 1.000 |
+| Slope | 1 | 1.000 | 1.000 | 1.000 |
+| Slope | 4 | 1.000 | 1.000 | 1.000 |
+| Curvature | 1 | 0.210 | 0.203 | 0.208 |
+| Curvature | 4 | 0.106 | 0.161 | 0.208 |
+
+Both curvature raw \(p\)-values remain below 0.05 at all three block lengths,
+and their unadjusted percentile intervals exclude zero. None passes the
+pre-specified six-test Holm correction. The bootstrap represents origin-level
+sampling uncertainty, while the separate MCSE describes simulation error.
 
 ## Point forecasts and calibration
 
@@ -88,6 +107,32 @@ observations. Mean PIT values are near 0.5, but this alone does not establish
 uniform PIT calibration; the PIT histograms and interval coverage are
 descriptive with 130 origins.
 
+The M4 calibration summaries also report standardized-error moments and
+lag-one diagnostics (origin order is the evaluation order):
+
+| Factor | Horizon | Std. error mean | Std. error variance | PIT mean | PIT lag 1 | 90% coverage |
+|---|---:|---:|---:|---:|---:|---:|
+| Level | 1 | −0.101 | 1.248 | 0.473 | −0.054 | 0.862 |
+| Level | 4 | 0.030 | 1.039 | 0.510 | −0.059 | 0.892 |
+| Slope | 1 | 0.003 | 1.088 | 0.503 | 0.027 | 0.900 |
+| Slope | 4 | −0.069 | 1.279 | 0.482 | 0.101 | 0.885 |
+| Curvature | 1 | 0.066 | 0.989 | 0.531 | 0.148 | 0.885 |
+| Curvature | 4 | 0.112 | 1.099 | 0.520 | 0.075 | 0.931 |
+
+The corrected M4 PIT averages future log-volatility paths before evaluating
+the path-conditional Gaussian CDF. Compared with the superseded
+moment-matched-Gaussian calculation, the mean PIT changes by at most 0.00029
+across the six groups; individual PIT values change by as much as 0.01884.
+Forecast means, variances, CRPS, CRPS MCSE, DSS, MAE, RMSE components and
+interval endpoints are identical before and after the PIT correction.
+Training-only auxiliary AR residual diagnostics show substantial
+non-Gaussianity (excess kurtosis 2.19, 8.58 and 3.74) and ARCH(5) effects
+(LM-test \(p=6.0\times10^{-7}\), \(5.1\times10^{-21}\), and
+\(3.4\times10^{-5}\)) for level, slope, and curvature. These are not
+posterior-standardized M4 residuals and do not validate out-of-sample
+calibration; they motivate the paper's explicit innovation-distribution
+limitations.
+
 ## Interpretation
 
 The factor-level evidence is narrower than a yield-curve forecast
@@ -100,5 +145,6 @@ outperformance in a trading application.
 
 Machine-readable outputs and figures are in
 [`results/factor_probabilistic_20261116/`](../../results/factor_probabilistic_20261116/):
-the origin-level forecast table, aggregated metrics, paired tests,
-factor-isolated risk sensitivities, and CRPS/PIT figures.
+the origin-level forecast table, aggregated metrics, grouped calibration
+diagnostics, paired tests, factor-isolated risk sensitivities, and CRPS/PIT
+figures. The corrected PIT leaves every forecast score and moment unchanged.

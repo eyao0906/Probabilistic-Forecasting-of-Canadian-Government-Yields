@@ -29,6 +29,35 @@ This corresponds to $500 per basis point of five-year yield. It assumes
 linear duration exposure and omits carry, convexity, transaction costs,
 factor dependence, and yield-curve reconstruction error.
 
+## Illustrative factor-isolating key-rate sensitivities
+
+The fixed loading matrix also gives a transparent algebraic way to define
+hypothetical maturity sensitivities with a chosen factor exposure. For a
+vector \(d\) over the eight maturities, the implied factor exposure is
+\(b=\Lambda^\top d\). Since \(\Lambda\) has full column rank, the
+minimum-Euclidean-norm vector satisfying a target \(b^\ast\) is
+\[
+d=\Lambda(\Lambda^\top\Lambda)^{-1}b^\ast.
+\]
+For unit level, slope, or curvature exposure, the maturity sensitivities are:
+
+| Maturity (years) | Level | Slope | Curvature |
+|---:|---:|---:|---:|
+| 0.25 | 0.203 | 0.434 | −1.721 |
+| 0.50 | 0.057 | 0.416 | −0.832 |
+| 1 | −0.153 | 0.371 | 0.504 |
+| 2 | −0.343 | 0.257 | 1.921 |
+| 5 | −0.164 | −0.081 | 1.897 |
+| 7 | 0.074 | −0.248 | 1.020 |
+| 10 | 0.363 | −0.416 | −0.140 |
+| 30 | 0.963 | −0.732 | −2.649 |
+
+These are normalized first-order sensitivity weights: multiplying each column
+by the loading matrix gives the corresponding unit vector in factor space.
+The entries include long and short signs and are not security positions or
+tradability claims. They illustrate how maturity combinations can represent
+factor exposures; they do not supply joint factor risk or portfolio VaR.
+
 ## Latest accepted-origin example
 
 The following are 90% simulation intervals at the 2025-11-28 origin. The

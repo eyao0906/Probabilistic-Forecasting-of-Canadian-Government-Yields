@@ -10,7 +10,7 @@ quarto render paper\MRP_Draft.qmd --to pdf
 .\.venv\Scripts\python.exe -B -c "from src.verify_paper import verify; r=verify(write_outputs=False, previews=False); print(r); assert r['passed']"
 ```
 
-The evaluation writes 3,120 factor forecast rows, 24 grouped metrics rows, six paired tests, factor-isolated risk sensitivities, and figures under `results/factor_probabilistic_20261116/`. MCMC is not run.
+The evaluation writes 3,120 factor forecast rows, 24 grouped metric rows, grouped calibration diagnostics, six paired tests, factor-isolated risk sensitivities, and figures under `results/factor_probabilistic_20261116/`. The M4 PIT integrates over future volatility paths. MCMC is not run; the correction and before/after score reconciliation are documented in `docs/factor_probabilistic_20261116/FACTOR_EVALUATION_AMENDMENT_20261116.md`.
 
 The completed render, numerical-table comparison, and focused validation are
 summarized in

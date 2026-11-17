@@ -1,54 +1,95 @@
-# Manuscript build and results audit
+# Manuscript, numerical, and integrity audit
 
-## Scope
+## Scope and research design
 
-This audit covers the factor-level manuscript in `paper/MRP_Draft.qmd` and its
-rendered PDF. The evaluation follows the frozen
-`FACTOR_EVALUATION_PROTOCOL.md`; it reuses accepted posterior draws and does
-not rerun MCMC, alter priors, or change accepted yield-level forecasts.
+This audit covers the current factor-level manuscript in `paper/MRP_Draft.qmd`,
+its rendered PDF, the accepted posterior archive, and the factor-evaluation
+outputs. The study uses M3 for Bayesian DNS with constant factor volatility
+and M4 for Bayesian DNS with stochastic factor volatility; these correspond to
+archive labels M4 and M5. The manuscript contains no legacy M5 label.
 
-## Build and document checks
+The two-step DNS design is represented accurately: fixed Nelson–Siegel
+loadings extract three factors by cross-sectional least squares, then separate
+Bayesian regressions treat those estimates as observations. The paper does
+not describe a Kalman filter, joint latent-factor estimation, or a yield-level
+likelihood in the second stage. The fixed decay is
+\(\lambda=0.5160377358490565\), selected on the initial training window.
 
-Rendered with:
+## Mathematical and statistical findings
 
-```powershell
-quarto render paper\MRP_Draft.qmd --to pdf
-```
+- M3 uses the exact Gaussian AR(1) likelihood conditional on the first
+  extracted factor. M4 uses a stationary latent log-volatility path and an
+  exact log-\(\chi^2\) likelihood correction; the Gaussian mixture is a
+  proposal, not the posterior likelihood.
+- The prior is placed on the long-run mean \(\mu_j\) and persistence \(b_j\),
+  with \(a_j=(1-b_j)\mu_j\). This avoids the infinite-moment ratio generated
+  by an independent intercept/persistence prior. The appendix distinguishes
+  finite-horizon predictive moments from an infinite-horizon stationary
+  factor variance.
+- \(U=4\) gives a sufficient bound for the stated posterior-moment argument,
+  but is not necessary for stationary prior-predictive second moments under
+  the log-expected-variance parameterization. Posterior tail behavior above
+  four remains untested; the paper reports this as a limitation.
+- The factor fits are independent. In the initial 835-week training window,
+  the mean absolute pairwise correlation among the eight yield reconstruction
+  residual series is 0.659611, with maximum 0.988809. Thus diagonal
+  reconstruction covariance is a working restriction, not an empirical
+  claim of uncorrelated residuals. The least-squares residual is orthogonal
+  to the fitted loading columns at each date; that projection identity does
+  not imply independence or diagonal covariance across maturities.
+- Training-only auxiliary AR residuals show substantial non-Gaussianity and
+  ARCH effects. These diagnostics are not posterior-standardized M4 residuals
+  and do not establish out-of-sample misspecification tests; they appropriately
+  limit claims about Gaussianity and calibration.
+- The M4 PIT now averages conditional Gaussian CDFs over future volatility
+  paths. This is the predictive mixture CDF, not the CDF of a
+  moment-matched Gaussian. The focused check against 200,000 simulated
+  predictive outcomes passes at horizons one and four.
 
-The resulting `paper/MRP_Draft.pdf` has 34 pages and a 191-word abstract. The
-main text is configured at 12 pt. Automated verification found no unresolved
-citations, cross-references, PDF reference markers, duplicate labels, missing
-includes, or blank pages. The manuscript source and extracted PDF text contain
-no legacy model label.
+## Numerical reconciliation
 
-Representative pages covering the score tables, paired comparison, risk
-illustration, and bibliography were visually inspected. The paired-comparison
-table is kept together on one page. No clipped or overflowing content was
-observed in those pages.
+- The evaluation checked 130 origins, 3,120 forecasts, and 24 accepted
+  posterior-chain files per origin. All reconstructed posterior forecast
+  means and variances matched accepted records.
+- Compared with the superseded PIT calculation, forecast means, variances,
+  CRPS, CRPS MCSE, DSS, MAE, squared-error components, and predictive
+  interval endpoints are bit-for-bit unchanged. PIT values and calibration
+  diagnostics are the intended changes.
+- M4 has lower CRPS than M3 in all six factor-horizon groups. Neither
+  curvature comparison remains significant after six-test Holm adjustment.
+  The predeclared expected block lengths 4, 8, and 12 produce the same
+  family-wise conclusion.
+- The 130-origin average-score MCSE is 0.000100–0.000640. It is much smaller
+  than the curvature mean differences (0.00536 and 0.01549), so Monte Carlo
+  noise does not account for those point estimates. Origin-level bootstrap
+  uncertainty and multiplicity adjustment still prevent a confirmatory
+  superiority claim.
+- M4 marginal coverage ranges from 0.862 to 0.931 at 90%; calibration varies
+  across factors and horizons. PIT means near 0.5 do not imply uniformity.
 
-## Numerical checks
+The detailed scores, PIT reconciliation, group diagnostics, bootstrap
+sensitivities, and output hashes are recorded in
+`FACTOR_EVALUATION_REPORT.md` and
+`FACTOR_EVALUATION_AMENDMENT_20261116.md`.
 
-- The manuscript's CRPS, RMSE, and 90% coverage tables match all 18 displayed
-  model-factor-horizon rows in `results/factor_probabilistic_20261116/factor_metrics.csv`.
-- All six displayed paired differences, confidence intervals, raw p-values,
-  and Holm-adjusted p-values match `paired_tests.json`.
-- All six stochastic-volatility-minus-constant-volatility CRPS differences
-  are negative; none is significant after Holm adjustment at 5%.
-- The evaluation covers 130 origins and 3,120 forecasts. Accepted origin
-  manifests and posterior checkpoint hashes passed validation; reconstructed
-  posterior moments matched all 520 saved model-by-horizon records.
+## Build and software checks
 
-The numbers are marginal factor results conditional on OLS-extracted factors
-and fixed loadings. The five-year duration example varies one factor at a
-time; it is not joint portfolio risk or evidence of full-curve calibration.
+Rendered with `quarto render paper\MRP_Draft.qmd --to pdf`. The updated PDF
+has 35 pages and a 191-word abstract. The no-write paper verifier passed:
+there are no unresolved citations or cross-references, duplicate labels,
+missing includes, unresolved PDF reference markers, or blank pages; the
+12-point main-text configuration and first-page title checks also pass.
+Quarto completed both LuaLaTeX passes without emitting a build error.
 
-## Software checks
+Eight focused tests in `tests/test_factor_probabilistic_experiment.py` pass.
+Python compilation and `git diff --check` pass. The combined Bayesian
+prior/sampler test run completed 27 of 29 tests; two phase-2 experiment tests
+raise the existing strict error `Phase 2 sources or evidence have changed`.
+The conditional sampler, target, and moment tests in that run passed. No
+MCMC or full repository suite was run.
 
-- Four focused tests in `tests/test_factor_probabilistic_experiment.py` pass.
-- The factor experiment, verifier, and focused test files pass Python
-  compilation.
-- `git diff --check` passes.
-
-No full repository test suite or new sampler run was performed. Manual review
-of the academic interpretation, references, author details, and institutional
-requirements remains the author's and supervisor's responsibility.
+The integrated PDF preview rendered blank, so visual inspection of the newly
+rendered pages was not available in this environment. Automated PDF
+verification passed, and the revised content is prose rather than a new
+equation or table. The author should still inspect the final PDF visually
+before submission.

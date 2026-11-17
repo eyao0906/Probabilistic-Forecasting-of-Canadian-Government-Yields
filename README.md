@@ -12,8 +12,10 @@ Key deliverables:
 - [`docs/factor_probabilistic_20261116/RESEARCH_SCOPE_REVISION.md`](docs/factor_probabilistic_20261116/RESEARCH_SCOPE_REVISION.md) — revised question and scope.
 - [`docs/factor_probabilistic_20261116/FACTOR_EVALUATION_PROTOCOL.md`](docs/factor_probabilistic_20261116/FACTOR_EVALUATION_PROTOCOL.md) — frozen evaluation protocol.
 - [`docs/factor_probabilistic_20261116/FACTOR_EVALUATION_REPORT.md`](docs/factor_probabilistic_20261116/FACTOR_EVALUATION_REPORT.md) — scores, inference, and limits.
+- [`docs/factor_probabilistic_20261116/FACTOR_EVALUATION_AMENDMENT_20261116.md`](docs/factor_probabilistic_20261116/FACTOR_EVALUATION_AMENDMENT_20261116.md) — corrected M4 PIT, before/after reconciliation, and result hashes.
 - [`docs/factor_probabilistic_20261116/FACTOR_RISK_APPLICATION.md`](docs/factor_probabilistic_20261116/FACTOR_RISK_APPLICATION.md) — factor-isolated duration illustration.
 - [`docs/factor_probabilistic_20261116/MANUSCRIPT_AUDIT.md`](docs/factor_probabilistic_20261116/MANUSCRIPT_AUDIT.md) — render, numerical, and integrity checks.
+- [`docs/factor_probabilistic_20261116/FINAL_MATHEMATICAL_STATISTICAL_AUDIT.md`](docs/factor_probabilistic_20261116/FINAL_MATHEMATICAL_STATISTICAL_AUDIT.md) — prior, likelihood, covariance, diagnostic, and inference audit.
 
 The earlier eight-yield study and residual-subspace experiment remain separate historical/sensitivity evidence; neither is presented as the new factor evaluation. For existing prior rationale and provenance, see [`docs/bayesian_prior_justification.md`](docs/bayesian_prior_justification.md).
 
@@ -22,7 +24,7 @@ The earlier eight-yield study and residual-subspace experiment remain separate h
 - `paper/` — current QMD/PDF, citation style and saved reporting tables.
 - `src/`, `tests/` — implementations and focused checks.
 - `data/raw/`, `data/processed/` — preserved sources and weekly panel; retrieval verification remains separate.
-- `results/factor_probabilistic_20261116/` — factor forecasts, metrics, paired tests, risk sensitivities, and figures.
+- `results/factor_probabilistic_20261116/` — factor forecasts, metrics, grouped calibration diagnostics, paired tests, risk sensitivities, and figures.
 - `results/bayesian_prior_revised_20261114/` — accepted revised-prior posterior draws and yield-level archive reused for M3/M4 factor predictions.
 - `results/validated_baselines/` — accepted yield-level M0–M2 results; unchanged and not substituted for factor-level M0/M2.
 - `results/bayesian_finite_20261027T194239Z/` — historical finite-prior run and sensitivity evidence.
