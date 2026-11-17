@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import time
 from pathlib import Path
@@ -17,26 +18,34 @@ from .sampler import (
     _update_volatility_persistence,
     _update_volatility_variance,
 )
+from .sv_interweave import interweave_persistence, interweave_variance
 
 
 ROOT = Path(__file__).resolve().parents[2]
-OUTPUT = ROOT / "results" / "hautsch_yang_state_space_20261117" / "sv_conditional_screen_20261117"
+OUTPUT_ROOT = ROOT / "results" / "hautsch_yang_state_space_20261117"
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--interwoven", action="store_true", help="add experimental non-centered MH moves")
+    args = parser.parse_args()
+    output_dir = OUTPUT_ROOT / (
+        "sv_conditional_interwoven_20261117" if args.interwoven else "sv_conditional_screen_20261117"
+    )
     design = {
         "n": 120, "warmup": 500, "draws": 1500, "chains": 4,
         "seed": 20261118, "mean": float(np.log(.04)), "phi": .8, "variance": .1,
         "mean_prior_center": float(np.log(.04)), "mean_prior_sd": 1.,
         "phi_beta": [20., 1.5], "variance_upper": 4.,
         "stages": ["path_only", "release_mean", "release_persistence", "release_variance"],
+        "interwoven": args.interwoven,
     }
     source = {
         path.name: sha256_file(path) for path in sorted(Path(__file__).parent.glob("*.py"))
     }
     metadata = {"design": design, "source_sha256": source}
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    metadata_path = OUTPUT / "design.json"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    metadata_path = output_dir / "design.json"
     if metadata_path.exists():
         if json.loads(metadata_path.read_text(encoding="utf-8")) != metadata:
             raise ValueError("existing SV screen uses a different design or source")
@@ -63,6 +72,7 @@ def main() -> None:
             variance = [.05, .2, .5, 1.][chain] if stage_index >= 3 else design["variance"]
             h = np.full(design["n"], mean - variance / 2 + chain - 1.5)
             accepted_phi = accepted_variance = 0
+            interwoven_phi = interwoven_variance = 0
             for iteration in range(design["warmup"] + design["draws"]):
                 h = _sample_volatility_path(h, innovations, mean, phi, variance, rng)
                 if stage_index >= 1:
@@ -82,6 +92,18 @@ def main() -> None:
                     )
                     if iteration >= design["warmup"]:
                         accepted_variance += int(accepted)
+                if args.interwoven and stage_index >= 2:
+                    h, phi, accepted = interweave_persistence(
+                        h, innovations, mean, phi, variance, *design["phi_beta"], rng
+                    )
+                    if iteration >= design["warmup"]:
+                        interwoven_phi += int(accepted)
+                if args.interwoven and stage_index >= 3:
+                    h, variance, accepted = interweave_variance(
+                        h, innovations, mean, phi, variance, design["variance_upper"], rng
+                    )
+                    if iteration >= design["warmup"]:
+                        interwoven_variance += int(accepted)
                 if iteration >= design["warmup"]:
                     index = iteration - design["warmup"]
                     h_draws[chain, index] = h
@@ -91,6 +113,8 @@ def main() -> None:
             acceptance.append({
                 "phi": accepted_phi / design["draws"] if stage_index >= 2 else None,
                 "variance": accepted_variance / design["draws"] if stage_index >= 3 else None,
+                "interwoven_phi": interwoven_phi / design["draws"] if args.interwoven and stage_index >= 2 else None,
+                "interwoven_variance": interwoven_variance / design["draws"] if args.interwoven and stage_index >= 3 else None,
             })
         posterior = {"h": h_draws}
         if stage_index >= 1:
@@ -138,7 +162,14 @@ def main() -> None:
             "acceptance": acceptance,
             "elapsed_seconds": time.perf_counter() - started,
         }
-        output = OUTPUT / f"{stage}.json"
+        trace_path = output_dir / f"{stage}_traces.npz"
+        np.savez_compressed(
+            trace_path, mean=means, phi=phis, variance=variances,
+            h_selected=h_draws[:, :, [0, design["n"] // 2, design["n"] - 1]],
+            h_truth=true_h, innovations=innovations,
+        )
+        result["trace_sha256"] = sha256_file(trace_path)
+        output = output_dir / f"{stage}.json"
         temporary = output.with_suffix(".tmp")
         temporary.write_text(json.dumps(result, indent=2, allow_nan=False) + "\n", encoding="utf-8")
         temporary.replace(output)

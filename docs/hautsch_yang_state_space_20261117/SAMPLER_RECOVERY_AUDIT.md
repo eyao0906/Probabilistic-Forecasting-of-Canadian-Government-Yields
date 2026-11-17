@@ -97,6 +97,16 @@ accept/reject decisions against dense multivariate-normal densities and
 explicit transformed priors. These tests are not a proof of full sampler
 posterior invariance; repeated synthetic recovery is still required.
 
+The additional non-centered interweaving experiment is deliberately separate
+from `run_chain`. It standardizes the current path into independent Gaussian
+innovations, proposes persistence or variance while holding those innovations
+fixed, and reconstructs the path. The MH target includes the exact factor
+innovation likelihood and the respective transformed parameter prior.
+Independent tests compare its acceptance decisions with a dense centered joint
+Gaussian density, including the path transformation determinant and parameter
+Jacobian. Its conditional screen improves mixing but still fails the gates;
+see the synthetic report. It is not a validated full-model sampler change.
+
 ## Reproducible bounded screening
 
 Run `python -m src.ssdns_hy.synthetic_pilot` from the isolated worktree.

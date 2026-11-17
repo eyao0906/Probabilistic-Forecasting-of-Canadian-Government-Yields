@@ -96,3 +96,26 @@ stored in `results/hautsch_yang_state_space_20261117/sv_conditional_screen_20261
 These conditional screens do not estimate factor dynamics, observation
 variances, decay, or a full joint posterior. They retain summaries rather than
 all individual path draws.
+
+An experimental follow-up adds non-centered interweaving moves that hold the
+standardized Gaussian volatility innovations fixed while proposing persistence
+or stationary variance, then reconstruct the path. This leaves the same joint
+target: the Gaussian path density and the path-transformation Jacobian cancel
+in non-centered coordinates. Tests compare acceptance decisions with an
+independently evaluated dense centered Gaussian density including both path
+and proposal Jacobians. These moves are used only in the conditional experiment,
+not the main joint sampler.
+
+On the same simulated innovations, the released-persistence stage improved
+from maximum R-hat 1.561 / minimum bulk ESS 7.2 to 1.060 / 56.5. When both
+SV persistence and stationary variance were released, the interwoven stage
+had maximum R-hat 1.109, minimum bulk ESS 30.8 and minimum tail ESS 39.6;
+the centered stage had 1.640, 6.5 and 8.7. Both interwoven stages still fail
+the declared gates. Path-only and mean-release stages also remained below
+the gates. A single conditional experiment is insufficient to validate the
+interwoven transition in the joint model or to justify interpreting its
+posterior draws.
+
+Results and selected-state and global-parameter traces are in
+`results/hautsch_yang_state_space_20261117/sv_conditional_interwoven_20261117/`.
+The command is `python -m src.ssdns_hy.sv_conditional_screen --interwoven`.
