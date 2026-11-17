@@ -1,0 +1,96 @@
+{
+  "bootstrap": {
+    "method": "stationary bootstrap of paired origin differences",
+    "repetitions": 9999,
+    "expected_block_length_origins": 4,
+    "seed": 20261118,
+    "common_origin_indices_across_tests": true,
+    "holm_family_size": 6
+  },
+  "tests": [
+    {
+      "comparison": "M4 minus M3",
+      "factor": "level",
+      "horizon": 1,
+      "n_origins": 130,
+      "mean_crps_difference": -0.00011816846348180629,
+      "bootstrap_ci95": [
+        -0.0007280844073779122,
+        0.0004580530272380143
+      ],
+      "p_value_two_sided": 0.7015,
+      "p_value_holm": 1.0,
+      "mean_pair_mcse": 0.0010858756788417283
+    },
+    {
+      "comparison": "M4 minus M3",
+      "factor": "level",
+      "horizon": 4,
+      "n_origins": 130,
+      "mean_crps_difference": -0.0006338536534569709,
+      "bootstrap_ci95": [
+        -0.00289487444960508,
+        0.001046002790914853
+      ],
+      "p_value_two_sided": 0.5344,
+      "p_value_holm": 1.0,
+      "mean_pair_mcse": 0.002169852477955202
+    },
+    {
+      "comparison": "M4 minus M3",
+      "factor": "slope",
+      "horizon": 1,
+      "n_origins": 130,
+      "mean_crps_difference": -0.000407192727856617,
+      "bootstrap_ci95": [
+        -0.0016452139284292382,
+        0.0008483683695195775
+      ],
+      "p_value_two_sided": 0.525,
+      "p_value_holm": 1.0,
+      "mean_pair_mcse": 0.0014322557487805366
+    },
+    {
+      "comparison": "M4 minus M3",
+      "factor": "slope",
+      "horizon": 4,
+      "n_origins": 130,
+      "mean_crps_difference": -0.0021295862838512387,
+      "bootstrap_ci95": [
+        -0.0063966318555542315,
+        0.0022383475731087565
+      ],
+      "p_value_two_sided": 0.3379,
+      "p_value_holm": 1.0,
+      "mean_pair_mcse": 0.0027643306423139947
+    },
+    {
+      "comparison": "M4 minus M3",
+      "factor": "curvature",
+      "horizon": 1,
+      "n_origins": 130,
+      "mean_crps_difference": -0.0053636613173726495,
+      "bootstrap_ci95": [
+        -0.010530562993989153,
+        -0.00016376665583801015
+      ],
+      "p_value_two_sided": 0.042,
+      "p_value_holm": 0.21000000000000002,
+      "mean_pair_mcse": 0.003508867674042657
+    },
+    {
+      "comparison": "M4 minus M3",
+      "factor": "curvature",
+      "horizon": 4,
+      "n_origins": 130,
+      "mean_crps_difference": -0.015489819097672978,
+      "bootstrap_ci95": [
+        -0.028073294841870128,
+        -0.002634307134570564
+      ],
+      "p_value_two_sided": 0.0176,
+      "p_value_holm": 0.1056,
+      "mean_pair_mcse": 0.00686906475239604
+    }
+  ]
+}

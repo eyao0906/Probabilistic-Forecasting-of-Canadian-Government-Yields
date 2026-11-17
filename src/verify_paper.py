@@ -10,7 +10,7 @@ def verify(root=ROOT, write_outputs=True, previews=True):
     with p.open('rb') as handle:
         reader=PdfReader(handle);texts=[page.extract_text() or '' for page in reader.pages]
     q=(root/'paper/MRP_Draft.qmd').read_text(encoding='utf-8')
-    match=re.search(r'This study investigates.*?(?=```)',q,re.S)
+    match=re.search(r'\\chapter\*\{Abstract\}.*?```[^\n]*\n(.*?)```',q,re.S)
     abstract=match.group(0).strip() if match else ''
     bib=(root/'references.bib').read_text(encoding='utf-8')
     keys=set(re.findall(r'@\w+\{([^,]+),',bib))
@@ -30,7 +30,8 @@ def verify(root=ROOT, write_outputs=True, previews=True):
             'bibliography_entries':len(keys),'duplicate_labels':sorted({x for x in labels if labels.count(x)>1}),
             'missing_includes':missing,'unresolved_pdf_crossref_markers':[i+1 for i,t in enumerate(texts) if '??' in t],
             'blank_pages':[i+1 for i,t in enumerate(texts) if len(t.strip())<10],
-            'title_first':bool(texts and 'Probabilistic Forecasting' in texts[0]),
+            'title_first':bool(texts and 'Probabilistic Forecasting of Canadian Government-Yield Factors'
+                                in re.sub(r'\s+',' ',texts[0])),
             'main_body_12pt_configured':bool(re.search(r'^fontsize:\s*12pt\s*$',q,re.M))}
     report['passed']=bool(report['page_limit_ok'] and report['abstract_limit_ok'] and report['title_first']
                           and report['main_body_12pt_configured'] and not any(report[k] for k in
@@ -47,7 +48,9 @@ def verify(root=ROOT, write_outputs=True, previews=True):
         try:
             indices={0,1,2,len(doc)-1}
             for i,t in enumerate(texts):
-                if any(s in t for s in ['Table 6.1','Table 7.1','Table 6.4','Figure 6.1','Analytical derivations']):indices.add(i)
+                if any(s in t for s in ['Mean factor CRPS','Paired stationary-bootstrap CRPS',
+                                        'Empirical marginal coverage','Factor-isolated risk',
+                                        'Analytical derivations']):indices.add(i)
             for i in sorted(indices):
                 doc[i].render(scale=1.3).to_pil().save(out/f'page_{i+1:02d}.png')
         finally:doc.close()
