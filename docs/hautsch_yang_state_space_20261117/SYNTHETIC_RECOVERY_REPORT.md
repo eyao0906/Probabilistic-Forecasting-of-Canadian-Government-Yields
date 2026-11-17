@@ -64,3 +64,35 @@ parameter summaries are diagnostic only. This screen does not establish
 repeated-coverage rates, latent-volatility recovery, predictive recovery,
 different initial-chain robustness, or performance over the full requested
 range of configurations.
+
+## SV blocks conditional on known factor innovations
+
+The `sv_conditional_screen` holds one synthetic factor's innovations fixed,
+with 120 observations, true expected log innovation variance \(\log(0.04)\),
+SV persistence 0.8, stationary log-variance 0.1, and four chains started at
+different volatility paths and, when released, different parameter values.
+It uses 500 warmup and 1,500 retained draws per chain. The following stages
+release the path and then parameters in sequence. Gates include all 120
+volatility-state marginals as well as each released global parameter.
+
+| Released | Maximum rank R-hat | Minimum bulk ESS | Minimum tail ESS | Status |
+|---|---:|---:|---:|---|
+| Path only | 1.015 | 613.8 | 710.0 | rejected |
+| Path and expected variance | 1.032 | 227.7 | 278.4 | rejected |
+| Plus SV persistence | 1.561 | 7.2 | 14.4 | rejected |
+| Plus SV stationary variance | 1.640 | 6.5 | 8.7 | rejected |
+
+With persistence released, its four chain means were 0.897, 0.946, 0.740
+and 0.833 despite approximately 0.53–0.56 acceptance. This identifies a
+serious mixing problem in the centered persistence block even when factor
+innovations are known; it does not by itself establish weak identification.
+The path-only stage came closer but still failed the unchanged R-hat gate.
+The stored pointwise path-coverage proportions describe one simulated path
+and are not repeated-dataset credible-interval coverage.
+
+The command is `python -m src.ssdns_hy.sv_conditional_screen`; source hashes,
+full per-state diagnostics, chain parameter means and path summaries are
+stored in `results/hautsch_yang_state_space_20261117/sv_conditional_screen_20261117/`.
+These conditional screens do not estimate factor dynamics, observation
+variances, decay, or a full joint posterior. They retain summaries rather than
+all individual path draws.
