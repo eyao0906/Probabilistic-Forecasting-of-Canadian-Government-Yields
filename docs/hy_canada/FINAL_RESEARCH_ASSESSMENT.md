@@ -1,39 +1,24 @@
 # Final research assessment
 
-1. **DLNS reliability:** Not established. Both four-chain runs show severe
-   chain disagreement on the actual Canadian data.
-2. **SVNS reliability:** Not established. The non-centered run has even
-   stronger failures for several parameters.
-3. **Identification:** Reliable identification of curvature persistence,
-   decay and measurement variances has not been demonstrated. Level and slope
-   persistence are near one in the draws, but this is not reliable inference.
-4. **SV dynamics:** Not established; volatility persistence, variance and
-   selected log-volatility states have poor convergence diagnostics.
-5. **Joint factors versus OLS:** Exploratory smoothed factors differ from OLS
-   factors at fixed decay 0.7. Based on only 25 conditional state draws per
-   chain, RMS differences in level/slope/curvature are approximately
-   0.288/0.316/0.642 percentage points for DLNS and 0.305/0.269/0.812 for
-   SVNS. These are not defensible posterior comparisons because the chains
-   have not converged, the conditional sample is small, and joint-model decay
-   varies while the OLS benchmark fixes it.
-6. **Parameter and measurement uncertainty:** The exploratory chains reveal
-   substantial disagreement and coupling, not a reliable quantification of
-   posterior uncertainty.
-7. **Historical yield fit:** Not established by posterior predictive checks.
-   Training-only OLS residuals show strong temporal persistence in the
-   five-dimensional residual complement; OLS orthogonality also induces
-   cross-maturity residual correlations.
-8. **Predictive uncertainty:** No DLNS-SVNS predictive comparison is
-   defensible, and no origin forecasts were produced.
-9. **MRP evidence:** The mathematical checks and exploratory fits do not yet
-   support an inference-focused empirical claim about the joint models.
-10. **Recommendation:** Keep this as exploratory research, not a completed
-    four-model comparison. Investigate the coupled decay/measurement
-    geometry, initial-state and prior sensitivity, and SV path mixing using
-    better-validated proposals or a mature gradient-based implementation.
-    Compare methods only after reliable inference is demonstrated. Do not
-    assume that more iterations, tighter priors, or joint estimation alone
-    will solve the problem.
+The requested joint-state-space research question remains open. On the
+actual Canadian panel, blocked Gibbs with a full factor smoother and a
+fine-grid decay update did not converge after 20,000 DLNS iterations per
+chain. The shorter corrected-mixture SVNS pilots also failed badly, with
+low correction acceptance for level and slope at the reference offset.
+Therefore no posterior factor estimates, model-fit claims, predictive
+uncertainty comparisons or B3/B4 benchmark refits are supported.
 
-No likelihood-based comparison with differently conditioned two-step models,
-Bayes factor, 130-origin backtest, or claim of improved forecast scores is made.
+The fine decay grid moves locally but does not bridge separated decay and
+covariance configurations. One plausible next research direction is a
+joint state/decay move or a carefully validated marginal/blocking scheme;
+the existing results cannot establish whether the difficulty is
+multimodality, weak identification, prior sensitivity, misspecification,
+or a combination. Any new approach needs its own posterior-invariance and
+real-data diagnostics.
+
+This is a methodological adaptation, not a faithful numerical reproduction:
+measurement covariance is diagonal despite the paper's full-Wishart appendix;
+DLNS uses a proper full-Q prior; initialization, priors and decay support are
+Canadian-specific; and the SV block uses a Metropolis correction rather
+than the paper's post-hoc reweighting. The joint correction's mathematical
+verification and importance-weight diagnostics remain incomplete.

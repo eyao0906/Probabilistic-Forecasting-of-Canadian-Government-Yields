@@ -15,3 +15,9 @@ The files and failed outcomes remain available in the unchanged
 found no references to these directories outside them. No dataset, manuscript,
 accepted benchmark, historical research archive, or literature source is
 included in this cleanup.
+
+The subsequent collapsed-likelihood DLNS/SVNS implementation, its
+elliptical-slice and random-walk runners, model-specific diagnostics and
+failed-run outputs under `hy_canada` were replaced by blocked components.
+Their history is preserved in commit `87dbabc`. OLS descriptive diagnostics,
+the original panel, and external research assets were retained.

@@ -1,25 +1,19 @@
 # Implementation validation
 
-Run from the worktree root using the project Python environment:
+Run `python -m unittest discover -s tests\hy_canada -v` from the worktree.
+Focused tests compare diagonal measurement and full-Q conditionals,
+decay probabilities, Gaussian factor smoother moments, the scalar SV filter
+and smoother, mixture probabilities, Student-t acceptance ratios and
+Gaussian correction ratios against independent formulas. One-state corrected
+mixture kernels with fixed and unknown volatility means are compared with
+numerical quadrature. Weighted factor-dynamics conditionals, fixed-seed short chains,
+bad data rejection and full-Q one-step forecast moments are also checked.
 
-```
-python -m unittest discover -s tests\hy_canada -v
-```
-
-Nine focused tests passed. They verify the loading limit and dimensions;
-the exact Kalman log likelihood against an independently assembled joint
-Gaussian covariance with time-varying transition variances; the first
-transition and time indexing; backward simulation-smoother moments against
-an analytical conditional Gaussian; stationary AR log-volatility moments and
-non-centered recursion; one-step predictive moments; parameter transform
-inverses and a numerical Jacobian; finite posterior targets and seeded chain
-reproducibility. An elliptical-slice chain also reproduces an analytically
-known Gaussian conditional mean and variance. Invalid duplicate dates,
-missing weeks and nonfinite yields are rejected. The smoother test uses 6,000
-Monte Carlo draws and the SV and
-forecast moment tests use 12,000.
-
-These checks do not prove global posterior exploration, validate all extreme
-numerical inputs, establish long-chain stationary sampling, or establish that
-the model fits real data. The elementary elliptical-slice check does not prove
-mixing in the high-dimensional real-data SV posterior.
+The standalone Kalman-likelihood test uses its documented pre-observation
+initial-state convention; the blocked smoother instead takes `f_1` as the
+first-state prior. The test for the latter checks its dense conditional
+Gaussian moments, constant-Q equivalence with the time-varying-Q wrapper,
+and independently calculated moments with two different transition Qs.
+These checks do not prove the joint SV correction or the full sampler
+converged. A separate importance-weight ESS and SV predictive simulator have
+not been implemented.

@@ -1,92 +1,52 @@
-# Model and inference specification
+# Joint Canadian DNS model specification
 
-This is an adaptation of Hautsch and Yang's 2010 working paper (published
-in 2012, DOI 10.1016/j.csda.2010.07.003). The consulted source is the
-repository's working-paper copy, not a line-by-line comparison with the final
-journal text. The source studies monthly U.S. yields; this study uses weekly
-Canadian yields. The independent computation below is not a reproduction of
-its blocked sampler.
+The observed 835 by 8 panel is in percentage points; maturity is in years.
+Both models use `y_t = Lambda(lambda) f_t + epsilon_t`, where
+`epsilon_t ~ N(0, diag(r))`, and
+`f_t = mu + diag(rho)(f_{t-1} - mu) + eta_t`.
+The sampled persistence parameters are restricted to `(-1,1)`.
+The first state has the independent proper prior
+`f_1 ~ N(m0,P0)`; transitions and SV paths begin at `f_1 -> f_2`.
 
-For each date, `y_t = H(lambda) f_t + e_t`, where the row of `H` for maturity
-tau is `(1, (1-exp(-lambda*tau))/(lambda*tau),
-(1-exp(-lambda*tau))/(lambda*tau)-exp(-lambda*tau))`. Maturities are years
-and lambda is per year. `e_t ~ N(0, diag(r))`; `f_t = mu + diag(rho)
-(f_(t-1)-mu) + eta_t`; and `eta_t ~ N(0,diag(q_t))`. Conditional innovations
-and observation errors are independent. There are eight measurement
-variances, not an OLS reconstruction covariance. Persistence is restricted to
-the positive stationary interval `(0,1)`; this is a modeling restriction,
-not an implication of the data.
+DLNS uses `eta_t ~ N(0,Q)` with a full positive definite 3 by 3 Q.
+SVNS uses `Q_t = diag(exp(h_t))`; each h component has stationary Gaussian
+AR(1) dynamics with mean `a`, persistence `phi` and innovation SD `sigma`.
+The different restrictions on Q mean DLNS/SVNS are not a pure
+constant-versus-stochastic-volatility comparison.
 
-The first observation follows a transition from `f_0 ~ N(m0,P0)`. This is a
-proper, training-calibrated initialization, not the old `10^6 I` covariance.
-Set `m0` to the mean of training OLS factors computed at lambda 0.7, and set
-`P0 = diag((2*s_f)^2)`, where `s_f` is their sample standard deviation floored
-at 0.1. The first transition uses `q_1`, including in SVNS.
+## Priors and initialization
 
-## Priors
+All empirical-Bayes values below are calibrated solely on the 2000-2015
+training data, using OLS factors at decay 0.7 per year. They are pragmatic
+research choices, not validated prior knowledge. Let `m`, `s`, `R0`, and
+`S` be respectively the sample factor means, SDs (floored at 0.1), residual
+variances (floored at 1e-5), and the factor AR residual covariance with
+1e-5 added to its diagonal. The AR estimates used for S are clipped to
+[0.7,0.995].
 
-These are empirical-Bayes, training-only choices, not literature-derived exact
-hyperparameters. They use the full training window both to calibrate priors
-and to fit the model. Results are conditional on that calibration and are not
-a fully pre-data prior analysis. A real-time forecast must recalibrate using
-only its own training window. No validation is implied by MCMC convergence.
+* `m0=m`, `P0=diag((2s)^2)`, independently of transition parameters.
+* Independent `mu_j ~ N(m_j,(2s_j)^2)` and
+  `rho_j ~ N(0.95,0.1^2)` truncated to (-1,1).
+* `r_j ~ InvGamma(2.5, 1.5 R0_j)` using the shape/scale convention.
+* DLNS `Q ~ InvWishart(df=5, scale=S)`; this is proper in dimension
+  three and has prior mean S.
+* Decay is discrete-uniform on a declared grid in [0.2,1.2] per year.
+  The working paper's monthly [0.055,0.08] converts to [0.66,0.96]
+  per year. The broader Canadian grid is a judgmental sensitivity choice;
+  it does not establish that this prior is appropriate.
+* For each SV factor, `(a, logit(phi), log(sigma))` has independent normal
+  priors centered at `(log(S_jj), logit(0.95), log(0.2))`, with SDs
+  `(2,1.25,1)`. Numerical support is restricted to `|logit(phi)|<=25`
+  and `|log(sigma)|<=15`; thus `phi` is positive and stationary. These
+  transformed-scale priors and bounds are adaptations, not the paper's
+  exact priors. The prior can imply very persistent and volatile h paths;
+  no prior predictive adequacy has been established.
 
-At lambda 0.7, obtain OLS factors, their mean and standard deviation, lag-one
-OLS persistence clipped to `[0.7,0.995]`, factor AR residual variances `q0`, and
-cross-sectional residual variances `r0`. Floor variances at `10^-5`. In the
-unconstrained coordinates used by the sampler, independently:
-
-* `mu_j ~ N(factor_mean_j, (2*s_f_j)^2)`.
-* `logit(rho_j) ~ N(logit(0.95), 1.25^2)`.
-* `log(q_j) ~ N(log(q0_j), 1^2)`.
-* `log(r_i) ~ N(log(r0_i), 1.5^2)`.
-* `logit((lambda-0.05)/1.95) ~ N(logit(1/3), 1^2)`.
-
-The log variance coordinates are restricted to `[-50,50]` for numerical
-representability. In SVNS additionally `log(v)` is restricted to `[-10,10]`
-and all realized `h_t` to `[-50,50]`; outside these supports the target is
-zero. These are explicit truncations of the stated priors, not latent clipping.
-No claim is made that the precise bounds or prior scales are empirically
-validated. The posterior prior-comparison table is conditional on training
-calibration and ignores the negligible numerical truncation in its prior
-Monte Carlo.
-
-The priors are assigned directly to the unconstrained variables, so no
-Jacobian is added to their normal densities in those coordinates. Their
-induced densities on `(rho,q,r,lambda)` contain the usual inverse-transform
-Jacobians. `q_j` means a constant innovation variance for DLNS and the
-stationary *arithmetic mean* innovation variance for SVNS.
-
-## Stochastic volatility
-
-For each factor, `h_t = log(q) - v/2 + sqrt(v) u_t`,
-`u_1 = z_1`, `u_t = phi*u_(t-1) + sqrt(1-phi^2)*z_t`,
-and independent `z_t ~ N(0,1)`. Thus `h` has stationary variance `v` and
-`E(exp(h_t))=q` before numerical truncation. Priors are
-`logit(phi) ~ N(logit(0.95),1.25^2)` and `log(v) ~ N(log(0.5),1)`.
-The shared-parameter priors are the same as DLNS.
-
-## Algorithm
-
-The Kalman likelihood exactly integrates the complete latent factor path for
-each parameter and volatility path. DLNS uses symmetric random-walk
-Metropolis blocks in the unconstrained coordinates; scales adapt only during
-warmup. A second run adds a fixed symmetric correlated random walk for
-`(log(q),log(r),decay-coordinate)` estimated from the first exploratory
-training-only run. It is fixed before sampling and does not change the target.
-Four chains use independent seeds.
-
-SVNS uses the same marginal likelihood and shared parameter blocks with
-non-centered volatility innovations. Gaussian elliptical-slice updates each
-factor's entire innovation path conditional on parameters; parameter blocks
-hold these independent innovations fixed. This is exact MCMC for the stated
-truncated model, not an approximate filter or variational posterior. The
-Gaussian smoothing routine draws factor paths conditional on a parameter and
-volatility draw; it is separate from the collapsed MCMC transition.
-
-Diagonal measurement errors, diagonal factor persistence, the empirically
-calibrated priors, positive persistence, initialization and the sampler are
-adaptations. OLS residual correlations are not evidence that diagonal `R` is
-true: OLS residuals obey `H' e_t = 0`, imposing five-dimensional residual
-geometry and correlations by construction. A proper model-checking analysis
-must separately examine dynamics and posterior predictive residuals.
+The main text of Hautsch and Yang imposes diagonal measurement covariance;
+its Appendix A gives a full Wishart precision update. They are not equivalent.
+This implementation chooses the main-text diagonal restriction, with proper
+independent inverse-gamma updates, rather than a full Wishart on eight
+measurements. The paper reports DLNS factor-innovation correlations, so
+the Canadian constant-Q model retains full Q, but the paper does not fully
+specify a corresponding full-Q update. The inverse-Wishart update above is
+an explicit adaptation. There is no claim of exact replication.

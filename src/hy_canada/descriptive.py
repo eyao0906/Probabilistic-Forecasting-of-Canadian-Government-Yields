@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from .data import MATURITIES, load_panel
-from .experiment import OUT, ROOT
+from .blocked_experiment import OUT, ROOT
 from .kalman import loadings
 
 

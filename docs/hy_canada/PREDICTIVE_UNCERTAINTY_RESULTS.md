@@ -1,14 +1,12 @@
 # Predictive uncertainty
 
-No empirical posterior predictive distributions or intervals are reported.
-The initial and pilot-informed DLNS runs have major convergence failures;
-unreliable chains cannot establish credible predictive uncertainty. The
-one-step conditional simulation routine was checked against analytical
-Gaussian moments, but that is not a real-data forecast.
+No forecast densities, coverage or model comparison are reported: both
+joint posteriors are unconverged. Requested origins 2016-01-08, 2020-03-27
+and 2025-11-28 are present in the existing panel; their presence alone does
+not provide a valid real-time experiment. See `forecast_target_dates.csv`.
 
-The existing panel contains all three requested origins. Observation-based
-target dates are saved in `results/hy_canada/forecast_target_dates.csv`:
-2016-01-15 and 2016-02-05; 2020-04-03 and 2020-04-23; and 2025-12-05
-and 2025-12-24. No model was fit or updated at these origins, and no
-forecast comparison, coverage assessment, or performance claim was made.
-Any future origin fit must use only data available by that origin.
+The constant-Q conditional forward simulator includes full factor innovation
+covariance and diagonal measurement noise and has a Gaussian moment test.
+Parameter and state uncertainty require integration over reliable posterior
+draws; the SV future-volatility simulator and origin-specific refits remain
+unimplemented. Two-step benchmarks have not been refitted.
