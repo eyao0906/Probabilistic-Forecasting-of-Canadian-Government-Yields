@@ -293,82 +293,55 @@ of the Canadian zero-coupon yield-curve data.
 \section{Motivation and research
 problem}\label{motivation-and-research-problem}
 
-Movements in government yield curves can be represented by a small
-number of common factors, conventionally interpreted as level, slope,
-and curvature (\citeproc{ref-diebold2006forecasting}{Diebold \& Li,
-2006}; \citeproc{ref-litterman1991common}{Litterman \& Scheinkman,
-1991}). These factors capture distinct patterns of interest-rate
-movements: broadly parallel shifts across maturities, changes in the
-steepness of the curve, and changes in its intermediate-maturity shape.
-For fixed-income institutions, understanding these movements is
-essential because bond valuations, hedging effectiveness, and
-interest-rate exposures depend on how yields evolve across different
-maturities. Regulatory risk-management frameworks similarly recognize
-the importance of both parallel and non-parallel yield-curve shocks
+Government yield-curve movements are commonly characterized by three
+factors---level, slope, and curvature---representing parallel shifts,
+changes in steepness, and changes in intermediate-maturity shape
+(\citeproc{ref-diebold2006forecasting}{Diebold \& Li, 2006};
+\citeproc{ref-litterman1991common}{Litterman \& Scheinkman, 1991}).
+These movements affect fixed-income valuations, hedging, and
+interest-rate exposures, while regulatory frameworks recognize the
+importance of both parallel and non-parallel yield-curve shocks
 (\citeproc{ref-bcbs2016irrbb}{Basel Committee on Banking Supervision,
-2016}). Accurate point forecasts alone are therefore insufficient;
-probabilistic forecasts that characterize the magnitude and uncertainty
-of different yield-curve movements can provide additional information
-for scenario analysis and risk assessment.
+2016}). Beyond forecasting expected yield movements, characterizing
+their predictive uncertainty is therefore relevant to interest-rate
+scenario analysis and risk assessment.
 
-The Dynamic Nelson--Siegel (DNS) framework offers a parsimonious
-representation of the yield curve through three interpretable factors
+The Dynamic Nelson--Siegel (DNS) framework provides a parsimonious
+representation of these factors
 (\citeproc{ref-diebold2006forecasting}{Diebold \& Li, 2006}).
-Conventional factor-forecasting models typically assume constant
-innovation variances, although uncertainty surrounding interest-rate
-movements may evolve with market conditions. Bayesian
-stochastic-volatility models extend this framework by allowing factor
-innovation variances to change over time
+Conventional autoregressive factor models generally assume constant
+innovation variances, potentially overlooking changes in uncertainty
+across market conditions. Bayesian stochastic-volatility extensions
+allow innovation variances to evolve dynamically
 (\citeproc{ref-hautsch2012bayesian}{Hautsch \& Yang, 2012}). However,
-the potential forecasting benefit of this additional flexibility need
-not be uniform across level, slope, and curvature. Given their different
-maturity-loading patterns and underlying dynamics, an improvement in
-modelling volatility may be more informative for certain factors than
-for others. This motivates the central research question: Does
-incorporating Bayesian stochastic volatility improve the marginal
-probabilistic forecasts of yield-curve factors, and how does its
-predictive contribution vary across factors and forecast horizons?
+their incremental forecasting value may differ across factors because
+level, slope, and curvature exhibit distinct dynamics and maturity
+sensitivities. This motivates the central research question: Does
+Bayesian stochastic volatility improve marginal probabilistic forecasts
+of yield-curve factors, and how does its predictive contribution vary
+across factors and forecast horizons?
 
-To investigate this question, the study extracts level, slope, and
-curvature factors from eight Canadian government yields using fixed
-Nelson--Siegel loadings and cross-sectional least squares, followed by
-separate estimation of their time-series dynamics. Bayesian
-specifications with constant and stochastic factor volatility are
-compared with conventional random-walk and autoregressive benchmarks
-using 130 common expanding-window forecast origins over 2016--2025, at
-one- and four-week horizons. Forecast quality is assessed primarily
-through the continuous ranked probability score (CRPS), which evaluates
-the accuracy of each factor's predictive distribution, supplemented by
-the Dawid--Sebastiani score (DSS), point-forecast errors, and
-calibration diagnostics. By examining the distributional forecasting
-performance of each factor individually, the study seeks to identify
-where time-varying volatility contributes useful predictive information
-and to assess its potential relevance for factor-based interest-rate
-scenario analysis and fixed-income risk management.
+The study extracts Nelson--Siegel factors from eight Canadian government
+yield maturities using fixed loadings and cross-sectional least squares,
+then models their dynamics separately. Bayesian autoregressive
+specifications with constant and stochastic volatility are evaluated
+against random-walk and conventional autoregressive benchmarks across
+130 expanding-window forecast origins from 2016 to 2025, at one- and
+four-week horizons. The continuous ranked probability score (CRPS)
+serves as the primary measure of probabilistic forecast quality,
+supplemented by the Dawid--Sebastiani score (DSS), point-forecast
+errors, and marginal calibration diagnostics.
 
 \section{Contribution and scope}\label{contribution-and-scope}
 
-This study contributes a controlled Bayesian Dynamic Nelson--Siegel
-(DNS) comparison examining how stochastic volatility affects the
-marginal probabilistic forecasting performance of level, slope, and
-curvature factors. The constant and stochastic-volatility specifications
-share the same factor extraction, fixed Nelson--Siegel loadings,
-autoregressive mean dynamics, prior design, and forecast origins,
-allowing the incremental contribution of time-varying factor volatility
-to be assessed. Conventional random-walk and autoregressive models
-provide additional benchmarks. By evaluating predictive distributions
-separately across factors and forecast horizons, the study identifies
-where stochastic volatility offers potential improvements in forecasting
-uncertainty and explores their relevance to fixed-income risk
-management.
-
-The analysis focuses on marginal factor distributions rather than
-jointly forecasting the full eight-maturity yield curve, as
-independently estimated factor dynamics do not explicitly capture
-cross-factor dependence. Practical implications are illustrated through
-individual factor sensitivities of the five-year yield, providing an
-interpretable link between factor uncertainty and interest-rate exposure
-without extending to portfolio-level risk measurement.
+This study provides a controlled comparison of Bayesian constant- and
+stochastic-volatility DNS factor forecasts. Both specifications share
+the same factor extraction, autoregressive mean dynamics, priors for
+common parameters, and forecast design, isolating the incremental
+contribution of time-varying innovation uncertainty. By evaluating
+predictive distributions separately across factors and horizons, the
+analysis examines whether additional volatility flexibility offers
+comparable forecasting benefits for different yield-curve movements.
 
 \chapter{Methodology and conceptual framework}\label{sec-literature}
 
@@ -491,17 +464,6 @@ for Nelson--Siegel factor extraction. As model-estimated yields rather
 than directly observed security prices, the series provides the basis
 for constructing statistical proxies for level, slope, and curvature
 movements.
-
-The analysis relies on a historical data extract rather than
-reconstructed real-time publication vintages. A limited comparison with
-the Bank's official series confirmed agreement across eight selected
-maturities for 21 observations in December 2015, although the full
-historical extract's provenance and revision status remain independently
-unverified. The Bank's typical publication delay of approximately two
-weeks also means that observation dates do not necessarily reflect
-contemporaneously available information. Accordingly, the empirical
-analysis is interpreted as retrospective forecasting based on
-observation-time data.
 
 \section{Cleaning, units and weekly
 sampling}\label{cleaning-units-and-weekly-sampling}
@@ -747,24 +709,29 @@ a_j&=(1-b_j)\mu_j.
 \end{aligned}
 }\end{equation}
 
-Here, \(\bar f_{j,\mathrm{train}}\) and \(s_{j,\mathrm{train}}\) are the
-sample mean and standard deviation of each extracted factor over the
-initial 2000--2015 training period, and \(\hat b_{j,\mathrm{OLS}}\) is
+Here, \(\bar f_{j,\mathrm{train}}\) and \(s_{j,\mathrm{train}}\) denote
+the sample mean and standard deviation of each extracted factor over the
+initial 2000--2015 training period, while \(\hat b_{j,\mathrm{OLS}}\) is
 the corresponding auxiliary AR(1) persistence estimate. These
-hyperparameters are calibrated using the initial 835 weekly observations
-and held fixed across subsequent expanding estimation windows.
+empirical-Bayes hyperparameters are calibrated using the initial 835
+weekly observations and held fixed across subsequent expanding
+estimation windows.
 
 Specifying the prior directly on \(\mu_j\) ensures finite prior moments
-for the long-run factor mean, including when persistence approaches
-unity. This avoids the potentially heavy-tailed implied mean
-\(a_j/(1-b_j)\) that can arise from independent diffuse priors on the
+for the long-run factor mean, avoiding the potentially heavy-tailed
+ratio \(a_j/(1-b_j)\) induced by independent diffuse priors on the
 intercept and persistence. The prior standard deviation of twice the
-training factor standard deviation permits substantial uncertainty
-around the historical mean, while the persistence prior regularizes the
-highly persistent factor dynamics observed in the initial sample. Both
-prior scales are study-specific choices assessed using training-sample
-diagnostics and prior-predictive simulations rather than selected
-through out-of-sample forecast scores.
+training factor standard deviation allows substantial uncertainty around
+the historical mean. For persistence, the truncated-normal prior
+restricts \(b_j\) to the stationary region \((-1,1)\), with a standard
+deviation of \(0.03\) chosen as a study-specific regularization scale.
+This specification implies prior median mean-reversion half-lives of
+approximately 32, 31, and 22 weeks for level, slope, and curvature,
+respectively, while accommodating near-unit-root persistence. Prior-only
+comparisons with standard deviations of \(0.015\) and \(0.06\)
+illustrate how alternative scales affect the implied half-life
+distributions. The selected value therefore represents an intermediate
+degree of persistence regularization among the considered alternatives.
 
 The constant innovation variance is parameterized on the logarithmic
 scale:
@@ -875,21 +842,22 @@ p_U(v_j)
 \qquad U=4.
 }\end{equation}
 
-The exponential prior regularizes toward smaller volatility
-fluctuations, while the finite upper bound ensures the existence of
-finite-horizon posterior-predictive moments under the specified proper
-parameter priors. Importantly, this restriction bounds the stationary
-variance of latent log volatility, not realized volatility or the
-magnitude of future yield movements.
-
-The prior parameters were assessed through training-only
-prior-predictive simulations, following the principle of evaluating
-whether a prior implies plausible observable outcomes
-(\citeproc{ref-gelman2017prior}{Gelman et al., 2017}). The rate and
-upper bound are regularization choices rather than estimates uniquely
-identified by the historical data. Their mathematical role in ensuring
-finite predictive moments is distinct from the empirical question of
-forecast quality.
+The rate-one truncated exponential prior regularizes the stationary
+log-volatility variance toward smaller values, while the finite upper
+bound provides a sufficient condition for the existence of
+finite-horizon posterior-predictive moments, as established in the
+Appendix. The numerical choice \(U=4\) is assessed through training-only
+prior-predictive sensitivity experiments using \(U\in{2,4,8}\), with
+100,000 simulations per specification. The resulting one and four-week
+yield-movement distributions show limited sensitivity to the bound where
+increasing \(U\) from four to eight changes the four-week 99th
+percentile of the RMS yield-curve movement by approximately 0.1\%.
+Posterior diagnostics further indicate limited concentration near the
+imposed boundary, with the largest origin-specific posterior 99th
+percentile of \(v_j\) equal to 2.87. The prior-predictive assessment
+follows the principle of evaluating prior implications in the context of
+observable outcomes (\citeproc{ref-gelman2017prior}{Gelman et al.,
+2017}).
 
 Posterior inference uses a Gaussian-mixture representation of
 log-squared innovations with a Metropolis correction targeting the exact
@@ -1347,9 +1315,45 @@ approximately 3.4\% at one week and 4.9\% at four weeks, whereas
 improvements for level and slope are considerably smaller. The
 stochastic-volatility specification also records the lowest curvature
 CRPS among all four models. These findings suggest that the incremental
-value of time-varying volatility is concentrated in forecasting
-uncertainty surrounding changes in yield-curve shape. Formal inference
-on these differences is presented below.
+value of time-varying volatility is most apparent for uncertainty
+surrounding changes in yield-curve shape. Formal inference on these
+differences is presented below.
+
+As a complementary distributional measure, the DSS evaluates predictive
+means and variances, while MAE assesses point-forecast accuracy.
+Table~\ref{tbl-factor-dss-mae} summarizes both metrics for the two
+Bayesian specifications.
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{Mean DSS and MAE across 130 origins for Bayesian
+constant-volatility (M2) and stochastic-volatility (M3) DNS. Lower
+values are preferable for both metrics; MAE is measured in factor
+percentage points.}\label{tbl-factor-dss-mae}\tabularnewline
+\toprule\noalign{}
+Factor & Horizon & M2 DSS & M3 DSS & M2 MAE & M3 MAE \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Factor & Horizon & M2 DSS & M3 DSS & M2 MAE & M3 MAE \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Level & 1 & −3.415 & −3.419 & 0.0830 & 0.0830 \\
+Level & 4 & −2.188 & −2.261 & 0.1581 & 0.1581 \\
+Slope & 1 & −3.161 & −3.192 & 0.0949 & 0.0947 \\
+Slope & 4 & −1.528 & −1.598 & 0.2018 & 0.2000 \\
+Curvature & 1 & −1.455 & −1.563 & 0.2076 & 0.2083 \\
+Curvature & 4 & 0.003 & −0.080 & 0.4166 & 0.4181 \\
+\end{longtable}
+
+M3 achieves lower DSS across all six factor--horizon comparisons,
+providing descriptive support for the CRPS findings. In contrast, MAE
+differences are small and do not consistently favor stochastic
+volatility. The results suggest that its forecasting contribution
+primarily concerns predictive uncertainty rather than conditional mean
+accuracy. DSS differences are reported as supplementary evidence without
+separate significance testing.
 
 \section{Point accuracy and marginal
 calibration}\label{point-accuracy-and-marginal-calibration}
@@ -1383,16 +1387,40 @@ Curvature & 4 & 0.5890 & 0.5918 & 95.4\% & 93.1\% \\
 
 Point-forecast accuracy is broadly similar between the two Bayesian
 models. Notably, M3's improvement in four-week curvature CRPS occurs
-alongside a slightly higher RMSE, indicating that its distributional
+alongside a slightly higher RMSE, reinforcing that its distributional
 advantage does not arise from more accurate conditional mean predictions
 alone.
 
-Coverage results are mixed across factors. Stochastic volatility brings
-curvature coverage closer to the nominal rate at both horizons, while
-level and slope exhibit different calibration patterns. Together with
-the PIT diagnostics, these results indicate that the effects of
-time-varying volatility extend beyond point accuracy, although marginal
-calibration is not uniform across factors.
+Coverage results vary across factors. Stochastic volatility brings
+curvature coverage closer to the nominal 90\% level at both horizons,
+while level and slope exhibit mixed patterns. At four weeks, curvature's
+nominal 50\% interval coverage also moves from 70.0\% under M2 to 54.6\%
+under M3, indicating substantially reduced central overcoverage.
+
+Marginal calibration is further examined through the probability
+integral transform (PIT) distributions in Figure~\ref{fig-factor-pit}.
+
+\begin{figure}
+
+\centering{
+
+\includegraphics[width=0.85\linewidth,height=\textheight,keepaspectratio]{generated/figures/factor_pit.png}
+
+}
+
+\caption{\label{fig-factor-pit}PIT histograms across 130 forecast
+origins for each factor and horizon. The dashed horizontal line
+represents the uniform-density benchmark.}
+
+\end{figure}%
+
+The PIT histograms show deviations from uniformity that differ across
+factors and horizons. Curvature forecasts under constant volatility
+exhibit noticeable concentration in central PIT bins, consistent with
+their excessive interval coverage. Stochastic volatility generally
+reduces this concentration, particularly at the four-week horizon,
+although irregularities remain. Level and slope display less consistent
+changes in histogram shape.
 
 \section{Paired Bayesian comparison}\label{paired-bayesian-comparison}
 
@@ -1435,10 +1463,7 @@ of stochastic-volatility superiority.
 The estimated curvature improvements are substantially larger than their
 corresponding scenario-simulation Monte Carlo standard errors,
 indicating that finite-simulation noise is unlikely to account for the
-observed score reductions. Nevertheless, uncertainty across forecast
-origins remains material. Furthermore, differences in statistical
-significance across factors do not establish statistically significant
-differences \emph{between} factor-specific effects.
+observed score reductions.
 
 \section{Factor-isolated interest-rate risk
 illustration}\label{factor-isolated-interest-rate-risk-illustration}
