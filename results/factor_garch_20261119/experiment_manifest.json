@@ -1,0 +1,94 @@
+{
+  "experiment": "independent Gaussian AR(1)-GARCH(1,1) models for extracted DNS factors",
+  "model_identifier": "AR1_GARCH11",
+  "status": "complete",
+  "data_sha256": "0b2af5c3c7bb261973ea4ec04c151eedbf7cf1428f22d0e08eaae87a212bfd77",
+  "accepted_factor_forecasts_sha256": "6581452e3b1aabd1a59474e0ff6da32d86fba448c481d828e9497c5c4c8c6a48",
+  "accepted_factor_metrics_sha256": "dc301aee69e4970f5541ee6b9075149b050b86ab5f80b45f0eda8d82af24cc96",
+  "repository_base_commit": "4d2608132e0c18bf95ab12d775bf3b90daf12ee9",
+  "git_branch": "research/factor-probabilistic-forecasting-20261116",
+  "code_sha256": {
+    "garch_factor_experiment": "237588b5d2031519dd2b58557ba664c515f0f7bea5d9590aa0976baeddbdd2c0",
+    "plot_factor_histories": "4b806d6e2584c8a3485b10056c8dfbd19992722140a2bd1529e605672a0582e0",
+    "garch_tests": "dd16c6e7232e2dcb850ee9fbf030bd204a2182a23c17cfc1671675a6ea8d3960",
+    "requirements_lock": "fb874e6796bb3466f6e9a88598e3f1921f6d0e5d20ffd61f8372579d8eab7ccb"
+  },
+  "fixed_lambda": 0.5160377358490565,
+  "maturities_years": [
+    0.25,
+    0.5,
+    1,
+    2,
+    5,
+    7,
+    10,
+    30
+  ],
+  "factor_units": "percentage points",
+  "optimization_units": "basis points; intercept divided by 100 and variances by 10000 on output",
+  "research_observations": 1356,
+  "research_start": "2000-01-07",
+  "research_end": "2025-12-24",
+  "initial_training_observations": 835,
+  "initial_training_end": "2015-12-31",
+  "origin_count": 130,
+  "first_origin": "2016-01-08",
+  "last_origin": "2025-11-28",
+  "horizons": [
+    1,
+    4
+  ],
+  "expected_fit_count": 390,
+  "completed_fit_count": 390,
+  "successful_fit_count": 390,
+  "expected_forecast_count": 780,
+  "completed_forecast_count": 780,
+  "scenario_count_horizon_four": 8192,
+  "scenario_batches": 8,
+  "scenario_seed_base": 20261119,
+  "seed_derivation": "[base seed, absolute origin row index, factor index, horizon]",
+  "converged_fit_count_by_factor": {
+    "level": 130,
+    "slope": 130,
+    "curvature": 130
+  },
+  "garch_persistence_at_or_above_one": 0,
+  "ar_coefficient_at_or_above_unit_magnitude": 0,
+  "manuscript_to_accepted_internal_model_mapping": {
+    "M0": "M0",
+    "M1": "M2",
+    "M2": "M3",
+    "M3": "M4"
+  },
+  "reporting_order": [
+    "M0",
+    "M1",
+    "M2",
+    "M3",
+    "AR1_GARCH11"
+  ],
+  "dependencies": {
+    "arch": "8.0.0",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "matplotlib": "3.11.2",
+    "pandas": "3.1.0",
+    "python": "3.14.7"
+  },
+  "outputs": {
+    "forecasts": "garch_factor_forecasts.csv",
+    "metrics": "garch_factor_metrics.csv",
+    "fits": "garch_fit_diagnostics.csv",
+    "calibration": "garch_calibration_diagnostics.csv",
+    "comparison": "garch_vs_existing_models.csv"
+  },
+  "validation": {
+    "accepted_origin_and_target_alignment": true,
+    "accepted_model_label_mapping_explicit": true,
+    "all_390_fits_converged": true,
+    "all_780_forecasts_completed": true,
+    "six_complete_forecast_groups": true,
+    "fit_diagnostic_rows": 390,
+    "finite_forecasts_and_scores": true
+  }
+}
