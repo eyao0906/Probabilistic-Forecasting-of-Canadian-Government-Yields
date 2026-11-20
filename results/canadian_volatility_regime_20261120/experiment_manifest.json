@@ -1,0 +1,216 @@
+{
+  "experiment": "Retrospective observation-time volatility regime conditional evaluation",
+  "status": "complete",
+  "parent_branch": "research/factor-probabilistic-forecasting-20261116",
+  "extension_branch": "research/canadian-volatility-regime-extension-20261120",
+  "source_paths": {
+    "factor_history": "figures\\factor_probabilistic_20261116\\extracted_dns_factors.csv",
+    "yield_panel": "data\\processed\\canada_weekly.csv",
+    "factor_forecasts": "results\\factor_probabilistic_20261116\\factor_forecasts.csv",
+    "factor_metrics": "results\\factor_probabilistic_20261116\\factor_metrics.csv",
+    "garch_forecasts": "results\\factor_garch_20261119\\garch_factor_forecasts.csv",
+    "garch_metrics": "results\\factor_garch_20261119\\garch_factor_metrics.csv"
+  },
+  "sample": {
+    "country": "Canada",
+    "research_start": "2000-01-07",
+    "research_end": "2025-12-24",
+    "weekly_observations": 1356,
+    "initial_training_end": "2015-12-31",
+    "initial_training_observations": 835,
+    "origin_count": 130,
+    "first_origin": "2016-01-08",
+    "last_origin": "2025-11-28",
+    "horizons": [
+      1,
+      4
+    ],
+    "fixed_lambda": 0.5160377358490565,
+    "maturities_years": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      5.0,
+      7.0,
+      10.0,
+      30.0
+    ],
+    "factor_units": "percentage points"
+  },
+  "model_label_mapping": {
+    "M0": {
+      "specification": "Factor random walk",
+      "internal": "M0"
+    },
+    "M1": {
+      "specification": "Classical Gaussian AR(1)",
+      "internal": "M2"
+    },
+    "M2": {
+      "specification": "Bayesian DNS, constant volatility",
+      "internal": "M3"
+    },
+    "M3": {
+      "specification": "Bayesian DNS, stochastic volatility",
+      "internal": "M4"
+    },
+    "AR1_GARCH11": {
+      "specification": "Independent Gaussian AR(1)-GARCH(1,1)",
+      "internal": "AR1_GARCH11"
+    }
+  },
+  "regime_method": {
+    "method": "26-week standardized factor-change rolling RMS",
+    "factor_order": [
+      "level",
+      "slope",
+      "curvature"
+    ],
+    "lookback_weekly_changes": 26,
+    "normalization": "sample SD (ddof=1) of within-training-sample weekly factor changes",
+    "training_start": "2000-01-07",
+    "training_end": "2015-12-31",
+    "training_observation_count": 835,
+    "training_change_count": 834,
+    "threshold_training_window_count": 809,
+    "quantile_method": "NumPy linear interpolation (method='linear')",
+    "low_rule": "V_t <= q25",
+    "high_rule": "V_t >= q75",
+    "medium_rule": "q25 < V_t < q75",
+    "normalization_factors": {
+      "level": 0.08689221266726901,
+      "slope": 0.1275455924181985,
+      "curvature": 0.37615296662983694
+    },
+    "q25": 0.75446758310143,
+    "q75": 1.1030895592309802,
+    "composite_formula": "sqrt((V_level^2 + V_slope^2 + V_curvature^2)/3)",
+    "information_cutoff": "Each index value uses factor observations dated through its own date",
+    "origin_regime_counts": {
+      "LOW": 34,
+      "MEDIUM": 56,
+      "HIGH": 40
+    },
+    "complete_eligible_history_rows": 1330,
+    "max_factor_reconstruction_abs_difference": 1.021405182655144e-14,
+    "first_complete_window_date": "2000-07-07",
+    "latest_history_date": "2025-12-24"
+  },
+  "regime_counts": {
+    "LOW": 34,
+    "MEDIUM": 56,
+    "HIGH": 40
+  },
+  "bootstrap": {
+    "purpose": "Exploratory paired conditional comparison; not original confirmatory inference",
+    "method": "Circular stationary bootstrap over all 130 chronological origins",
+    "replicates": 9999,
+    "expected_block_length_origins": 4.0,
+    "seed": 20261120,
+    "random_generator": "NumPy default_rng",
+    "sampled_together": [
+      "origin-level model CRPS vectors",
+      "origin-based regime labels"
+    ],
+    "confidence_interval": "95% percentile interval",
+    "missing_regime_resamples": {
+      "LOW": 0,
+      "MEDIUM": 0,
+      "HIGH": 0
+    },
+    "origin_count_by_regime": {
+      "LOW": 34,
+      "MEDIUM": 56,
+      "HIGH": 40
+    },
+    "regimes_below_15_origins": [],
+    "p_values_reported": false,
+    "multiplicity": "No exploratory p-values reported; intervals are descriptive",
+    "sensitivity_block_lengths": "Not run; optional in protocol",
+    "regime_size_note": "No threshold changes based on subgroup performance"
+  },
+  "software": {
+    "python": "3.14.7",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "scipy": "1.18.1",
+    "matplotlib": "3.11.2"
+  },
+  "validation": {
+    "factor_rows": 1356,
+    "panel_rows": 1396,
+    "factor_dates_match_panel": true,
+    "max_factor_reconstruction_abs_difference": 1.021405182655144e-14,
+    "excluded_1999_observation_not_used": true,
+    "unconditional_groups_checked": 30,
+    "unconditional_metrics_reproduced": true,
+    "metrics_compared": [
+      "mean_crps",
+      "mean_dss",
+      "rmse",
+      "mae",
+      "pit_mean",
+      "coverage50",
+      "coverage80",
+      "coverage90",
+      "mean_width50",
+      "mean_width80",
+      "mean_width90"
+    ],
+    "maximum_absolute_metric_difference": {
+      "mean_crps": 5.551115123125783e-17,
+      "mean_dss": 8.881784197001252e-16,
+      "rmse": 1.3877787807814457e-16,
+      "mae": 5.551115123125783e-17,
+      "pit_mean": 1.1102230246251565e-16,
+      "coverage50": 5.551115123125783e-17,
+      "coverage80": 1.1102230246251565e-16,
+      "coverage90": 1.1102230246251565e-16,
+      "mean_width50": 2.220446049250313e-16,
+      "mean_width80": 2.220446049250313e-16,
+      "mean_width90": 8.881784197001252e-16
+    },
+    "forecast_rows": 3900,
+    "forecast_key_unique": true,
+    "model_count": 5,
+    "factor_count": 3,
+    "horizon_count": 2,
+    "origin_count": 130,
+    "regime_counts_sum_to_origins": true,
+    "scores_and_intervals_validated": true,
+    "accepted_forecasts_reestimated": false,
+    "legacy_make_design_hash_gate_used": false,
+    "focused_test_suite": {
+      "command": "python.exe -m unittest tests.test_canadian_volatility_regime_analysis",
+      "return_code": 0,
+      "output": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.352s\n\nOK"
+    },
+    "figures_rendered": true
+  },
+  "outputs": [
+    "regime_thresholds.json",
+    "historical_volatility_index.csv",
+    "origin_volatility_regimes.csv",
+    "forecasts_with_regimes.csv",
+    "regime_metrics.csv",
+    "regime_pairwise_differences.csv",
+    "regime_interaction_summary.csv",
+    "regime_calibration_diagnostics.csv",
+    "regime_bootstrap_results.json",
+    "figures\\figure_1_regime_history.pdf",
+    "figures\\figure_1_regime_history.png",
+    "figures\\figure_2_conditional_crps.pdf",
+    "figures\\figure_2_conditional_crps.png",
+    "figures\\figure_3_relative_crps_skill.pdf",
+    "figures\\figure_3_relative_crps_skill.png",
+    "figures\\figure_4_garch_vs_bayesian_sv.pdf",
+    "figures\\figure_4_garch_vs_bayesian_sv.png",
+    "figures\\figure_5_calibration_intervals.pdf",
+    "figures\\figure_5_calibration_intervals.png",
+    "figures\\figure_5_calibration_pit.pdf",
+    "figures\\figure_5_calibration_pit.png",
+    "docs/canadian_volatility_regime_20261120/VOLATILITY_REGIME_EVALUATION_REPORT.md"
+  ],
+  "hash_policy": "No SHA-256 equality is required or enforced."
+}
