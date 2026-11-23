@@ -238,36 +238,34 @@ University of Waterloo\par
 \addcontentsline{toc}{chapter}{Abstract}
 
 This study investigates whether incorporating stochastic volatility into
-the Dynamic Nelson--Siegel (DNS) framework improves probabilistic
-forecasts of Canadian government yield-curve risk factors. Using weekly
-government yields at eight maturities from 2000 to 2025, the yield curve
-is represented by three interpretable factors---level, slope, and
-curvature---capturing parallel shifts, changes in steepness, and
-movements in the curve's shape. The analysis compares conventional
-random-walk and autoregressive benchmarks with Bayesian DNS models
-featuring constant and time-varying factor volatility. Forecasts are
-evaluated at one- and four-week horizons across 130 common
-expanding-window forecast origins during 2016--2025. The primary
-evaluation uses the continuous ranked probability score (CRPS) to assess
-marginal predictive distributions, supplemented by the Dawid--Sebastiani
-score (DSS), point-forecast accuracy, and probabilistic calibration
+the Dynamic Nelson--Siegel (DNS) framework improves marginal
+probabilistic forecasts of Canadian government yield-curve factors.
+Using weekly zero-coupon yields at eight maturities from 2000 to 2025,
+the yield curve is represented by three interpretable factors---level,
+slope, and curvature. The study compares a factor random walk,
+conventional two-step DNS with OLS AR(1) dynamics, Bayesian DNS with
+constant and stochastic volatility, and a conventional AR(1)-GARCH(1,1)
+benchmark. One and four-week predictive distributions are evaluated
+across 130 common expanding-window forecast origins during 2016--2025.
+Forecast performance is assessed primarily using the continuous ranked
+probability score (CRPS), supplemented by the Dawid--Sebastiani score
+(DSS), point-forecast accuracy, and probabilistic calibration
 diagnostics.
 
-The empirical findings suggest that the value of stochastic volatility
-varies across yield-curve factors. Improvements in probabilistic
-forecasting are most pronounced for curvature, particularly at the
-longer forecast horizon, while the corresponding effects for level and
-slope are comparatively limited. These results highlight the importance
-of examining individual yield-curve risk factors rather than relying
-exclusively on aggregate forecasting performance. By allowing
-factor-specific uncertainty to evolve over time, Bayesian
-stochastic-volatility DNS provides a flexible framework for
-characterizing interest-rate dynamics beyond conventional point
-forecasts. From a practical fixed-income perspective, the resulting
-factor-level predictive distributions offer interpretable inputs for
-yield-curve scenario analysis, interest-rate exposure assessment, and
-risk management applications sensitive to changes in the shape of the
-term structure.
+The empirical results suggest that Bayesian stochastic volatility
+improves marginal probabilistic forecasts relative to its
+constant-volatility counterpart, with the largest gains observed for
+curvature at the four-week horizon, while improvements for level and
+slope remain modest. However, AR(1)-GARCH(1,1) achieves comparable,
+marginally lower CRPS across all six factor--horizon combinations, while
+simpler benchmarks remain competitive for short-horizon level forecasts.
+These findings suggest that capturing conditional heteroskedasticity may
+be more consequential for predictive performance than additional
+Bayesian modelling complexity. The study highlights the importance of
+factor-specific volatility modelling and its implications for
+fixed-income risk management, where predictive distributions can inform
+interest-rate scenario analysis and maturity-sensitive exposure
+assessment.
 
 \clearpage
 \chapter*{Acknowledgements}
@@ -311,37 +309,35 @@ representation of these factors
 (\citeproc{ref-diebold2006forecasting}{Diebold \& Li, 2006}).
 Conventional autoregressive factor models generally assume constant
 innovation variances, potentially overlooking changes in uncertainty
-across market conditions. Bayesian stochastic-volatility extensions
-allow innovation variances to evolve dynamically
-(\citeproc{ref-hautsch2012bayesian}{Hautsch \& Yang, 2012}). However,
-their incremental forecasting value may differ across factors because
-level, slope, and curvature exhibit distinct dynamics and maturity
-sensitivities. This motivates the central research question: Does
-Bayesian stochastic volatility improve marginal probabilistic forecasts
-of yield-curve factors, and how does its predictive contribution vary
-across factors and forecast horizons?
-
-The study extracts Nelson--Siegel factors from eight Canadian government
-yield maturities using fixed loadings and cross-sectional least squares,
-then models their dynamics separately. Bayesian autoregressive
-specifications with constant and stochastic volatility are evaluated
-against random-walk and conventional autoregressive benchmarks across
-130 expanding-window forecast origins from 2016 to 2025, at one- and
-four-week horizons. The continuous ranked probability score (CRPS)
-serves as the primary measure of probabilistic forecast quality,
-supplemented by the Dawid--Sebastiani score (DSS), point-forecast
-errors, and marginal calibration diagnostics.
+across market conditions. Both GARCH dynamics
+(\citeproc{ref-bollerslev1986generalized}{Bollerslev, 1986}) and
+Bayesian stochastic-volatility extensions
+(\citeproc{ref-hautsch2012bayesian}{Hautsch \& Yang, 2012}) accommodate
+time-varying innovation uncertainty through different mechanisms.
+However, their incremental forecasting value may differ across factors
+because level, slope, and curvature exhibit distinct dynamics and
+maturity sensitivities. This motivates the central research question:
+Does Bayesian stochastic volatility improve marginal probabilistic
+forecasts of yield-curve factors, and how does its predictive
+contribution vary across factors and forecast horizons?
 
 \section{Contribution and scope}\label{contribution-and-scope}
 
-This study provides a controlled comparison of Bayesian constant- and
-stochastic-volatility DNS factor forecasts. Both specifications share
-the same factor extraction, autoregressive mean dynamics, priors for
-common parameters, and forecast design, isolating the incremental
-contribution of time-varying innovation uncertainty. By evaluating
-predictive distributions separately across factors and horizons, the
-analysis examines whether additional volatility flexibility offers
-comparable forecasting benefits for different yield-curve movements.
+This study evaluates the incremental value of stochastic volatility in
+Bayesian Dynamic Nelson--Siegel factor forecasting. Level, slope, and
+curvature factors are extracted from eight Canadian government yield
+maturities using fixed loadings and cross-sectional least squares, then
+forecast independently at one and four-week horizons across 130
+expanding-window origins during 2016--2025. The Bayesian constant and
+stochastic-volatility specifications share the same factor extraction,
+autoregressive mean dynamics, and priors for common parameters, enabling
+a controlled assessment of time-varying innovation uncertainty.
+Comparisons with random-walk, conventional DNS, and AR(1)-GARCH(1,1)
+benchmarks further assess whether Bayesian stochastic volatility offers
+predictive benefits beyond simpler alternatives. Using CRPS as the
+primary evaluation criterion, supplemented by DSS, point-forecast
+accuracy, and marginal calibration diagnostics, the study examines how
+these benefits vary across yield-curve factors and forecast horizons.
 
 \chapter{Methodology and conceptual framework}\label{sec-literature}
 
@@ -398,56 +394,45 @@ foundation for mixture-based posterior inference.
 
 The present specification introduces factor-specific latent
 log-volatility processes into otherwise matched Bayesian DNS
-autoregressions, without incorporating a leverage effect. The constant-
+autoregressions, without incorporating a leverage effect. The constant
 and stochastic-volatility models share the same factor extraction,
 autoregressive mean structure, priors for common parameters, and
 forecast design. This controlled comparison isolates the incremental
 forecasting contribution of time-varying factor volatility within the
-specified modelling framework. By permitting volatility dynamics to
-differ across level, slope, and curvature, the approach also allows
-their marginal predictive distributions to respond differently to
-changing interest-rate uncertainty.
+Bayesian framework. The AR(1)-GARCH(1,1) benchmark adds a separate,
+conventional conditional-variance comparison without sharing the
+Bayesian prior or parameter-uncertainty treatment. By permitting
+volatility dynamics to differ across level, slope, and curvature, the
+approach also allows their marginal predictive distributions to respond
+differently to changing interest-rate uncertainty.
 
 \section{Probabilistic forecast
 evaluation}\label{probabilistic-forecast-evaluation}
 
-Proper scoring rules provide a principled framework for assessing
-predictive distributions rather than relying exclusively on
-point-forecast accuracy (\citeproc{ref-gneiting2007strictly}{Gneiting \&
-Raftery, 2007}). The primary evaluation criterion is the continuous
-ranked probability score (CRPS), applied separately to each extracted
-factor at one- and four-week horizons. CRPS assesses the agreement
-between a forecast's cumulative distribution and its subsequently
-observed realization, incorporating both predictive concentration and
-calibration.
+Forecast performance is evaluated primarily using the continuous ranked
+probability score (CRPS), a scoring rule that assesses the accuracy and
+calibration of marginal predictive distributions
+(\citeproc{ref-gneiting2007strictly}{Gneiting \& Raftery, 2007}). The
+Dawid--Sebastiani score (DSS) (\citeproc{ref-dawid1999coherent}{Dawid \&
+Sebastiani, 1999}) complements CRPS by evaluating predictive means and
+variances through a Gaussian quasi-likelihood criterion. Root mean
+squared error (RMSE) and mean absolute error (MAE) assess point-forecast
+accuracy, while probability integral transform (PIT) diagnostics and
+prediction-interval coverage examine marginal calibration.
 
-The Dawid--Sebastiani score (DSS)
-(\citeproc{ref-dawid1999coherent}{Dawid \& Sebastiani, 1999}) provides a
-complementary assessment of predictive means and variances. In its
-univariate form, DSS corresponds to a Gaussian quasi-likelihood
-(QLIKE-type) loss, although it does not represent the exact negative log
-predictive density for non-Gaussian posterior mixtures. Root mean
-squared error (RMSE), probability integral transform (PIT) diagnostics,
-and central prediction-interval coverage provide additional evidence on
-point accuracy and marginal calibration. Because factor dynamics are
-estimated independently, the present evaluation focuses on marginal
-distributions rather than jointly modelling cross-factor dependence.
-Accordingly, no multivariate Energy Score or joint yield-curve coverage
-assessment is reported.
-
-The primary statistical comparison examines paired CRPS differences
-between Bayesian DNS with stochastic volatility (M3) and its
-constant-volatility counterpart (M2), separately for each factor and
-forecast horizon. A stationary bootstrap
+The primary statistical comparison evaluates paired CRPS differences
+between Bayesian stochastic-volatility DNS (M3) and its
+constant-volatility counterpart (M2) across three factors and two
+forecast horizons. A stationary bootstrap
 (\citeproc{ref-politis1994stationary}{Politis \& Romano, 1994}) accounts
-for temporal dependence across common forecast origins, while Holm
-adjustment controls the family-wise error rate across the six
-factor--horizon comparisons. Conventional factor random-walk and
-autoregressive benchmarks provide additional descriptive context.
-Together, these evaluations assess the extent to which stochastic
-volatility contributes to marginal predictive performance and whether
-the observed improvements differ across yield-curve factors and
-forecasting horizons.
+for temporal dependence across forecast origins, while Holm adjustment
+controls for multiple comparisons. Random-walk (M0) and conventional DNS
+(M1) benchmarks establish baseline predictive performance, whereas
+AR(1)-GARCH(1,1) assesses whether Bayesian stochastic volatility offers
+improvements beyond conventional conditional heteroskedasticity
+modelling. These supplementary comparisons are descriptive,
+distinguishing the value of time-varying volatility from the additional
+complexity of Bayesian inference.
 
 \chapter{Data and information sets}\label{sec-data}
 
@@ -566,11 +551,9 @@ y_t(\tau)={}&L_t
 
 Here, \(L_t\) captures movements common to all maturities, \(S_t\)
 governs the short-to-long maturity contrast, and \(C_t\) captures
-curvature concentrated around intermediate maturities. These
-interpretations arise from the functional form of the maturity loadings
-rather than from formal economic identification. The decay parameter
-\(\lambda>0\) determines the shape of the slope and curvature loadings,
-defined as
+curvature concentrated around intermediate maturities. The decay
+parameter \(\lambda>0\) determines the shape of the slope and curvature
+loadings, defined as
 
 \begin{equation}\protect\phantomsection\label{eq-loadings}{
 s(\tau;\lambda)=\frac{1-e^{-\lambda\tau}}{\lambda\tau},
@@ -617,6 +600,36 @@ imply independence across residual maturities or over time. Indeed, the
 initial training sample exhibits substantial cross-maturity residual
 correlation, with a mean absolute pairwise correlation of approximately
 0.660.
+
+Figure~\ref{fig-factor-histories} presents the historical trajectories
+of the three extracted Nelson--Siegel factors over 2000--2025. All
+factors are obtained from the same fixed-loading cross-sectional OLS
+procedure and are expressed in percentage points. The vertical dashed
+line distinguishes the initial estimation sample (2000--2015) from the
+subsequent out-of-sample evaluation period (2016--2025).
+
+\begin{figure}
+
+\centering{
+
+\includegraphics[width=0.95\linewidth,height=\textheight,keepaspectratio]{../figures/factor_probabilistic_20261116/extracted_factor_histories.pdf}
+
+}
+
+\caption{\label{fig-factor-histories}Historical level, slope, and
+curvature factors extracted from eight Canadian government zero-coupon
+yield maturities using fixed Nelson--Siegel loadings. The shaded region
+denotes the out-of-sample evaluation period beginning in 2016.}
+
+\end{figure}%
+
+The level factor exhibits persistent, gradual movements, whereas the
+slope factor changes sign repeatedly under the adopted short-end loading
+convention. Curvature displays more pronounced short-run fluctuations,
+reflecting variation in intermediate-maturity yield-curve shape. These
+distinct historical trajectories motivate evaluating factor-specific
+predictive distributions rather than assuming uniform forecasting
+performance across the three components.
 
 The subsequent Bayesian analysis treats the extracted factors as
 observed proxies and models their time-series dynamics rather than
@@ -877,8 +890,10 @@ factors.
 benchmarks}\label{factor-level-forecast-benchmarks}
 
 To assess the incremental forecasting value of Bayesian inference and
-stochastic volatility, the study compares four specifications under
-identical forecast origins and horizons.
+stochastic volatility, the study compares five marginal
+factor-forecasting specifications at identical forecast origins and
+horizons. All five models forecast factors independently, without
+explicitly modelling cross-factor dependence.
 
 The simplest benchmark (M0) is a factor random walk, which assumes that
 each factor's expected future value equals its current observation. Its
@@ -898,26 +913,44 @@ linearly with the forecast horizon under the random-walk assumption.
 
 The conventional DNS benchmark (M1) instead models each factor using the
 unrestricted OLS AR(1) specification in Equation~\ref{eq-ar}, with
-forecast moments given by Equation~\ref{eq-ar-moments}. The Bayesian
+Gaussian forecast moments in Equation~\ref{eq-ar-moments}. The Bayesian
 constant-volatility model (M2) incorporates posterior parameter
 uncertainty under stationary factor dynamics, while the
 stochastic-volatility extension (M3) additionally allows innovation
 uncertainty to evolve over time.
 
-All four models produce marginal predictive distributions for level,
-slope, and curvature at one- and four-week horizons. The classical
-specifications use Gaussian plug-in forecasts, whereas the Bayesian
-models integrate over accepted posterior parameter draws and future
-factor innovations. Comparisons are conducted at common forecast
-origins, ensuring that differences in forecast performance are assessed
-against the same factor realizations and market periods.
+To benchmark the need for Bayesian stochastic volatility against a
+conventional conditional-heteroskedasticity model, AR-GARCH fits a
+Gaussian AR(1)-GARCH(1,1) model independently to each extracted factor
+\(j\in\{L,S,C\}\) (\citeproc{ref-bollerslev1986generalized}{Bollerslev,
+1986}):
+
+\begin{equation}\protect\phantomsection\label{eq-ar-garch}{
+\begin{aligned}
+\tilde f_{j,t}&=a_j+b_j\tilde f_{j,t-1}+\varepsilon_{j,t},
+&\varepsilon_{j,t}&=\sigma_{j,t}z_{j,t},\quad z_{j,t}\sim N(0,1),\\
+\sigma_{j,t}^{2}&=\omega_j+\alpha_j\varepsilon_{j,t-1}^{2}
++\beta_j\sigma_{j,t-1}^{2},
+&\omega_j&>0,\quad\alpha_j,\beta_j\geq0.
+\end{aligned}
+}\end{equation}
+
+Parameters are re-estimated by maximum likelihood at each forecast
+origin using the expanding factor history. The GARCH variance process is
+mean-reverting when \(\alpha_j+\beta_j<1\), although values near unity
+indicate highly persistent volatility. One-week predictive distributions
+are conditionally Gaussian, while four-week distributions are obtained
+through recursive simulation of the autoregressive and
+conditional-variance dynamics. Unlike the Bayesian specifications (M2
+and M3), AR-GARCH conditions on estimated parameters without
+incorporating parameter uncertainty.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Forecasting specifications and their roles in the
-comparison.}\label{tbl-ladder}\tabularnewline
+\caption{Five marginal factor-forecasting
+specifications.}\label{tbl-ladder}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Model
@@ -948,42 +981,39 @@ M2 & Bayesian two-step DNS; constant factor volatility & Bayesian
 control \\
 M3 & Bayesian two-step DNS; finite-moment stochastic factor volatility &
 Bayesian extension \\
+AR-GARCH & Gaussian AR(1)-GARCH(1,1), fitted separately by factor &
+Conventional time-varying variance benchmark \\
 \end{longtable}
 
 \chapter{Experimental design and evaluation}\label{sec-design}
 
 \section{Expanding-window design}\label{expanding-window-design}
 
-The forecasting experiment uses an expanding-window design to assess the
-out-of-sample probabilistic performance of the level, slope, and
-curvature factors. The initial estimation period spans 2000--2015,
-comprising 835 weekly observations used to select the Nelson--Siegel
-decay parameter and calibrate the Bayesian priors. The evaluation period
-covers 2016--2025, with 130 common forecast origins selected at
-intervals of four weekly observations. At each origin, the estimation
-window expands to incorporate subsequent observations, and forecasts are
-generated one and four weekly observations ahead. All models use
-information dated no later than the corresponding forecast origin,
-ensuring consistent historical information sets and directly comparable
-forecast targets.
+The out-of-sample experiment follows an expanding-window forecasting
+procedure with 130 common forecast origins, spaced four weekly
+observations apart over 2016--2025. At each origin, the estimation
+window incorporates all observations available up to that date, and each
+model generates one and four-week-ahead predictive distributions for the
+three extracted factors. Forecasts are evaluated against identical
+realized outcomes, ensuring comparability across models without
+look-ahead information.
 
-The experiment evaluates four factor-forecasting specifications: a
-random walk (M0), a conventional autoregressive model (M1), Bayesian DNS
-with constant volatility (M2), and Bayesian DNS with stochastic
-volatility (M3). Across three factors, two forecast horizons, and 130
-origins, the design produces 3,120 marginal factor forecasts, of which
-1,560 correspond to the Bayesian specifications. Bayesian inference uses
-four Markov chain Monte Carlo (MCMC) chains per model and factor, with
-3,000 warm-up iterations and 6,000 retained posterior draws per chain.
+All five models are evaluated under this common design, producing 3,900
+marginal forecasts across three factors and two horizons. Model
+parameters are re-estimated at each origin: conventional benchmarks use
+historical plug-in estimates, AR-GARCH uses maximum likelihood, and
+Bayesian specifications use posterior inference with four MCMC chains,
+each comprising 3,000 warm-up and 6,000 retained draws. The evaluation
+includes 390 successful AR-GARCH fits, while the original 1,560 Bayesian
+forecasts remain unchanged.
 
-For the classical benchmarks, predictive means and variances are
-obtained from the fitted model parameters. The random-walk variance is
-estimated from historical weekly factor differences and scaled by the
-forecast horizon, whereas the autoregressive benchmark uses unrestricted
-ordinary least squares (OLS) estimates and the mean squared fitted
-innovation residual. For the Bayesian models, forecast moments integrate
-over posterior parameter uncertainty using the law of total expectation
-and variance:
+Predictive distributions are constructed according to each model's
+uncertainty specification. M0 and M1 yield analytical Gaussian
+forecasts, while AR-GARCH uses a conditional Gaussian distribution at
+one week and recursive simulation at four weeks. Bayesian models
+integrate over posterior parameter uncertainty and future innovations,
+including latent volatility dynamics under M3. Their predictive moments
+are obtained through the law of total expectation and variance:
 
 \[
 \begin{aligned}
@@ -1028,13 +1058,12 @@ CRPS evaluates the full marginal predictive distribution, making it
 particularly suitable for assessing the contribution of time-varying
 factor volatility.
 
-For the Gaussian random-walk and autoregressive benchmarks, CRPS is
-evaluated analytically. For the Bayesian models, its expectation terms
-are estimated using two independent sets of 8,192 posterior-predictive
-factor scenarios per origin, factor, and horizon. Eight batches of 1,024
-scenario pairs are used to assess Monte Carlo precision. Because the
-extracted factors are expressed in percentage points, CRPS retains the
-same measurement units.
+CRPS is computed analytically for the Gaussian benchmarks (M0, M1, and
+one-week AR-GARCH). For Bayesian models, CRPS is estimated from two
+independent sets of 8,192 posterior-predictive draws, while four-week
+AR-GARCH uses 8,192 simulated paths and an unbiased empirical estimator.
+Monte Carlo precision is assessed using eight batches of 1,024 draws or
+draw pairs. All scores are expressed in factor percentage points.
 
 The Dawid--Sebastiani score (DSS) provides a complementary evaluation of
 predictive means and variances (\citeproc{ref-dawid1999coherent}{Dawid
@@ -1052,9 +1081,9 @@ The log-variance term and the variance-standardized squared error
 jointly assess forecast dispersion and accuracy. For Gaussian predictive
 distributions, DSS is equivalent to twice the negative log predictive
 density up to the additive constant \(\log(2\pi)\). For Bayesian
-posterior-predictive mixtures, it remains a moment-based Gaussian
-quasi-likelihood (QLIKE-type) score rather than the exact negative log
-predictive density.
+posterior-predictive mixtures and the non-Gaussian multiweek GARCH
+predictive distributions, it remains a moment-based Gaussian QLIKE-type
+score rather than the exact negative log predictive density.
 
 Although DSS resembles the QLIKE loss used in volatility-forecast
 evaluation, the present analysis does not construct a separate
@@ -1084,17 +1113,18 @@ For the Bayesian constant-volatility model, PIT values are computed by
 averaging conditional Gaussian cumulative distribution functions over
 posterior parameter draws. For the stochastic-volatility model, the
 calculation additionally integrates over simulated future volatility
-paths, accounting for uncertainty in the factor innovation variance
-throughout the forecast horizon.
+paths. The one-week AR-GARCH PIT uses its conditional Gaussian CDF; the
+four-week AR-GARCH PIT is estimated from the recursively simulated
+factor distribution.
 
 Central 50\%, 80\%, and 90\% prediction intervals are obtained
-analytically for the Gaussian benchmarks and from posterior-predictive
-quantiles for the Bayesian models. Empirical coverage and average
-interval width are reported separately for each factor and horizon. PIT
-distributions provide complementary evidence on marginal calibration,
-while interval width measures forecast concentration. These diagnostics
-are interpreted descriptively given the finite number of forecast
-origins.
+analytically for M0, M1, and one-week AR-GARCH, and from simulated
+predictive quantiles for the Bayesian models and four-week AR-GARCH.
+Empirical coverage and average interval width are reported separately
+for each factor and horizon. PIT distributions provide complementary
+evidence on marginal calibration, while interval width measures forecast
+concentration. These diagnostics are interpreted descriptively given the
+finite number of forecast origins.
 
 Point-forecast accuracy is evaluated using root mean squared error
 (RMSE) and mean absolute error (MAE), calculated from predictive means:
@@ -1157,8 +1187,7 @@ Because the analysis examines three factors at two horizons, the six
 primary p-values are adjusted using Holm's multiple-testing procedure to
 control the family-wise error rate. Additional bootstrap results using
 expected block lengths of eight and twelve origins assess sensitivity to
-the assumed dependence structure. Comparisons with the classical
-random-walk and autoregressive benchmarks are reported descriptively.
+the assumed dependence structure.
 
 Monte Carlo simulation introduces an additional source of numerical
 uncertainty. For each Bayesian forecast, the CRPS Monte Carlo standard
@@ -1181,13 +1210,13 @@ with variation across forecast origins.
 
 Posterior simulation quality is assessed using rank-normalized split
 \(\widehat R\) and bulk and tail effective sample sizes, following
-Vehtari et al. (\citeproc{ref-vehtari2021rank}{2021}). These diagnostics
-evaluate convergence and the reliability of posterior simulation, while
-the predictive scores and calibration measures assess forecasting
-performance. Statistical conclusions are conditional on the specified
-factor representations, model assumptions, and evaluation sample; the
-paired tests do not independently establish statistically significant
-differences in the effects of stochastic volatility between factors.
+Vehtari et al. (\citeproc{ref-vehtari2021rank}{2021}). GARCH numerical
+diagnostics additionally record optimizer convergence, autoregressive
+persistence, and GARCH variance persistence \(\alpha_j+\beta_j\). These
+diagnostics evaluate numerical reliability, while predictive scores and
+calibration measures assess forecasting performance. Statistical
+conclusions are conditional on the specified factor representations,
+model assumptions, and evaluation sample.
 
 \chapter{Empirical results}\label{sec-results}
 
@@ -1195,15 +1224,16 @@ differences in the effects of stochastic volatility between factors.
 diagnostics}\label{forecast-sample-and-posterior-diagnostics}
 
 The evaluation comprises 130 forecast origins between January 2016 and
-November 2025, covering one- and four-week horizons. Across four models
-and three Nelson--Siegel factors, the experiment produces 3,120 marginal
-forecasts, including 1,560 Bayesian forecasts. Posterior inference
-satisfies the adopted numerical acceptance criteria: the maximum
-rank-normalized \(\widehat R\) is 1.00965, and minimum bulk and tail
-effective sample sizes exceed 1,000 and 2,000, respectively. These
-diagnostics support the numerical reliability of posterior simulation
-without implying predictive calibration
-(\citeproc{ref-vehtari2021rank}{Vehtari et al., 2021}).
+November 2025, covering one- and four-week horizons. Across five models
+and three Nelson--Siegel factors, the combined study evaluates 3,900
+marginal forecasts, including 1,560 accepted Bayesian forecasts and 780
+AR-GARCH forecasts. All 390 factor-origin GARCH optimizations reported
+convergence. Posterior inference satisfies the adopted numerical
+acceptance criteria: the maximum rank-normalized \(\widehat R\) is
+1.00965, and minimum bulk and tail effective sample sizes exceed 1,000
+and 2,000, respectively. These diagnostics support the numerical
+reliability of posterior simulation without implying predictive
+calibration (\citeproc{ref-vehtari2021rank}{Vehtari et al., 2021}).
 
 \section{Posterior parameter
 behavior}\label{posterior-parameter-behavior}
@@ -1284,121 +1314,219 @@ establish robustness to alternative prior specifications.
 performance}\label{marginal-probabilistic-forecasting-performance}
 
 Table~\ref{tbl-factor-crps} reports average CRPS for each factor and
-horizon. Stochastic-volatility DNS (M3) achieves lower CRPS than the
-Bayesian constant-volatility specification (M2) across all six
-comparisons, with the largest improvements observed for curvature.
+forecast horizon. The Bayesian stochastic-volatility model (M3) improves
+upon its constant-volatility counterpart (M2) in all six factor--horizon
+combinations, with the largest improvements observed for curvature. The
+AR-GARCH benchmark provides an external comparison to assess whether
+similar probabilistic forecasting performance can be achieved using a
+conventional conditional heteroskedasticity specification.
 
-\begin{longtable}[]{@{}lrrrrr@{}}
-\caption{Mean marginal CRPS across 130 forecast origins, in factor
-percentage points. Lower values indicate better probabilistic
-forecasts.}\label{tbl-factor-crps}\tabularnewline
+\begin{longtable}[]{@{}lrrrrrr@{}}
+\caption{Mean marginal CRPS across 130 common origins, in factor
+percentage points; lower is
+better.}\label{tbl-factor-crps}\tabularnewline
 \toprule\noalign{}
-Factor & Horizon & M0 & M1 & M2 & M3 \\
+Factor & Horizon & M0 & M1 & M2 & M3 & AR-GARCH \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-Factor & Horizon & M0 & M1 & M2 & M3 \\
+Factor & Horizon & M0 & M1 & M2 & M3 & AR-GARCH \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Level & 1 & 0.05964 & 0.05962 & 0.05980 & 0.05968 \\
-Level & 4 & 0.11277 & 0.11280 & 0.11249 & 0.11185 \\
-Slope & 1 & 0.06836 & 0.06861 & 0.06870 & 0.06830 \\
-Slope & 4 & 0.14587 & 0.14684 & 0.14624 & 0.14411 \\
-Curvature & 1 & 0.15826 & 0.15614 & 0.15639 & 0.15102 \\
-Curvature & 4 & 0.32748 & 0.31702 & 0.31744 & 0.30195 \\
+Level & 1 & 0.05964 & 0.05962 & 0.05980 & 0.05968 & 0.05960 \\
+Level & 4 & 0.11277 & 0.11280 & 0.11249 & 0.11185 & 0.11178 \\
+Slope & 1 & 0.06836 & 0.06861 & 0.06870 & 0.06830 & 0.06822 \\
+Slope & 4 & 0.14587 & 0.14684 & 0.14624 & 0.14411 & 0.14406 \\
+Curvature & 1 & 0.15826 & 0.15614 & 0.15639 & 0.15102 & 0.15039 \\
+Curvature & 4 & 0.32748 & 0.31702 & 0.31744 & 0.30195 & 0.30112 \\
 \end{longtable}
 
-Relative to constant volatility, curvature CRPS decreases by
-approximately 3.4\% at one week and 4.9\% at four weeks, whereas
-improvements for level and slope are considerably smaller. The
-stochastic-volatility specification also records the lowest curvature
-CRPS among all four models. These findings suggest that the incremental
-value of time-varying volatility is most apparent for uncertainty
-surrounding changes in yield-curve shape. Formal inference on these
-differences is presented below.
+Relative to M2, M3 reduces curvature CRPS by approximately 3.4\% at one
+week and 4.9\% at four weeks, whereas improvements for level and slope
+are comparatively modest. Nevertheless, AR-GARCH achieves the lowest
+average CRPS in all six groups. Its advantage over M3 is small, with
+absolute differences below 0.001 factor percentage points and relative
+reductions of approximately 0.03\%--0.42\%. Thus, while stochastic
+volatility improves probabilistic performance within the matched
+Bayesian comparison, the results do not establish superiority over a
+conventional GARCH-based volatility model.
 
-As a complementary distributional measure, the DSS evaluates predictive
-means and variances, while MAE assesses point-forecast accuracy.
-Table~\ref{tbl-factor-dss-mae} summarizes both metrics for the two
-Bayesian specifications.
+The Dawid--Sebastiani score (DSS) provides a complementary assessment of
+predictive means and variances, while mean absolute error (MAE)
+evaluates point-forecast accuracy. Table~\ref{tbl-factor-dss-mae}
+compares these metrics across M2, M3, and AR-GARCH (A-G) using the same
+forecast origins.
 
-\begin{longtable}[]{@{}lrrrrr@{}}
-\caption{Mean DSS and MAE across 130 origins for Bayesian
-constant-volatility (M2) and stochastic-volatility (M3) DNS. Lower
-values are preferable for both metrics; MAE is measured in factor
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.0968}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1290}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1290}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1290}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1290}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1290}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1290}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1290}}@{}}
+\caption{Mean marginal DSS and MAE across 130 common forecast origins.
+Lower values are preferable for both metrics; MAE is measured in factor
 percentage points.}\label{tbl-factor-dss-mae}\tabularnewline
 \toprule\noalign{}
-Factor & Horizon & M2 DSS & M3 DSS & M2 MAE & M3 MAE \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Factor
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Horizon
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M2 DSS
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M3 DSS
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+A-G DSS
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M2 MAE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M3 MAE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+A-G MAE
+\end{minipage} \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-Factor & Horizon & M2 DSS & M3 DSS & M2 MAE & M3 MAE \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Factor
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Horizon
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M2 DSS
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M3 DSS
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+A-G DSS
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M2 MAE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M3 MAE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+A-G MAE
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Level & 1 & −3.415 & −3.419 & 0.0830 & 0.0830 \\
-Level & 4 & −2.188 & −2.261 & 0.1581 & 0.1581 \\
-Slope & 1 & −3.161 & −3.192 & 0.0949 & 0.0947 \\
-Slope & 4 & −1.528 & −1.598 & 0.2018 & 0.2000 \\
-Curvature & 1 & −1.455 & −1.563 & 0.2076 & 0.2083 \\
-Curvature & 4 & 0.003 & −0.080 & 0.4166 & 0.4181 \\
+Level & 1 & −3.415 & −3.419 & −3.428 & 0.0830 & 0.0830 & 0.0829 \\
+Level & 4 & −2.188 & −2.261 & −2.266 & 0.1581 & 0.1581 & 0.1578 \\
+Slope & 1 & −3.161 & −3.192 & −3.170 & 0.0949 & 0.0947 & 0.0943 \\
+Slope & 4 & −1.528 & −1.598 & −1.587 & 0.2018 & 0.2000 & 0.1996 \\
+Curvature & 1 & −1.455 & −1.563 & −1.643 & 0.2076 & 0.2083 & 0.2077 \\
+Curvature & 4 & 0.003 & −0.080 & −0.220 & 0.4166 & 0.4181 & 0.4179 \\
 \end{longtable}
 
-M3 achieves lower DSS across all six factor--horizon comparisons,
-providing descriptive support for the CRPS findings. In contrast, MAE
-differences are small and do not consistently favor stochastic
-volatility. The results suggest that its forecasting contribution
-primarily concerns predictive uncertainty rather than conditional mean
-accuracy. DSS differences are reported as supplementary evidence without
-separate significance testing.
+M3 achieves lower DSS than M2 in all six groups, consistent with
+improvements in the predictive mean--variance representation. Relative
+to M3, AR-GARCH obtains lower DSS in four of six groups, particularly
+for curvature, while M3 performs better for slope at both horizons.
+AR-GARCH also achieves the lowest MAE in four groups, covering level and
+slope at both horizons, although the absolute differences among models
+are small. For curvature, M2 retains a slight MAE advantage despite its
+weaker probabilistic scores.
+
+These findings indicate that improvements in predictive uncertainty do
+not necessarily translate into more accurate conditional mean forecasts.
+In particular, the curvature results demonstrate that both Bayesian
+stochastic volatility and AR-GARCH can improve distributional scores
+without producing corresponding reductions in point-forecast errors.
 
 \section{Point accuracy and marginal
 calibration}\label{point-accuracy-and-marginal-calibration}
 
-Probabilistic improvements do not necessarily coincide with improvements
-in conditional mean forecasts. Table~\ref{tbl-factor-auxiliary} compares
-RMSE and nominal 90\% interval coverage for the two Bayesian
-specifications.
+Probabilistic forecasting improvements need not coincide with gains in
+point accuracy or nominal interval coverage.
+Table~\ref{tbl-factor-auxiliary} compares RMSE and empirical coverage of
+central 90\% prediction intervals across M2, M3, and AR-GARCH.
 
-\begin{longtable}[]{@{}lrrrrr@{}}
-\caption{Bayesian point accuracy and marginal calibration across 130
-origins. RMSE is in factor percentage points; nominal interval coverage
-is 90\%.}\label{tbl-factor-auxiliary}\tabularnewline
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.0968}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1290}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1290}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1290}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1290}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1290}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1290}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1290}}@{}}
+\caption{Point accuracy and marginal calibration across 130 common
+forecast origins. RMSE is measured in factor percentage points; coverage
+refers to nominal central 90\% prediction intervals. Lower RMSE and
+coverage closer to 90\% are
+preferable.}\label{tbl-factor-auxiliary}\tabularnewline
 \toprule\noalign{}
-Factor & Horizon & M2 RMSE & M3 RMSE & M2 coverage & M3 coverage \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Factor
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Horizon
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M2 RMSE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M3 RMSE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+AR-GARCH RMSE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M2 coverage
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M3 coverage
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+AR-GARCH coverage
+\end{minipage} \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-Factor & Horizon & M2 RMSE & M3 RMSE & M2 coverage & M3 coverage \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Factor
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Horizon
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M2 RMSE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M3 RMSE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+AR-GARCH RMSE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M2 coverage
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+M3 coverage
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+AR-GARCH coverage
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Level & 1 & 0.1066 & 0.1065 & 83.8\% & 86.2\% \\
-Level & 4 & 0.2019 & 0.2021 & 85.4\% & 89.2\% \\
-Slope & 1 & 0.1246 & 0.1246 & 90.0\% & 90.0\% \\
-Slope & 4 & 0.2779 & 0.2766 & 90.8\% & 88.5\% \\
-Curvature & 1 & 0.2786 & 0.2798 & 95.4\% & 88.5\% \\
-Curvature & 4 & 0.5890 & 0.5918 & 95.4\% & 93.1\% \\
+Level & 1 & 0.1066 & 0.1065 & 0.1063 & 83.8\% & 86.2\% & 86.9\% \\
+Level & 4 & 0.2019 & 0.2021 & 0.2022 & 85.4\% & 89.2\% & 90.0\% \\
+Slope & 1 & 0.1246 & 0.1246 & 0.1241 & 90.0\% & 90.0\% & 90.0\% \\
+Slope & 4 & 0.2779 & 0.2766 & 0.2768 & 90.8\% & 88.5\% & 88.5\% \\
+Curvature & 1 & 0.2786 & 0.2798 & 0.2796 & 95.4\% & 88.5\% & 88.5\% \\
+Curvature & 4 & 0.5890 & 0.5918 & 0.5913 & 95.4\% & 93.1\% & 93.1\% \\
 \end{longtable}
 
-Point-forecast accuracy is broadly similar between the two Bayesian
-models. Notably, M3's improvement in four-week curvature CRPS occurs
-alongside a slightly higher RMSE, reinforcing that its distributional
-advantage does not arise from more accurate conditional mean predictions
-alone.
+Point-forecast accuracy is broadly similar among the Bayesian models and
+AR-GARCH. At four-week curvature, classical M1 has lower RMSE than
+either M3 or AR-GARCH, despite their lower CRPS. This reinforces that
+the distributional improvements do not arise from consistently more
+accurate conditional means.
 
-Coverage results vary across factors. Stochastic volatility brings
-curvature coverage closer to the nominal 90\% level at both horizons,
-while level and slope exhibit mixed patterns. At four weeks, curvature's
-nominal 50\% interval coverage also moves from 70.0\% under M2 to 54.6\%
-under M3, indicating substantially reduced central overcoverage.
+Coverage results vary across factors. M3 brings curvature's 90\%
+coverage closer to nominal at both horizons relative to M2, while level
+and slope exhibit mixed changes. AR-GARCH has 90\% coverage of 88.5\%
+for one-week curvature and 93.1\% for four-week curvature, matching M3
+after rounding, but its level and slope coverage is not uniformly closer
+to nominal. At four weeks, curvature's nominal 50\% coverage moves from
+70.0\% under M2 to 54.6\% under M3, indicating reduced central
+overcoverage. These marginal diagnostics do not establish comprehensive
+distributional calibration.
 
-Marginal calibration is further examined through the probability
-integral transform (PIT) distributions in Figure~\ref{fig-factor-pit}.
+Marginal calibration for the original M0--M3 specifications is further
+examined through the probability integral transform (PIT) distributions
+in Figure~\ref{fig-factor-pit}.
 
 \begin{figure}
 
@@ -1457,8 +1585,9 @@ Curvature exhibits the largest estimated CRPS reductions, and its
 unadjusted confidence intervals exclude zero at both horizons. However,
 neither comparison remains significant after adjustment for multiple
 testing. The results therefore provide suggestive evidence of a
-curvature-specific forecasting benefit rather than confirmatory evidence
-of stochastic-volatility superiority.
+curvature-specific forecasting benefit within the matched Bayesian
+comparison rather than confirmatory evidence of stochastic-volatility
+superiority.
 
 The estimated curvature improvements are substantially larger than their
 corresponding scenario-simulation Monte Carlo standard errors,
@@ -1490,146 +1619,113 @@ a calibrated portfolio VaR or joint yield-curve risk forecast.
 \section{Interpretation of the forecasting
 results}\label{interpretation-of-the-forecasting-results}
 
-The central contribution of this study is to evaluate the incremental
-value of stochastic volatility at the level of individual Nelson--Siegel
-risk factors, rather than assessing yield-curve forecasts solely through
-aggregate accuracy. By comparing Bayesian constant- and
-stochastic-volatility specifications under matched factor extraction,
-mean dynamics, prior assumptions, and forecast origins, the analysis
-provides a controlled assessment of how time-varying innovation
-uncertainty affects marginal predictive distributions.
+This study evaluates the incremental value of stochastic volatility in
+marginal Nelson--Siegel factor forecasting through a controlled Bayesian
+comparison and conventional benchmarks. Holding factor extraction,
+autoregressive dynamics, and common priors fixed between M2 and M3
+isolates the contribution of time-varying innovation uncertainty within
+the Bayesian framework.
 
-The results reveal a distinct empirical pattern. Improvements in CRPS
-are negligible for level, modest for slope, and largest for curvature,
-where stochastic volatility reduces average CRPS by approximately 3.4\%
-at one week and 4.9\% at four weeks. These reductions exceed estimated
-Monte Carlo simulation error, suggesting that the observed differences
-are not artifacts of finite predictive simulation. However, neither
-curvature comparison remains statistically significant after Holm
-adjustment, and cross-factor heterogeneity has not been formally tested.
-The evidence therefore suggests a potentially greater role for
-stochastic volatility in forecasting curvature uncertainty, rather than
-establishing a universal or statistically confirmed factor-specific
-advantage.
+The results show that the estimated forecasting benefits are
+factor-dependent. Bayesian stochastic volatility reduces mean CRPS
+relative to its constant-volatility counterpart by approximately 3.4\%
+for one-week curvature forecasts and 4.9\% at four weeks, while
+improvements for level and slope are substantially smaller. The
+conventional AR-GARCH benchmark achieves similarly strong probabilistic
+performance, with marginally lower CRPS across all six factor--horizon
+combinations. This suggests that capturing conditional
+heteroskedasticity is a key source of predictive improvement, while the
+additional flexibility of Bayesian latent-volatility inference does not
+necessarily translate into superior forecasting performance.
 
-Importantly, the curvature improvements are not accompanied by
-corresponding gains in point-forecast accuracy. This distinction
-illustrates why evaluating predictive distributions is valuable: models
-with similar conditional mean forecasts can provide different
-assessments of uncertainty. The findings consequently support examining
-probabilistic performance as a separate dimension of yield-curve
-forecasting, particularly when forecasting uncertainty is itself
-relevant to financial decisions.
+The limited changes in point-forecast accuracy further indicate that the
+principal contribution of volatility modelling lies in characterizing
+predictive uncertainty rather than improving expected factor movements.
+Together, these findings support a factor-specific approach to model
+selection, particularly for curvature-related yield-curve risks, where
+forecasting changes in uncertainty may offer greater value than
+increasing model complexity uniformly across factors.
 
 \section{Implications for fixed-income risk
 management}\label{implications-for-fixed-income-risk-management}
 
-The factor-level interpretation provides a direct connection between
-statistical forecasting and fixed-income risk analysis. Level, slope,
-and curvature represent different patterns of yield-curve movements,
-with potentially different implications for maturity-specific exposures,
-hedging strategies, and interest-rate scenarios. A model that
-characterizes uncertainty in these movements can therefore offer
-information beyond the expected direction of interest rates.
+The findings highlight the practical importance of distinguishing
+uncertainty across yield-curve risk factors. Level, slope, and curvature
+correspond to different maturity-loading patterns, making their
+predictive distributions relevant to different forms of interest-rate
+exposure. The stronger probabilistic improvements for curvature suggest
+particular value in modelling time-varying uncertainty associated with
+non-parallel yield-curve movements and intermediate-maturity exposures.
 
-The relatively larger curvature improvements are particularly relevant
-to exposures sensitive to changes in the intermediate portion of the
-yield curve. The empirical results suggest that explicitly modelling
-time-varying volatility may be more informative for these shape-related
-movements than for approximately parallel shifts. Conversely, the
-competitive performance of random-walk and autoregressive benchmarks for
-level and slope indicates that additional model complexity does not
-necessarily provide commensurate forecasting benefits for every risk
-factor.
-
-This distinction has practical implications for model development.
-Rather than applying increasingly complex volatility specifications
-uniformly across all yield-curve factors, financial institutions may
-benefit from evaluating their incremental predictive contribution
-separately. The duration-based illustration further demonstrates how
-marginal factor distributions can be translated into interpretable
-interest-rate exposure ranges. These applications motivate the use of
-probabilistic factor forecasts as components of risk analysis, although
-their economic value in actual hedging or portfolio decisions has not
-been directly tested.
+The comparable performance of Bayesian SV and AR-GARCH also offers an
+important consideration for practical model selection. Effective
+uncertainty forecasting need not require the most computationally
+sophisticated specification. Conventional conditional-volatility models
+may provide competitive predictive distributions, while Bayesian methods
+offer a framework for incorporating parameter and latent-state
+uncertainty. The factor-isolated duration illustration further
+demonstrates how these distributions can be translated into
+interpretable interest-rate exposure ranges, connecting probabilistic
+forecasting to scenario-based fixed-income risk assessment.
 
 \section{Modelling assumptions and statistical
 limitations}\label{modelling-assumptions-and-statistical-limitations}
 
-The analysis remains conditional on the two-step DNS representation.
-Factors are extracted using fixed Nelson--Siegel loadings and
-subsequently treated as observed inputs, without propagating uncertainty
-in factor extraction or the selected decay parameter. Moreover, the
-factor models are estimated independently, so cross-factor dependence is
-not represented in the predictive distributions. Consequently, the
-results support marginal factor forecasting and factor-isolated
-sensitivities, but not calibrated joint yield-curve scenarios, portfolio
-value-at-risk, or expected shortfall.
+The analysis adopts a two-step DNS framework with fixed maturity
+loadings and independently modelled factors. Consequently, predictive
+distributions are conditional on the extracted factor series and do not
+incorporate factor-extraction uncertainty or cross-factor dependence.
+The resulting forecasts support marginal risk-factor analysis rather
+than fully joint yield-curve or portfolio risk distributions.
 
-The stochastic-volatility specification captures time variation in
-innovation variance but retains Gaussian conditional innovations,
-independent factor dynamics, and no leverage effects. Training-sample
-residual diagnostics indicate conditional heteroskedasticity and
-departures from Gaussianity, supporting the investigation of volatility
-dynamics without establishing that the chosen specification fully
-explains those features. Although stochastic volatility can generate
-heavy-tailed marginal distributions through variance mixtures, it does
-not directly accommodate conditional asymmetry or more general
-innovation distributions.
+Both stochastic-volatility approaches assume conditionally Gaussian
+innovations, but differ in volatility dynamics and parameter-uncertainty
+treatment. The Bayesian specification relies on training-calibrated
+priors, while AR-GARCH uses maximum-likelihood plug-in estimates.
+Moreover, although all 390 AR-GARCH rolling optimizations converged,
+level and slope AR coefficients exceed 0.99 in magnitude, while
+curvature GARCH variance persistence \(\alpha_j+\beta_j\) is near one at
+all origins. The high persistence of fitted autoregressive and GARCH
+volatility parameters may affect longer-horizon forecast stability.
 
-Prior specification introduces additional uncertainty. The Bayesian
-models share priors for common parameters and match the interpretation
-of long-run expected innovation variance, improving comparability. The
-bounded log-volatility variance prior also ensures finite-horizon
-predictive moments. Nevertheless, its numerical hyperparameters remain
-regularization choices. Training-only prior-predictive checks and
-posterior diagnostics provide evidence of plausibility, but do not
-establish forecasting robustness to alternative persistence or
-volatility priors.
-
-Finally, the historical data extract and publication delays restrict the
-analysis to retrospective observation-time forecasting. The stationary
-bootstrap accounts for dependence across the 130 forecast origins, while
-Monte Carlo standard errors quantify predictive simulation noise;
-neither incorporates uncertainty arising from model specification,
-historical data vintages, or factor extraction. The conclusions should
-therefore be interpreted within the stated forecasting design rather
-than as evidence of real-time trading or risk-management performance.
+The primary M3--M2 comparison provides suggestive curvature improvements
+that do not remain significant after Holm adjustment. GARCH comparisons
+are descriptive, and their small CRPS differences do not establish a
+definitive ranking between the two volatility approaches. Finally, the
+retrospective forecasting design evaluates statistical performance using
+historical observation-time information, rather than realized economic
+outcomes under real-time implementation.
 
 \chapter{Conclusions}\label{sec-conclusions}
 
-This study investigates whether Bayesian stochastic volatility improves
-marginal probabilistic forecasts of Canadian government yield-curve
-factors. Using a controlled comparison of constant- and
-stochastic-volatility Dynamic Nelson--Siegel specifications across 130
-expanding-window forecast origins, it evaluates the predictive
-distributions of level, slope, and curvature at one- and four-week
-horizons.
+This study investigates whether stochastic volatility improves marginal
+probabilistic forecasting of Canadian government yield-curve factors
+within the Dynamic Nelson--Siegel framework. Using a matched Bayesian
+comparison and conventional forecasting benchmarks, it evaluates the
+predictive distributions of level, slope, and curvature across one- and
+four-week horizons.
 
-The principal finding is that the estimated benefit of stochastic
-volatility is concentrated in curvature, particularly at the longer
-horizon, while level and slope exhibit comparatively small changes.
-These improvements are evident in probabilistic scores rather than
-conditional mean accuracy, highlighting the importance of distinguishing
-forecasting uncertainty from forecasting expected yield movements.
-Although the curvature results are suggestive, they do not establish
-superiority after adjustment for multiple comparisons.
+The results indicate that the value of time-varying volatility is
+concentrated in curvature, where Bayesian stochastic volatility produces
+its largest CRPS improvements over constant volatility, particularly at
+the four-week horizon. Comparable performance from AR-GARCH suggests
+that much of this benefit may be obtained through conventional
+conditional-variance modelling, without the additional complexity of
+Bayesian latent-volatility inference. Moreover, the improvements in
+probabilistic scores are not consistently reflected in point-forecast
+accuracy, emphasizing the importance of modelling predictive uncertainty
+as a distinct forecasting objective.
 
-The study contributes a factor-specific perspective on probabilistic
-term-structure forecasting and a transparent Bayesian comparison that
-accounts for parameter uncertainty while maintaining a common
-interpretation of long-run innovation variance. Its practical relevance
-lies in identifying where more flexible volatility modelling may provide
-additional information for interest-rate scenario analysis and
-maturity-sensitive risk assessment. More broadly, the findings suggest
-that model complexity should be evaluated according to its contribution
-to the predictive distribution of each risk factor, rather than assumed
-beneficial across the entire yield curve.
-
-Future research could extend this framework to joint factor dependence,
-uncertainty in factor extraction, and real-time data vintages, enabling
-a more complete assessment of joint yield-curve scenarios and their
-economic value for portfolio risk management.
+The study contributes a factor-specific assessment of volatility
+modelling that distinguishes the incremental value of stochastic
+volatility within a Bayesian framework from its performance against
+simpler alternatives. For fixed-income risk management, the findings
+motivate selective volatility modelling according to the sensitivity and
+uncertainty of individual yield-curve factors, providing a practical
+foundation for maturity-sensitive exposure analysis and interest-rate
+scenario generation. Further development of joint factor dynamics and
+economic evaluation could extend these insights toward comprehensive
+portfolio risk forecasting.
 
 \appendix
 
@@ -2045,6 +2141,11 @@ Bolder, D. J., Johnson, G., \& Metzler, A. (2004). \emph{An empirical
 analysis of the canadian term structure of zero-coupon interest rates}
 (Nos. 2004-48). Bank of Canada.
 \url{https://publications.gc.ca/site/eng/9.559261/publication.html}
+
+\bibitem[\citeproctext]{ref-bollerslev1986generalized}
+Bollerslev, T. (1986). Generalized autoregressive conditional
+heteroskedasticity. \emph{Journal of Econometrics}, \emph{31}(3),
+307--327. \url{https://doi.org/10.1016/0304-4076(86)90063-1}
 
 \bibitem[\citeproctext]{ref-caldeira2010bayesian}
 Caldeira, J. F., Laurini, M. P., \& Portugal, M. S. (2010). Bayesian
