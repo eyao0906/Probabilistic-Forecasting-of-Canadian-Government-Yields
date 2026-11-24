@@ -1161,11 +1161,11 @@ forecast horizon. For factor \(j\) and horizon \(h\), the average paired
 score difference is
 
 \[
-\widehat\Delta_{j,h}
+\widehat{\Delta}_{j,h}
 =\frac{1}{N}\sum_{t=1}^{N}
 \left(
-\operatorname{CRPS}{M3,j,t,h}
--\operatorname{CRPS}{M2,j,t,h}
+\operatorname{CRPS}_{M3,j,t,h}
+-\operatorname{CRPS}_{M2,j,t,h}
 \right).
 \]
 
@@ -1449,7 +1449,7 @@ calibration}\label{point-accuracy-and-marginal-calibration}
 Probabilistic forecasting improvements need not coincide with gains in
 point accuracy or nominal interval coverage.
 Table~\ref{tbl-factor-auxiliary} compares RMSE and empirical coverage of
-central 90\% prediction intervals across M2, M3, and AR-GARCH.
+central 90\% prediction intervals across M2, M3, and AR-GARCH (A-G).
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.0968}}
@@ -1475,13 +1475,13 @@ M2 RMSE
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
 M3 RMSE
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AR-GARCH RMSE
+A-G RMSE
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
 M2 coverage
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
 M3 coverage
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AR-GARCH coverage
+A-G coverage
 \end{minipage} \\
 \midrule\noalign{}
 \endfirsthead
@@ -1495,13 +1495,13 @@ M2 RMSE
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
 M3 RMSE
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AR-GARCH RMSE
+A-G RMSE
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
 M2 coverage
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
 M3 coverage
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-AR-GARCH coverage
+A-G coverage
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
@@ -1521,15 +1521,15 @@ either M3 or AR-GARCH, despite their lower CRPS. This reinforces that
 the distributional improvements do not arise from consistently more
 accurate conditional means.
 
-Coverage results vary across factors. M3 brings curvature's 90\%
-coverage closer to nominal at both horizons relative to M2, while level
-and slope exhibit mixed changes. AR-GARCH has 90\% coverage of 88.5\%
-for one-week curvature and 93.1\% for four-week curvature, matching M3
-after rounding, but its level and slope coverage is not uniformly closer
-to nominal. At four weeks, curvature's nominal 50\% coverage moves from
-70.0\% under M2 to 54.6\% under M3, indicating reduced central
-overcoverage. These marginal diagnostics do not establish comprehensive
-distributional calibration.
+The calibration results suggest that constant-volatility M2 tends to
+overstate curvature uncertainty, producing excessively conservative
+prediction intervals. Both Bayesian SV (M3) and AR-GARCH reduce this
+overcoverage, yielding more concentrated intervals with coverage closer
+to nominal levels. Improvements for level and slope are less consistent,
+indicating that time-varying volatility does not uniformly enhance
+calibration across factors. These findings complement the CRPS results
+by highlighting the particular value of modelling evolving curvature
+uncertainty.
 
 Marginal calibration across all five forecasting specifications is
 further examined through the probability integral transform (PIT)
@@ -1609,22 +1609,53 @@ observed score reductions.
 \section{Factor-isolated interest-rate risk
 illustration}\label{factor-isolated-interest-rate-risk-illustration}
 
-To illustrate the financial interpretation of the predictive
-distributions, factor-level forecasts are translated into interest-rate
-exposure using a first-order duration approximation. At the final
-forecast origin, the four-week 90\% interval for the level factor's
-contribution to the five-year yield is approximately {[}−31.8, 30.5{]}
-basis points under constant volatility and {[}−25.5, 23.0{]} basis
-points under stochastic volatility.
+The stronger probabilistic forecasting improvements for curvature
+motivate examining their implications for intermediate-maturity
+interest-rate exposure. Under the Nelson--Siegel representation, a
+curvature-only movement contributes to the five-year yield through
+
+\[
+\Delta y_{5,t+h}^{(C)}
+=c(5;\lambda)(C_{t+h}-C_t),
+\]
+
+where level and slope are held fixed. Using the curvature loading
+defined in Equation~\ref{eq-loadings} and the training-estimated decay
+parameter \(\lambda=0.516038\) from Section 4.1, the five-year loading
+is
+
+\[
+c(5;\lambda)=\frac{1-e^{-5\lambda}}{5\lambda}-e^{-5\lambda}
+\approx 0.28245.
+\]
 
 For a stylized \$1 million fixed-income position with modified duration
-of five, these intervals correspond to approximate first-order P\&L
-ranges of {[}−\$15,300, \$15,900{]} and {[}−\$11,500, \$12,800{]},
-respectively. The illustration demonstrates how differences in marginal
-predictive uncertainty translate into interest-rate exposure estimates.
-It varies only the level factor, holding slope and curvature fixed, and
-therefore represents a factor-isolated sensitivity analysis rather than
-a calibrated portfolio VaR or joint yield-curve risk forecast.
+of five, the corresponding first-order P\&L is approximated by
+
+\[
+\Delta P^{(C)}
+\approx -P_0D_{\mathrm{mod}}\frac{\Delta y_{5,t+h}^{(C)}}{100},
+\]
+
+with yield changes expressed in percentage points.
+
+At the final forecast origin (28 November 2025), the four-week 90\%
+interval for the curvature-induced five-year yield change is
+approximately {[}−30.2, 33.9{]} basis points under Bayesian constant
+volatility (M2), compared with {[}−18.7, 18.8{]} basis points under
+stochastic volatility (M3). These imply approximate P\&L ranges of
+{[}−\$16,900, \$15,100{]} and {[}−\$9,400, \$9,300{]}, respectively. The
+narrower M3 interval illustrates how time-varying volatility can alter
+estimated interest-rate exposure under relatively calm market
+conditions.
+
+Across the full evaluation period, M3 also reduces four-week curvature
+CRPS by approximately 4.9\% relative to M2, indicating that the benefit
+extends beyond this illustrative origin. From a fixed-income risk
+management perspective, more responsive curvature uncertainty forecasts
+can improve the assessment of maturity-sensitive exposures, helping risk
+managers adjust scenario ranges, evaluate potential valuation changes,
+and allocate risk limits as market conditions evolve.
 
 \section{Supplementary analysis: Volatility-regime dependence of
 forecast
@@ -1638,15 +1669,16 @@ market conditions.
 To classify market regimes without look-ahead bias, weekly changes in
 each extracted factor are standardized as
 \(z_{j,t}=\Delta\tilde f_{j,t}/s_j\), where
-\(\Delta\tilde f_{j,t}=\tilde f_{j,t}-\tilde f_{j,t-1}\) and \(s_j\) is
-the factor's sample standard deviation over the initial 2000--2015
-training period. Standardization places level, slope, and curvature on a
-common scale so that more volatile factors do not dominate the index.
-Recent market turbulence is then measured by the 26-week rolling
-root-mean-square (RMS) of standardized factor changes:
+\(\Delta\tilde f_{j,t}=\tilde f_{j,t}-\tilde f_{j,t-1}\) and \(s_j\)
+denotes the sample standard deviation of weekly changes in factor \(j\),
+estimated from the initial 2000--2015 training sample. Standardization
+places level, slope, and curvature on a common scale so that more
+volatile factors do not dominate the index. Recent market turbulence is
+then measured by the 26-week rolling root-mean-square (RMS) of
+standardized factor changes:
 
 \begin{equation}\protect\phantomsection\label{eq-volatility-regime-index}{
-V_t=\sqrt{\frac{1}{3\times26}\sum_{j\in{L,S,C}}\sum_{k=0}^{25}z_{j,t-k}^{2}}.
+V_t=\sqrt{\frac{1}{3\times26}\sum_{j\in\{L,S,C\}}\sum_{k=0}^{25}z_{j,t-k}^{2}}.
 }\end{equation}
 
 Higher values of \(V_t\) indicate larger recent factor movements. The
@@ -1700,11 +1732,11 @@ points. Exploratory 95\% confidence intervals are constructed using
 sequence, with an expected block length of four origins.
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1500}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0900}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1800}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1800}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.4000}}@{}}
 \caption{Regime-conditional CRPS differences between AR-GARCH and
 M3.}\label{tbl-volatility-regime}\tabularnewline
 \toprule\noalign{}
@@ -1713,11 +1745,11 @@ Factor
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
 Horizon
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-LOW difference
+LOW-Vol Diff
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-HIGH difference
+HIGH-Vol Diff
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-HIGH−LOW (95\% CI)
+\(\Delta(H−L)\) (95\% CI)
 \end{minipage} \\
 \midrule\noalign{}
 \endfirsthead
@@ -1727,11 +1759,11 @@ Factor
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
 Horizon
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-LOW difference
+LOW-Vol Diff
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-HIGH difference
+HIGH-Vol Diff
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-HIGH−LOW (95\% CI)
+\(\Delta(H−L)\) (95\% CI)
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
@@ -1790,10 +1822,11 @@ for one-week curvature forecasts and 4.9\% at four weeks, while
 improvements for level and slope are substantially smaller. The
 conventional AR-GARCH benchmark achieves similarly strong probabilistic
 performance, with marginally lower CRPS across all six factor--horizon
-combinations. This suggests that capturing conditional
-heteroskedasticity is a key source of predictive improvement, while the
-additional flexibility of Bayesian latent-volatility inference does not
-necessarily translate into superior forecasting performance.
+combinations. These findings are consistent with conditional
+heteroskedasticity being an important source of improvements in
+predictive distributions, while the additional complexity of Bayesian
+latent-volatility inference does not necessarily yield superior
+forecasting performance.
 
 The limited changes in point-forecast accuracy further indicate that the
 principal contribution of volatility modelling lies in characterizing
@@ -1801,7 +1834,10 @@ predictive uncertainty rather than improving expected factor movements.
 Together, these findings support a factor-specific approach to model
 selection, particularly for curvature-related yield-curve risks, where
 forecasting changes in uncertainty may offer greater value than
-increasing model complexity uniformly across factors.
+increasing model complexity uniformly across factors. The supplementary
+regime analysis further suggests that Bayesian SV may become relatively
+more competitive against AR-GARCH under elevated factor volatility,
+although the estimated differences remain inconclusive.
 
 \section{Implications for fixed-income risk
 management}\label{implications-for-fixed-income-risk-management}

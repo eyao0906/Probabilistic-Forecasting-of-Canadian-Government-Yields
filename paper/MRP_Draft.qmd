@@ -459,11 +459,11 @@ All evaluations are conducted separately for level, slope, and curvature. Becaus
 The primary statistical comparison examines the difference in CRPS between Bayesian stochastic-volatility DNS (M3) and its constant-volatility counterpart (M2), separately for each factor and forecast horizon. For factor $j$ and horizon $h$, the average paired score difference is
 
 $$
-\widehat\Delta_{j,h}
+\widehat{\Delta}_{j,h}
 =\frac{1}{N}\sum_{t=1}^{N}
 \left(
-\operatorname{CRPS}{M3,j,t,h}
--\operatorname{CRPS}{M2,j,t,h}
+\operatorname{CRPS}_{M3,j,t,h}
+-\operatorname{CRPS}_{M2,j,t,h}
 \right).
 $$
 
@@ -538,9 +538,9 @@ These findings indicate that improvements in predictive uncertainty do not neces
 
 ## Point accuracy and marginal calibration
 
-Probabilistic forecasting improvements need not coincide with gains in point accuracy or nominal interval coverage. @tbl-factor-auxiliary compares RMSE and empirical coverage of central 90% prediction intervals across M2, M3, and AR-GARCH.
+Probabilistic forecasting improvements need not coincide with gains in point accuracy or nominal interval coverage. @tbl-factor-auxiliary compares RMSE and empirical coverage of central 90% prediction intervals across M2, M3, and AR-GARCH (A-G).
 
-| Factor | Horizon | M2 RMSE | M3 RMSE | AR-GARCH RMSE | M2 coverage | M3 coverage | AR-GARCH coverage |
+| Factor | Horizon | M2 RMSE | M3 RMSE | A-G RMSE | M2 coverage | M3 coverage | A-G coverage |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Level | 1 | 0.1066 | 0.1065 | 0.1063 | 83.8% | 86.2% | 86.9% |
 | Level | 4 | 0.2019 | 0.2021 | 0.2022 | 85.4% | 89.2% | 90.0% |
@@ -553,7 +553,7 @@ Probabilistic forecasting improvements need not coincide with gains in point acc
 
 Point-forecast accuracy is broadly similar among the Bayesian models and AR-GARCH. At four-week curvature, classical M1 has lower RMSE than either M3 or AR-GARCH, despite their lower CRPS. This reinforces that the distributional improvements do not arise from consistently more accurate conditional means.
 
-Coverage results vary across factors. M3 brings curvature's 90% coverage closer to nominal at both horizons relative to M2, while level and slope exhibit mixed changes. AR-GARCH has 90% coverage of 88.5% for one-week curvature and 93.1% for four-week curvature, matching M3 after rounding, but its level and slope coverage is not uniformly closer to nominal. At four weeks, curvature's nominal 50% coverage moves from 70.0% under M2 to 54.6% under M3, indicating reduced central overcoverage. These marginal diagnostics do not establish comprehensive distributional calibration.
+The calibration results suggest that constant-volatility M2 tends to overstate curvature uncertainty, producing excessively conservative prediction intervals. Both Bayesian SV (M3) and AR-GARCH reduce this overcoverage, yielding more concentrated intervals with coverage closer to nominal levels. Improvements for level and slope are less consistent, indicating that time-varying volatility does not uniformly enhance calibration across factors. These findings complement the CRPS results by highlighting the particular value of modelling evolving curvature uncertainty.
 
 Marginal calibration across all five forecasting specifications is further examined through the probability integral transform (PIT) histograms in @fig-factor-pit.
 
@@ -582,18 +582,41 @@ The estimated curvature improvements are substantially larger than their corresp
 
 ## Factor-isolated interest-rate risk illustration
 
-To illustrate the financial interpretation of the predictive distributions, factor-level forecasts are translated into interest-rate exposure using a first-order duration approximation. At the final forecast origin, the four-week 90% interval for the level factor's contribution to the five-year yield is approximately [−31.8, 30.5] basis points under constant volatility and [−25.5, 23.0] basis points under stochastic volatility.
+The stronger probabilistic forecasting improvements for curvature motivate examining their implications for intermediate-maturity interest-rate exposure. Under the Nelson–Siegel representation, a curvature-only movement contributes to the five-year yield through
 
-For a stylized $1 million fixed-income position with modified duration of five, these intervals correspond to approximate first-order P&L ranges of [−$15,300, $15,900] and [−$11,500, $12,800], respectively. The illustration demonstrates how differences in marginal predictive uncertainty translate into interest-rate exposure estimates. It varies only the level factor, holding slope and curvature fixed, and therefore represents a factor-isolated sensitivity analysis rather than a calibrated portfolio VaR or joint yield-curve risk forecast.
+$$
+\Delta y_{5,t+h}^{(C)}
+=c(5;\lambda)(C_{t+h}-C_t),
+$$
+
+where level and slope are held fixed. Using the curvature loading defined in @eq-loadings and the training-estimated decay parameter $\lambda=0.516038$ from Section 4.1, the five-year loading is
+
+$$
+c(5;\lambda)=\frac{1-e^{-5\lambda}}{5\lambda}-e^{-5\lambda}
+\approx 0.28245.
+$$
+
+For a stylized $1 million fixed-income position with modified duration of five, the corresponding first-order P&L is approximated by
+
+$$
+\Delta P^{(C)}
+\approx -P_0D_{\mathrm{mod}}\frac{\Delta y_{5,t+h}^{(C)}}{100},
+$$
+
+with yield changes expressed in percentage points.
+
+At the final forecast origin (28 November 2025), the four-week 90% interval for the curvature-induced five-year yield change is approximately [−30.2, 33.9] basis points under Bayesian constant volatility (M2), compared with [−18.7, 18.8] basis points under stochastic volatility (M3). These imply approximate P&L ranges of [−$16,900, $15,100] and [−$9,400, $9,300], respectively. The narrower M3 interval illustrates how time-varying volatility can alter estimated interest-rate exposure under relatively calm market conditions.
+
+Across the full evaluation period, M3 also reduces four-week curvature CRPS by approximately 4.9% relative to M2, indicating that the benefit extends beyond this illustrative origin. From a fixed-income risk management perspective, more responsive curvature uncertainty forecasts can improve the assessment of maturity-sensitive exposures, helping risk managers adjust scenario ranges, evaluate potential valuation changes, and allocate risk limits as market conditions evolve.
 
 ## Supplementary analysis: Volatility-regime dependence of forecast performance
 
 The near-identical unconditional CRPS of Bayesian stochastic volatility (M3) and AR-GARCH motivates a supplementary analysis of whether their relative forecasting performance changes between low and high-volatility market conditions.
 
-To classify market regimes without look-ahead bias, weekly changes in each extracted factor are standardized as $z_{j,t}=\Delta\tilde f_{j,t}/s_j$, where $\Delta\tilde f_{j,t}=\tilde f_{j,t}-\tilde f_{j,t-1}$ and $s_j$ is the factor's sample standard deviation over the initial 2000–2015 training period. Standardization places level, slope, and curvature on a common scale so that more volatile factors do not dominate the index. Recent market turbulence is then measured by the 26-week rolling root-mean-square (RMS) of standardized factor changes:
+To classify market regimes without look-ahead bias, weekly changes in each extracted factor are standardized as $z_{j,t}=\Delta\tilde f_{j,t}/s_j$, where $\Delta\tilde f_{j,t}=\tilde f_{j,t}-\tilde f_{j,t-1}$ and $s_j$ denotes the sample standard deviation of weekly changes in factor $j$, estimated from the initial 2000–2015 training sample. Standardization places level, slope, and curvature on a common scale so that more volatile factors do not dominate the index. Recent market turbulence is then measured by the 26-week rolling root-mean-square (RMS) of standardized factor changes:
 
 $$
-V_t=\sqrt{\frac{1}{3\times26}\sum_{j\in{L,S,C}}\sum_{k=0}^{25}z_{j,t-k}^{2}}.
+V_t=\sqrt{\frac{1}{3\times26}\sum_{j\in\{L,S,C\}}\sum_{k=0}^{25}z_{j,t-k}^{2}}.
 $$ {#eq-volatility-regime-index}
 
 Higher values of $V_t$ indicate larger recent factor movements. The 25th and 75th percentiles of the 809 complete training-period index observations, $q_{25}=0.7545$ and $q_{75}=1.1031$, define LOW ($V_t\leq q_{25}$), MEDIUM ($q_{25}<V_t<q_{75}$), and HIGH ($V_t\geq q_{75}$) regimes. These thresholds remain fixed throughout the out-of-sample period, and each forecast origin is classified using only information available through that date. Of the 130 origins, 34 are classified as LOW, 56 as MEDIUM, and 40 as HIGH.
@@ -612,7 +635,7 @@ $$
 
 Negative values favor AR-GARCH, while positive values favor M3. The HIGH-minus-LOW difference, $\bar d_H-\bar d_L$, measures the change in relative forecasting performance, with positive values indicating a shift toward M3. All differences are expressed in factor percentage points. Exploratory 95% confidence intervals are constructed using 9,999 paired stationary-bootstrap resamples of the full 130-origin sequence, with an expected block length of four origins.
 
-| Factor | Horizon | LOW difference | HIGH difference | HIGH−LOW (95% CI) |
+| Factor | Horizon | LOW-Vol Diff | HIGH-Vol Diff | $\Delta(H−L)$ (95% CI) |
 |:---|---:|---:|---:|:---|
 | Level | 1 | −0.00032 | +0.00029 | +0.00061 [−0.00032, 0.00157] |
 | Level | 4 | −0.00036 | −0.00082 | −0.00046 [−0.00263, 0.00157] |
@@ -621,13 +644,13 @@ Negative values favor AR-GARCH, while positive values favor M3. The HIGH-minus-L
 | Curvature | 1 | −0.00145 | +0.00050 | +0.00195 [−0.00039, 0.00463] |
 | Curvature | 4 | −0.00213 | +0.00088 | +0.00302 [−0.00158, 0.00930] |
 
-: Regime-conditional CRPS differences between AR-GARCH and M3. {#tbl-volatility-regime}
+: Regime-conditional CRPS differences between AR-GARCH and M3. {#tbl-volatility-regime tbl-colwidths="[15,9,19,19,41]"}
 
 During LOW volatility, AR-GARCH achieves lower CRPS in all six factor–horizon comparisons. During HIGH volatility, Bayesian SV achieves lower CRPS in five of six comparisons, with the exception of four-week level forecasts. The largest estimated shift toward Bayesian SV occurs for curvature at the four-week horizon, although the absolute improvement remains small.
 
 The matched Bayesian comparison shows that M3 outperforms M2 in all six HIGH-volatility groups, compared with four of six LOW-volatility groups. However, the magnitude of these improvements is not consistently greater during HIGH volatility. For example, the four-week curvature CRPS reduction relative to M2 is approximately 7.0% under LOW volatility but only 1.6% under HIGH volatility.
 
-Although the rankings suggest that Bayesian SV may become more competitive relative to AR-GARCH during periods of elevated volatility, all six HIGH-minus-LOW confidence intervals include zero, as do the corresponding within-regime paired intervals. The observed differences therefore remain suggestive rather than conclusive. Overall, the supplementary analysis highlights possible regime dependence in the relative value of Bayesian SV, while reinforcing the main finding that both Bayesian SV and conventional GARCH provide competitive approaches to modelling time-varying uncertainty in yield-curve factors.
+Although the rankings suggest that Bayesian SV may become more competitive relative to AR-GARCH during periods of elevated volatility, all six HIGH-minus-LOW confidence intervals include zero, as do the corresponding within-regime paired intervals. The observed differences therefore remain suggestive rather than conclusive. Overall, the supplementary analysis highlights possible regime dependence in the relative value of Bayesian SV, while reinforcing the main finding that both Bayesian SV and conventional GARCH provide competitive approaches to modelling time-varying uncertainty in yield-curve factors. 
 
 # Discussion and limitations {#sec-discussion}
 
@@ -635,9 +658,9 @@ Although the rankings suggest that Bayesian SV may become more competitive relat
 
 This study evaluates the incremental value of stochastic volatility in marginal Nelson–Siegel factor forecasting through a controlled Bayesian comparison and conventional benchmarks. Holding factor extraction, autoregressive dynamics, and common priors fixed between M2 and M3 isolates the contribution of time-varying innovation uncertainty within the Bayesian framework.
 
-The results show that the estimated forecasting benefits are factor-dependent. Bayesian stochastic volatility reduces mean CRPS relative to its constant-volatility counterpart by approximately 3.4% for one-week curvature forecasts and 4.9% at four weeks, while improvements for level and slope are substantially smaller. The conventional AR-GARCH benchmark achieves similarly strong probabilistic performance, with marginally lower CRPS across all six factor–horizon combinations. This suggests that capturing conditional heteroskedasticity is a key source of predictive improvement, while the additional flexibility of Bayesian latent-volatility inference does not necessarily translate into superior forecasting performance.
+The results show that the estimated forecasting benefits are factor-dependent. Bayesian stochastic volatility reduces mean CRPS relative to its constant-volatility counterpart by approximately 3.4% for one-week curvature forecasts and 4.9% at four weeks, while improvements for level and slope are substantially smaller. The conventional AR-GARCH benchmark achieves similarly strong probabilistic performance, with marginally lower CRPS across all six factor–horizon combinations. These findings are consistent with conditional heteroskedasticity being an important source of improvements in predictive distributions, while the additional complexity of Bayesian latent-volatility inference does not necessarily yield superior forecasting performance.
 
-The limited changes in point-forecast accuracy further indicate that the principal contribution of volatility modelling lies in characterizing predictive uncertainty rather than improving expected factor movements. Together, these findings support a factor-specific approach to model selection, particularly for curvature-related yield-curve risks, where forecasting changes in uncertainty may offer greater value than increasing model complexity uniformly across factors.
+The limited changes in point-forecast accuracy further indicate that the principal contribution of volatility modelling lies in characterizing predictive uncertainty rather than improving expected factor movements. Together, these findings support a factor-specific approach to model selection, particularly for curvature-related yield-curve risks, where forecasting changes in uncertainty may offer greater value than increasing model complexity uniformly across factors. The supplementary regime analysis further suggests that Bayesian SV may become relatively more competitive against AR-GARCH under elevated factor volatility, although the estimated differences remain inconclusive.
 
 ## Implications for fixed-income risk management
 
