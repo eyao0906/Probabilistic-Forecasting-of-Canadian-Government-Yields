@@ -1,0 +1,37 @@
+{
+  "method": "26-week standardized factor-change rolling RMS",
+  "factor_order": [
+    "level",
+    "slope",
+    "curvature"
+  ],
+  "lookback_weekly_changes": 26,
+  "normalization": "sample SD (ddof=1) of within-training-sample weekly factor changes",
+  "training_start": "2000-01-07",
+  "training_end": "2015-12-31",
+  "training_observation_count": 835,
+  "training_change_count": 834,
+  "threshold_training_window_count": 809,
+  "quantile_method": "NumPy linear interpolation (method='linear')",
+  "low_rule": "V_t <= q25",
+  "high_rule": "V_t >= q75",
+  "medium_rule": "q25 < V_t < q75",
+  "normalization_factors": {
+    "level": 0.08689221266726901,
+    "slope": 0.1275455924181985,
+    "curvature": 0.37615296662983694
+  },
+  "q25": 0.75446758310143,
+  "q75": 1.1030895592309802,
+  "composite_formula": "sqrt((V_level^2 + V_slope^2 + V_curvature^2)/3)",
+  "information_cutoff": "Each index value uses factor observations dated through its own date",
+  "origin_regime_counts": {
+    "LOW": 34,
+    "MEDIUM": 56,
+    "HIGH": 40
+  },
+  "complete_eligible_history_rows": 1330,
+  "max_factor_reconstruction_abs_difference": 1.021405182655144e-14,
+  "first_complete_window_date": "2000-07-07",
+  "latest_history_date": "2025-12-24"
+}
