@@ -19,6 +19,7 @@ link-citations: true
 colorlinks: false
 header-includes:
   - |
+    \usepackage{needspace}
     \usepackage{chngcntr}
     \counterwithout{equation}{chapter}
     \counterwithout{footnote}{chapter}
@@ -362,7 +363,7 @@ Parameters are re-estimated by maximum likelihood at each forecast origin using 
 
 | Model | Specification | Role in evaluation |
 |---|---|---|
-| M0 | Factor random walk; training-only change variance | Random-walk benchmark |
+| M0 | Factor random walk; expanding-window variance of weekly factor changes. | Random-walk benchmark |
 | M1 | Two-step DNS; unrestricted OLS AR(1) by factor | Conventional DNS benchmark |
 | M2 | Bayesian two-step DNS; constant factor volatility | Bayesian control |
 | M3 | Bayesian two-step DNS; finite-moment stochastic factor volatility | Bayesian extension |

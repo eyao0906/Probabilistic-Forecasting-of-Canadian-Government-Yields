@@ -143,6 +143,7 @@
 
 
 \KOMAoption{captions}{tableheading}
+\usepackage{needspace}
 \usepackage{chngcntr}
 \counterwithout{equation}{chapter}
 \counterwithout{footnote}{chapter}
@@ -973,8 +974,8 @@ Role in evaluation
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-M0 & Factor random walk; training-only change variance & Random-walk
-benchmark \\
+M0 & Factor random walk; expanding-window variance of weekly factor
+changes. & Random-walk benchmark \\
 M1 & Two-step DNS; unrestricted OLS AR(1) by factor & Conventional DNS
 benchmark \\
 M2 & Bayesian two-step DNS; constant factor volatility & Bayesian
