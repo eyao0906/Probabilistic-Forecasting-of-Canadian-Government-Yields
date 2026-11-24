@@ -1238,14 +1238,13 @@ calibration (\citeproc{ref-vehtari2021rank}{Vehtari et al., 2021}).
 \section{Posterior parameter
 behavior}\label{posterior-parameter-behavior}
 
-To assess posterior learning under stochastic volatility,
-Table~\ref{tbl-posterior-parameters} summarizes the final Bayesian fit
-at 28 November 2025, using 24,000 retained draws per factor. Relative to
-their training-calibrated priors, posterior distributions generally
-exhibit greater concentration, particularly for the stationary
-log-volatility variance \(v_j\). Factor persistence remains high, while
-uncertainty in long-run means reflects the difficulty of estimating
-equilibrium levels for highly persistent interest-rate factors.
+To assess the estimated factor dynamics and volatility behaviour,
+Table~\ref{tbl-posterior-parameters} reports the posterior estimates
+from the final forecast origin, 28 November 2025. Each entry shows the
+posterior median and its 90\% credible interval, based on 24,000
+retained draws per factor. The parameters describe factor persistence
+\(b_j\), long-run factor means \(\mu_j\), and the level \(m_j\),
+persistence \(\phi_j\), and variation \(v_j\) of factor volatility.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1304}}
@@ -1302,13 +1301,22 @@ Curvature & 0.983 {[}0.975, 0.991{]} & -1.645 {[}-2.332, -0.885{]} &
 1.623{]} \\
 \end{longtable}
 
-The posterior distributions also provide evidence about the influence of
-volatility regularization. Across the 130 fits, the largest posterior
-99th percentile of \(v_j\) is 2.87, below the imposed upper bound of
-four, and posterior probability near that boundary is limited. The
-results suggest that posterior estimates are not persistently
-concentrated against the truncation boundary, although they do not
-establish robustness to alternative prior specifications.
+All three factors exhibit strong persistence, with estimated \(b_j\)
+close to one. This indicates that changes in factor levels tend to
+persist over time, making their long-run means difficult to estimate
+precisely, particularly for level and slope. The volatility estimates
+also differ across factors: curvature has the highest estimated
+volatility persistence \(\phi_j = 0.983\) and the greatest variation in
+log volatility \(v_j = 0.924\). This suggests that curvature uncertainty
+is both more variable and slower to adjust, providing a potential
+explanation for the larger forecasting improvements observed for this
+factor.
+
+The estimates also provide evidence that the imposed upper bound on
+\(v_j\) is not constraining the fitted model. Across all 130 forecast
+origins, the highest posterior 99th percentile of \(v_j\) is 2.87, below
+the specified upper bound of 4. This suggests that posterior estimates
+generally remain away from the boundary.
 
 \section{Marginal probabilistic forecasting
 performance}\label{marginal-probabilistic-forecasting-performance}
@@ -1356,8 +1364,7 @@ conventional GARCH-based volatility model.
 The Dawid--Sebastiani score (DSS) provides a complementary assessment of
 predictive means and variances, while mean absolute error (MAE)
 evaluates point-forecast accuracy. Table~\ref{tbl-factor-dss-mae}
-compares these metrics across M2, M3, and AR-GARCH (A-G) using the same
-forecast origins.
+compares these metrics across M2, M3, and AR-GARCH (A-G).
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.0968}}
@@ -1524,11 +1531,11 @@ to nominal. At four weeks, curvature's nominal 50\% coverage moves from
 overcoverage. These marginal diagnostics do not establish comprehensive
 distributional calibration.
 
-Marginal calibration for the original M0--M3 specifications is further
-examined through the probability integral transform (PIT) distributions
-in Figure~\ref{fig-factor-pit}.
+Marginal calibration across all five forecasting specifications is
+further examined through the probability integral transform (PIT)
+histograms in Figure~\ref{fig-factor-pit}.
 
-\begin{figure}
+\begin{figure}[H]
 
 \centering{
 
@@ -1536,19 +1543,24 @@ in Figure~\ref{fig-factor-pit}.
 
 }
 
-\caption{\label{fig-factor-pit}PIT histograms across 130 forecast
-origins for each factor and horizon. The dashed horizontal line
-represents the uniform-density benchmark.}
+\caption{\label{fig-factor-pit}PIT histograms for the five forecasting
+specifications across 130 common forecast origins, separately by factor
+and horizon. The dashed horizontal line denotes the uniform-density
+benchmark.}
 
 \end{figure}%
 
-The PIT histograms show deviations from uniformity that differ across
-factors and horizons. Curvature forecasts under constant volatility
-exhibit noticeable concentration in central PIT bins, consistent with
-their excessive interval coverage. Stochastic volatility generally
-reduces this concentration, particularly at the four-week horizon,
-although irregularities remain. Level and slope display less consistent
-changes in histogram shape.
+The PIT histograms reveal factor and horizon-specific differences in
+marginal calibration. Level and slope exhibit broadly similar patterns
+across models, whereas curvature shows more pronounced deviations from
+uniformity. In particular, constant-volatility specifications display
+greater concentration in central PIT bins, consistent with their
+excessive prediction-interval coverage. Bayesian stochastic volatility
+and AR-GARCH generally reduce this concentration, particularly at the
+four-week horizon, although calibration differences remain mixed. These
+findings complement the CRPS results by illustrating how time-varying
+volatility affects predictive distribution shapes without uniformly
+improving calibration.
 
 \section{Paired Bayesian comparison}\label{paired-bayesian-comparison}
 
@@ -1613,6 +1625,135 @@ predictive uncertainty translate into interest-rate exposure estimates.
 It varies only the level factor, holding slope and curvature fixed, and
 therefore represents a factor-isolated sensitivity analysis rather than
 a calibrated portfolio VaR or joint yield-curve risk forecast.
+
+\section{Volatility-regime dependence of forecast
+performance}\label{volatility-regime-dependence-of-forecast-performance}
+
+The near-identical unconditional CRPS of Bayesian stochastic volatility
+(M3) and AR-GARCH motivates a supplementary assessment of whether their
+relative performance varies with prevailing factor volatility. The
+existing forecasts are grouped by volatility at each of the 130 forecast
+origins, without re-estimating models or changing predictive scores.
+
+To characterize recent movements without allowing the more variable
+factors to dominate, define the standardized weekly factor changes
+\(z_{j,t}=\Delta\tilde f_{j,t}/s_j\), where
+\(\Delta\tilde f_{j,t}=\tilde f_{j,t}-\tilde f_{j,t-1}\) and \(s_j\) is
+the sample standard deviation of factor \(j\)'s weekly changes over the
+initial 2000--2015 training period. An equally weighted, trailing
+26-week root-mean-square (RMS) volatility index is
+
+\begin{equation}\protect\phantomsection\label{eq-volatility-regime-index}{
+V_t=\left[\frac{1}{3\times26}\sum_{j\in\{L,S,C\}}\sum_{k=0}^{25}\left(\frac{\Delta\tilde f_{j,t-k}}{s_j}\right)^2\right]^{1/2}.
+}\end{equation}
+
+The 25th and 75th percentiles of the 809 complete training-period index
+values, \(q_{25}=0.7545\) and \(q_{75}=1.1031\), define \textbf{LOW}
+(\(V_t\leq q_{25}\)), \textbf{MEDIUM} (\(q_{25}<V_t<q_{75}\)), and
+\textbf{HIGH} (\(V_t\geq q_{75}\)) regimes. Fixed training thresholds
+avoid calibrating the classification to subsequent forecast outcomes;
+each origin's label uses only factor observations through that date. The
+130 origins comprise 34 LOW, 56 MEDIUM, and 40 HIGH observations. The
+index in Figure~\ref{fig-volatility-regime-history} exhibits marked
+increases around periods of substantial historical yield-factor
+movements, including 2008--2009 and 2020--2023, providing a descriptive
+check on the classification's interpretation.
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics[width=0.92\linewidth,height=\textheight,keepaspectratio]{../results/canadian_volatility_regime_20261120/figures/figure_1_regime_history.pdf}
+
+}
+
+\caption{\label{fig-volatility-regime-history}Historical composite
+factor-change volatility index, with LOW and HIGH thresholds estimated
+exclusively from the initial training period and evaluated at common
+forecast origins.}
+
+\end{figure}%
+
+Table~\ref{tbl-volatility-regime} compares AR-GARCH with Bayesian SV
+using the within-regime mean paired CRPS difference
+\(d=\mathrm{CRPS}_{\mathrm{AR\text{-}GARCH}}-\mathrm{CRPS}_{M3}\).
+Negative values favor GARCH and positive values favor M3. The
+interaction \(\Delta_{H-L}=\bar d_H-\bar d_L\) measures how their
+relative performance changes between HIGH and LOW regimes.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\caption{Conditional paired CRPS differences (AR-GARCH minus M3), in
+factor percentage points, across LOW (\(n=34\)) and HIGH (\(n=40\))
+volatility regimes. Exploratory 95\% percentile intervals for
+HIGH-minus-LOW interactions use 9,999 paired circular
+stationary-bootstrap resamples of all 130 origins (expected block length
+four origins), with regime labels resampled jointly. MEDIUM origins
+remain in the bootstrap but are omitted from the table for
+concision.}\label{tbl-volatility-regime}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Factor
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(h\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+LOW \(\bar d\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+HIGH \(\bar d\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\(\Delta_{H-L}\) (95\% CI)
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Factor
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(h\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+LOW \(\bar d\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+HIGH \(\bar d\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\(\Delta_{H-L}\) (95\% CI)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Level & 1 & −0.00032 & +0.00029 & +0.00061 {[}−0.00032, 0.00157{]} \\
+Level & 4 & −0.00036 & −0.00082 & −0.00046 {[}−0.00263, 0.00157{]} \\
+Slope & 1 & −0.00045 & +0.00058 & +0.00104 {[}−0.00057, 0.00289{]} \\
+Slope & 4 & −0.00001 & +0.00075 & +0.00076 {[}−0.00225, 0.00394{]} \\
+Curvature & 1 & −0.00145 & +0.00050 & +0.00195 {[}−0.00039,
+0.00463{]} \\
+Curvature & 4 & −0.00213 & +0.00088 & +0.00302 {[}−0.00158,
+0.00930{]} \\
+\end{longtable}
+
+AR-GARCH records lower CRPS in all six LOW-regime comparisons, whereas
+M3 performs better in five of six HIGH-regime comparisons. Within the
+matched Bayesian comparison, M3 also improves on M2 in all six
+HIGH-regime groups, compared with four of six LOW-regime groups. For
+four-week curvature, however, its CRPS reduction relative to M2 is
+approximately 7.0\% in LOW volatility versus 1.6\% in HIGH volatility,
+so the Bayesian SV benefit is not uniformly larger during HIGH
+volatility.
+
+Despite the directional reversal relative to GARCH, all six interaction
+intervals in Table~\ref{tbl-volatility-regime} include zero, as do the
+corresponding LOW- and HIGH-regime paired intervals. The analysis
+therefore suggests that Bayesian SV \textbf{may become relatively more
+competitive during elevated volatility}, but does not establish a
+reliable regime-specific advantage. It reinforces the paper's central
+finding that time-varying uncertainty matters for factor-level
+predictive distributions, while the incremental forecasting value of
+Bayesian SV relative to conventional GARCH remains an open empirical
+question.
 
 \chapter{Discussion and limitations}\label{sec-discussion}
 
